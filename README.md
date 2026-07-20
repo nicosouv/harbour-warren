@@ -1,20 +1,22 @@
-# Hive
+# Warren
 
-A colony idle game for Sailfish OS.
+A colony idle game for Sailfish OS. You dig, you build, you conquer. A narrator judges you the
+whole time.
 
-Grow a colony from a handful of workers. Gather resources, dig out new burrows, and raise
-soldiers. When you're strong enough, send raiding parties out — and live with what they bring
-back.
+Start with a handful of badgers and a hole in the ground. Put them to work — forage food, gather
+materials, mine gold — raise burrows, keep the lights on, and when the colony is big enough,
+train soldiers and go take what the neighbours weren't using.
 
-Three sides to keep in balance:
+Four resources to juggle:
 
-- **Population** — workers that gather and build. They grow over time, and they need feeding.
-- **Colony** — burrows and structures that boost what you produce and unlock more.
-- **Army** — soldiers raised from your people and fed from your stores, sent out to raid.
+- **Food** — grows your population, feeds your army. Run out and things get thin.
+- **Materials** — everything you build.
+- **Gold** — mined; pays for soldiers and for keeping the place running.
+- **Energy** — you don't make it, you buy it. It drains. The lights are not free.
 
-Raids resolve on the strength you commit versus what you're up against: a clean win brings
-loot and ground held, a costly one bleeds your ranks, a defeat sets you back — but never to
-nothing. It all keeps ticking while the app is closed.
+Raids resolve on the strength you commit versus what you're up against: a clean win brings loot
+and ground held, a costly one bleeds your ranks, a defeat sets you back — but never to nothing.
+It all keeps ticking while the app is closed, whether that flatters you or not.
 
 Fully offline: no ads, no account, no telemetry. French and English.
 

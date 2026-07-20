@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs><clipPath id="dome"><path d="M0,256 a256,256 0 0 1 512,0 V512 H0 Z"/></clipPath></defs>
+  <g clip-path="url(#dome)"><rect width="512" height="512" fill="#e9e6dd"/></g>
+  <ellipse cx="208" cy="228" rx="18" ry="21" fill="#1b1b1a"/><ellipse cx="241" cy="217" rx="18" ry="21" fill="#1b1b1a"/><ellipse cx="275" cy="217" rx="18" ry="21" fill="#1b1b1a"/><ellipse cx="308" cy="228" rx="18" ry="21" fill="#1b1b1a"/><ellipse cx="258" cy="292" rx="50" ry="38" fill="#1b1b1a"/>
+</svg>

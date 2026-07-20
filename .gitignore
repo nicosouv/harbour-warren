@@ -8,7 +8,7 @@ qrc_*.cpp
 ui_*.h
 Makefile*
 .qmake.stash
-tests/tst_hive
+tests/tst_warren
 tests/Makefile*
 
 # Qt Creator / IDE
