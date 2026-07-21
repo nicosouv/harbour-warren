@@ -129,6 +129,23 @@ Item {
         }
     }
 
+    // How golden the hour is (dawn/dusk), and how "cloud-friendly" the daylight is.
+    property real golden: Math.max(0, 1 - Math.min(Math.abs(view.phase - 0.13),
+                                                    Math.abs(view.phase - 0.68)) * 7)
+    property real cloudDay: Math.max(0, Math.min(1, view.sky.day * 1.3))
+
+    // Warm band hugging the horizon at dawn and dusk.
+    Rectangle {
+        width: parent.width
+        y: parent.height * view.horizon - height
+        height: parent.height * 0.18
+        opacity: view.golden * 0.7
+        gradient: Gradient {
+            GradientStop { position: 0.0; color: "transparent" }
+            GradientStop { position: 1.0; color: "#e8a05a" }
+        }
+    }
+
     // Stars: fixed field, fading in as daylight drops.
     Item {
         anchors.fill: parent
@@ -140,6 +157,46 @@ Item {
                 color: "#cdd2e6"
                 x: view.width * view.jitter(index * 7 + 3, 1)
                 y: view.height * view.horizon * view.jitter(index * 11 + 5, 0.95)
+            }
+        }
+    }
+
+    // A shared wing-flap for the flock.
+    property real birdFlap: 0
+    SequentialAnimation on birdFlap {
+        running: view.visible && Qt.application.active && !view.reduceFx
+        loops: Animation.Infinite
+        NumberAnimation { to: 1; duration: 160 }
+        NumberAnimation { to: 0; duration: 160 }
+    }
+
+    // Cloud shape: a lumpy pixel puff, reused for both depth layers.
+    Component {
+        id: cloudPuff
+        Item {
+            property color cc: "#eef2f8"
+            Rectangle { x: parent.width * 0.15; y: parent.height * 0.35; width: parent.width * 0.70; height: parent.height * 0.55; radius: height / 2; color: parent.cc; antialiasing: false }
+            Rectangle { x: 0;                   y: parent.height * 0.45; width: parent.width * 0.50; height: parent.height * 0.50; radius: height / 2; color: parent.cc; antialiasing: false }
+            Rectangle { x: parent.width * 0.35; y: parent.height * 0.08; width: parent.width * 0.45; height: parent.height * 0.55; radius: height / 2; color: parent.cc; antialiasing: false }
+            Rectangle { x: parent.width * 0.55; y: parent.height * 0.40; width: parent.width * 0.40; height: parent.height * 0.50; radius: height / 2; color: parent.cc; antialiasing: false }
+        }
+    }
+
+    // FAR clouds: slow, pale, drift BEHIND the sun (declared before it).
+    Repeater {
+        model: [ { y: 0.07, w: 0.20, dur: 92000, delay: 0 },
+                 { y: 0.15, w: 0.15, dur: 108000, delay: 26000 },
+                 { y: 0.04, w: 0.24, dur: 100000, delay: 58000 } ]
+        Item {
+            width: view.width * modelData.w; height: width * 0.5
+            y: view.height * modelData.y
+            opacity: 0.30 * view.cloudDay
+            Loader { anchors.fill: parent; sourceComponent: cloudPuff; onLoaded: item.cc = "#e4eaf3" }
+            SequentialAnimation on x {
+                running: view.visible && Qt.application.active && !view.reduceFx
+                loops: Animation.Infinite
+                PauseAnimation { duration: modelData.delay }
+                NumberAnimation { from: -view.width * modelData.w * 1.6; to: view.width * 1.12; duration: modelData.dur }
             }
         }
     }
@@ -169,6 +226,72 @@ Item {
         }
     }
 
+    // NEAR clouds: bigger, faster, drift IN FRONT of the sun (declared after it).
+    Repeater {
+        model: [ { y: 0.19, w: 0.30, dur: 62000, delay: 14000 },
+                 { y: 0.27, w: 0.23, dur: 54000, delay: 42000 } ]
+        Item {
+            width: view.width * modelData.w; height: width * 0.5
+            y: view.height * modelData.y
+            opacity: 0.5 * view.cloudDay
+            Loader { anchors.fill: parent; sourceComponent: cloudPuff; onLoaded: item.cc = "#f3f6fb" }
+            SequentialAnimation on x {
+                running: view.visible && Qt.application.active && !view.reduceFx
+                loops: Animation.Infinite
+                PauseAnimation { duration: modelData.delay }
+                NumberAnimation { from: -view.width * modelData.w * 1.6; to: view.width * 1.12; duration: modelData.dur }
+            }
+        }
+    }
+
+    // A simple flock crossing the daytime sky now and then.
+    Item {
+        id: flock
+        width: view.width * 0.16; height: view.height * 0.05
+        y: view.height * 0.17
+        opacity: Math.max(0, view.sky.day - 0.2) * 1.3
+        Repeater {
+            model: [ { dx: 0.0, dy: 0.10 }, { dx: 0.36, dy: 0.42 }, { dx: 0.66, dy: 0.0 } ]
+            Item {
+                x: flock.width * modelData.dx; y: flock.height * modelData.dy
+                width: view.width * 0.022; height: width * 0.6
+                Rectangle { width: parent.width * 0.52; height: Math.max(1, parent.height * 0.18); color: "#2b2b32"; antialiasing: false
+                    x: 0; y: parent.height * 0.5; transformOrigin: Item.Right; rotation: -20 + view.birdFlap * 32 }
+                Rectangle { width: parent.width * 0.52; height: Math.max(1, parent.height * 0.18); color: "#2b2b32"; antialiasing: false
+                    x: parent.width * 0.48; y: parent.height * 0.5; transformOrigin: Item.Left; rotation: 20 - view.birdFlap * 32 }
+            }
+        }
+        SequentialAnimation on x {
+            running: view.visible && Qt.application.active && !view.reduceFx
+            loops: Animation.Infinite
+            NumberAnimation { from: -flock.width; to: view.width + flock.width; duration: 21000 }
+            PauseAnimation { duration: 28000 }
+        }
+    }
+
+    // Layered hill silhouettes at the skyline: depth, and the sun/moon sets behind them.
+    Canvas {
+        anchors.fill: parent
+        onPaint: {
+            var ctx = getContext("2d"); ctx.clearRect(0, 0, width, height)
+            var g = height * view.horizon
+            function ridge(color, base, amp, freq, ph) {
+                ctx.fillStyle = color
+                ctx.beginPath(); ctx.moveTo(0, g + 4)
+                for (var x = 0; x <= width; x += 2) {
+                    var hy = g - base - amp * Math.sin(x / freq + ph) - amp * 0.4 * Math.sin(x / (freq * 0.4) + ph * 2)
+                    ctx.lineTo(x, hy)
+                }
+                ctx.lineTo(width, g + 4); ctx.closePath(); ctx.fill()
+            }
+            ridge("#39424e", height * 0.02, height * 0.055, 62, 0.0)   // far ridge, hazy
+            ridge("#2c3038", 0, height * 0.085, 44, 2.1)               // near ridge, darker
+        }
+        onWidthChanged: requestPaint()
+        onHeightChanged: requestPaint()
+        Component.onCompleted: requestPaint()
+    }
+
     // --- Ground -----------------------------------------------------------------------------
     Rectangle {
         anchors { left: parent.left; right: parent.right; bottom: parent.bottom }
@@ -178,19 +301,6 @@ Item {
             GradientStop { position: 0.0; color: "#4a3d30" }
             GradientStop { position: 1.0; color: "#3a2f26" }
         }
-    }
-    // The mound with the main burrow mouth.
-    Rectangle {
-        width: parent.width * 0.5; height: parent.height * 0.22
-        radius: height
-        anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom; bottomMargin: parent.height * 0.48 }
-        color: "#54452f"
-    }
-    Rectangle {
-        width: parent.width * 0.09; height: parent.height * 0.10
-        radius: width / 2
-        anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom; bottomMargin: parent.height * 0.5 }
-        color: "#120f14"
     }
     // Ground texture: dirt grain, pebbles, grass tufts. Painted once.
     Canvas {
