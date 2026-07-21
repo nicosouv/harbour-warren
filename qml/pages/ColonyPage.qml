@@ -462,7 +462,8 @@ Page {
                             Rectangle {
                                 width: parent.width * modelData.progress; height: parent.height; radius: 1
                                 color: Theme.highlightColor
-                                Behavior on width { NumberAnimation { duration: 400 } }
+                                // Glide across the one-second gap between ticks: a continuous fill.
+                                Behavior on width { NumberAnimation { duration: 1000; easing.type: Easing.Linear } }
                             }
                         }
                     }

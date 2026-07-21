@@ -287,40 +287,32 @@ Item {
         }
     }
 
-    // Parallax mountains: three silhouette layers drifting at different speeds; the far range is
-    // taller and hazier, the near hills lower and darker. Each canvas is twice the view width with
-    // a periodic profile, so the drift wraps seamlessly. The sun and moon set behind them.
-    Repeater {
-        model: [ { color: "#3c4a5e", base: 0.15, amp: 0.10, dur: 190000, ph: 0.0 },
-                 { color: "#313c4d", base: 0.08, amp: 0.13, dur: 132000, ph: 1.3 },
-                 { color: "#262d3a", base: 0.02, amp: 0.16, dur: 94000,  ph: 2.7 } ]
-        Item {
-            width: view.width * 2; height: view.height
-            NumberAnimation on x {
-                from: 0; to: -view.width; duration: modelData.dur; loops: Animation.Infinite
-                running: view.visible && Qt.application.active && !view.reduceFx
-            }
-            Canvas {
-                anchors.fill: parent
-                onPaint: {
-                    var ctx = getContext("2d"); ctx.clearRect(0, 0, width, height)
-                    var vw = view.width, g = view.height * view.horizon
-                    ctx.fillStyle = modelData.color
-                    ctx.beginPath(); ctx.moveTo(0, g + 4)
-                    for (var x = 0; x <= width; x += 3) {
-                        var u = x / vw
-                        var hy = g - modelData.base * view.height
-                                 - modelData.amp * view.height * (0.5 + 0.5 * Math.sin(2 * Math.PI * u + modelData.ph))
-                                 - modelData.amp * 0.5 * view.height * (0.5 + 0.5 * Math.sin(2 * Math.PI * u * 2 + modelData.ph * 1.7))
-                        ctx.lineTo(x, hy)
-                    }
-                    ctx.lineTo(width, g + 4); ctx.closePath(); ctx.fill()
+    // Fixed mountains: three silhouette planes for depth — far range tall and hazy, near hills low
+    // and dark. They don't move; the layering IS the parallax. The sun and moon set behind them.
+    Canvas {
+        anchors.fill: parent
+        onPaint: {
+            var ctx = getContext("2d"); ctx.clearRect(0, 0, width, height)
+            var g = height * view.horizon
+            function ridge(color, base, amp, ph) {
+                ctx.fillStyle = color
+                ctx.beginPath(); ctx.moveTo(0, g + 4)
+                for (var x = 0; x <= width; x += 3) {
+                    var u = x / width
+                    var hy = g - base * height
+                             - amp * height * (0.5 + 0.5 * Math.sin(2 * Math.PI * u * 2 + ph))
+                             - amp * 0.5 * height * (0.5 + 0.5 * Math.sin(2 * Math.PI * u * 5 + ph * 1.7))
+                    ctx.lineTo(x, hy)
                 }
-                onWidthChanged: requestPaint()
-                onHeightChanged: requestPaint()
-                Component.onCompleted: requestPaint()
+                ctx.lineTo(width, g + 4); ctx.closePath(); ctx.fill()
             }
+            ridge("#3c4a5e", 0.15, 0.10, 0.0)   // far range, hazy
+            ridge("#313c4d", 0.08, 0.13, 1.3)   // mid
+            ridge("#262d3a", 0.02, 0.16, 2.7)   // near hills, darker
         }
+        onWidthChanged: requestPaint()
+        onHeightChanged: requestPaint()
+        Component.onCompleted: requestPaint()
     }
 
     // --- Ground -----------------------------------------------------------------------------
@@ -352,11 +344,16 @@ Item {
                 ctx.fillStyle = "rgba(150,140,128,0.22)"
                 ctx.beginPath(); ctx.arc(x, y, s, 0, 6.283); ctx.fill()
             }
-            for (i = 0; i < 42; i++) {
-                x = rnd() * width; y = g + rnd() * (height - g) * 0.5; var h = 2 + rnd() * 4
-                ctx.strokeStyle = rnd() < 0.5 ? "rgba(78,96,54,0.5)" : "rgba(96,116,66,0.45)"
+            // A thick carpet of grass tufts across the whole field. Painted once, so density is free.
+            for (i = 0; i < 240; i++) {
+                x = rnd() * width; y = g + rnd() * (height - g); var h = 2 + rnd() * 5
+                ctx.strokeStyle = rnd() < 0.5 ? "rgba(78,96,54,0.55)" : "rgba(96,116,66,0.5)"
                 ctx.lineWidth = 1
-                ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + (rnd() - 0.5) * 3, y - h); ctx.stroke()
+                var blades = 2 + Math.floor(rnd() * 3)
+                for (var bld = 0; bld < blades; bld++) {
+                    ctx.beginPath(); ctx.moveTo(x + (rnd() - 0.5) * 3, y)
+                    ctx.lineTo(x + (rnd() - 0.5) * 5, y - h * (0.6 + rnd() * 0.7)); ctx.stroke()
+                }
             }
         }
         onWidthChanged: requestPaint()
@@ -385,14 +382,15 @@ Item {
             }
         }
     }
+    // Animated blades on top of the carpet — these are the ones that sway in the breeze.
     Repeater {
-        model: 16
+        model: 44
         Rectangle {
-            width: 2; height: view.height * (0.03 + 0.02 * view.jitter(index * 17 + 2, 1))
+            width: 2; height: view.height * (0.028 + 0.026 * view.jitter(index * 17 + 2, 1))
             antialiasing: false
             color: index % 2 === 0 ? "#4e6036" : "#5f7444"
-            x: view.width * (0.02 + 0.96 * view.jitter(index * 29 + 4, 1))
-            y: view.height * (0.56 + 0.34 * view.jitter(index * 13 + 6, 1))
+            x: view.width * (0.015 + 0.97 * view.jitter(index * 29 + 4, 1))
+            y: view.height * (0.5 + 0.42 * view.jitter(index * 13 + 6, 1))
             transformOrigin: Item.Bottom
             rotation: view.wind * (8 + (index % 3) * 3)
         }
@@ -431,7 +429,10 @@ Item {
         Rectangle {
             anchors { left: parent.left; right: parent.right; top: parent.bottom; topMargin: 2 }
             height: 3; color: Qt.rgba(1, 1, 1, 0.15)
-            Rectangle { width: parent.width * view.siteProgress; height: parent.height; color: "#e0b23a" }
+            Rectangle {
+                width: parent.width * view.siteProgress; height: parent.height; color: "#e0b23a"
+                Behavior on width { NumberAnimation { duration: 1000; easing.type: Easing.Linear } }
+            }
         }
     }
 

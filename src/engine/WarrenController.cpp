@@ -441,8 +441,8 @@ QVariantList WarrenController::buildings() const
         m.insert(QStringLiteral("affordable"),
                  m_state.siteBld < 0 && liveRes(Materials) >= cost);
         m.insert(QStringLiteral("site"), m_state.siteBld == b);
-        m.insert(QStringLiteral("progress"),
-                 m_state.siteBld == b ? m_state.siteProgress / kBld[b].work : 0.0);
+        // Live progress (projected between flushes), so the bar advances every tick, not every 30 s.
+        m.insert(QStringLiteral("progress"), m_state.siteBld == b ? buildProgress() : 0.0);
         m.insert(QStringLiteral("damaged"), bldDamaged(m_state, b));
         m.insert(QStringLiteral("repairCost"), 40.0);
         out.append(m);
