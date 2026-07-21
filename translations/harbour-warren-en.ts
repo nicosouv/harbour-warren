@@ -171,6 +171,7 @@
     <message><source>breeding</source><translation>breeding</translation></message>
     <message><source>Assign badgers to forage: well fed, the colony breeds on its own.</source><translation>Assign badgers to forage: well fed, the colony breeds on its own.</translation></message>
     <message><source>a new badger</source><translation>a new badger</translation></message>
+    <message><source>ready in</source><translation>ready in</translation></message>
     <message><source>energy +25%</source><translation>energy +25%</translation></message>
     <message><source>blackout −30%</source><translation>blackout −30%</translation></message>
     <message><source>Powered: +25% production and building</source><translation>Powered: +25% production and building</translation></message>

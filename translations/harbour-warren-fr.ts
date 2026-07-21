@@ -171,6 +171,7 @@
     <message><source>breeding</source><translation>reproduction</translation></message>
     <message><source>Assign badgers to forage: well fed, the colony breeds on its own.</source><translation>Assignez des blaireaux à la cueillette : bien nourrie, la colonie se reproduit toute seule.</translation></message>
     <message><source>a new badger</source><translation>un nouveau blaireau</translation></message>
+    <message><source>ready in</source><translation>prêt dans</translation></message>
     <message><source>energy +25%</source><translation>énergie +25%</translation></message>
     <message><source>blackout −30%</source><translation>panne −30%</translation></message>
     <message><source>Powered: +25% production and building</source><translation>Alimenté : +25% production et construction</translation></message>

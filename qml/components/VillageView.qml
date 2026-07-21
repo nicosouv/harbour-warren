@@ -363,7 +363,10 @@ Item {
 
     // Greenery: wind-swayed trees and a fringe of grass. Pure decoration — no collision.
     Repeater {
-        model: [ { x: 0.05, y: 0.50, s: 1.0 }, { x: 0.93, y: 0.55, s: 0.85 }, { x: 0.55, y: 0.485, s: 0.7 } ]
+        model: [ { x: 0.03, y: 0.50, s: 1.0 },  { x: 0.15, y: 0.47, s: 0.7 },
+                 { x: 0.33, y: 0.485, s: 0.62 }, { x: 0.48, y: 0.46, s: 0.8 },
+                 { x: 0.63, y: 0.50, s: 0.66 },  { x: 0.79, y: 0.475, s: 0.9 },
+                 { x: 0.90, y: 0.52, s: 0.72 },  { x: 0.97, y: 0.49, s: 0.6 } ]
         Item {
             x: view.width * modelData.x; y: view.height * modelData.y
             width: view.width * 0.05 * modelData.s; height: width * 2.1

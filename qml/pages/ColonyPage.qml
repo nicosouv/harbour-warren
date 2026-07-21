@@ -611,11 +611,10 @@ Page {
                             Label { anchors.verticalCenter: parent.verticalCenter; text: "" + modelData.costPop; font.pixelSize: Theme.fontSizeExtraSmall; color: Theme.secondaryColor }
                         }
                     }
-                    Button {
+                    IconButton {
                         id: trainBtn
                         anchors { right: parent.right; rightMargin: Theme.horizontalPageMargin; verticalCenter: parent.verticalCenter }
-                        preferredWidth: Theme.buttonWidthSmall
-                        text: qsTr("Train")
+                        icon.source: "image://theme/icon-m-add"
                         enabled: modelData.affordable
                         onClicked: { Game.train(modelData.index, 1); app.buzz() }
                     }
@@ -640,20 +639,23 @@ Page {
                         fillMode: Image.PreserveAspectFit
                     }
                     Column {
-                        anchors { left: foxIcon.right; leftMargin: Theme.paddingMedium; verticalCenter: parent.verticalCenter }
-                        width: parent.width * 0.45
+                        anchors { left: foxIcon.right; leftMargin: Theme.paddingMedium; right: raidBtn.left; rightMargin: Theme.paddingMedium; verticalCenter: parent.verticalCenter }
                         Label { text: app.targetName(modelData.key); truncationMode: TruncationMode.Fade; width: parent.width }
                         Label {
-                            text: qsTr("defence") + " " + Game.fmt(modelData.defense)
-                                  + (modelData.intelPct > 0 ? "  ·  " + qsTr("intel") + " +" + modelData.intelPct.toFixed(0) + "%" : "")
+                            width: parent.width
+                            truncationMode: TruncationMode.Fade
+                            text: modelData.ready
+                                  ? qsTr("defence") + " " + Game.fmt(modelData.defense)
+                                    + (modelData.intelPct > 0 ? "  ·  " + qsTr("intel") + " +" + modelData.intelPct.toFixed(0) + "%" : "")
+                                  : qsTr("ready in") + " " + fmtCooldown(modelData.cooldownLeft)
                             font.pixelSize: Theme.fontSizeExtraSmall
-                            color: Theme.secondaryColor
+                            color: modelData.ready ? Theme.secondaryColor : "#c0a24a"
                         }
                     }
-                    Button {
+                    IconButton {
+                        id: raidBtn
                         anchors { right: parent.right; rightMargin: Theme.horizontalPageMargin; verticalCenter: parent.verticalCenter }
-                        preferredWidth: Theme.buttonWidthSmall
-                        text: modelData.ready ? qsTr("Raid") : fmtCooldown(modelData.cooldownLeft)
+                        icon.source: "image://theme/icon-m-right"
                         enabled: modelData.ready && Game.totalUnits > 0
                         onClicked: { Game.raid(modelData.index); app.buzz() }
                     }
