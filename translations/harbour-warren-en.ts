@@ -80,6 +80,33 @@
     <message><source>defence</source><translation>defence</translation></message>
     <message><source>intel</source><translation>intel</translation></message>
     <message><source>Raid</source><translation>Raid</translation></message>
+    <message><source>Records</source><translation>Records</translation></message>
+</context>
+<context>
+    <name>StatsPage</name>
+    <message><source>Records</source><translation>Records</translation></message>
+    <message><source>Playtime</source><translation>Playtime</translation></message>
+    <message><source>Actions logged</source><translation>Actions logged</translation></message>
+    <message><source>Population</source><translation>Population</translation></message>
+    <message><source>Gold</source><translation>Gold</translation></message>
+    <message><source>Army power</source><translation>Army power</translation></message>
+    <message><source>Best marks</source><translation>Best marks</translation></message>
+    <message><source>Nothing to boast about yet.</source><translation>Nothing to boast about yet.</translation></message>
+    <message><source>Peak population</source><translation>Peak population</translation></message>
+    <message><source>Peak gold</source><translation>Peak gold</translation></message>
+    <message><source>Total gold earned</source><translation>Total gold earned</translation></message>
+    <message><source>Territory held</source><translation>Territory held</translation></message>
+    <message><source>Peak army power</source><translation>Peak army power</translation></message>
+    <message><source>Raids won</source><translation>Raids won</translation></message>
+    <message><source>Badgers armed</source><translation>Badgers armed</translation></message>
+    <message><source>Buildings raised</source><translation>Buildings raised</translation></message>
+    <message><source>Biggest haul</source><translation>Biggest haul</translation></message>
+    <message><source>Reached</source><translation>Reached</translation></message>
+    <message><source>Shelter</source><translation>Shelter</translation></message>
+    <message><source>Depths</source><translation>Depths</translation></message>
+    <message><source>Muster</source><translation>Muster</translation></message>
+    <message><source>The raids</source><translation>The raids</translation></message>
+    <message><source>Escalation</source><translation>Escalation</translation></message>
 </context>
 <context>
     <name>SettingsPage</name>

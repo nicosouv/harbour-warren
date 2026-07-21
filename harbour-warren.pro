@@ -29,6 +29,7 @@ DISTFILES += qml/harbour-warren.qml \
     qml/cover/CoverPage.qml \
     qml/pages/ColonyPage.qml \
     qml/pages/SettingsPage.qml \
+    qml/pages/StatsPage.qml \
     qml/components/VillageView.qml \
     rpm/harbour-warren.spec \
     harbour-warren.desktop

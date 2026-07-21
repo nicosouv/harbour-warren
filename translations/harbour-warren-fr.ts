@@ -80,6 +80,33 @@
     <message><source>defence</source><translation>défense</translation></message>
     <message><source>intel</source><translation>renseignement</translation></message>
     <message><source>Raid</source><translation>Raid</translation></message>
+    <message><source>Records</source><translation>Records</translation></message>
+</context>
+<context>
+    <name>StatsPage</name>
+    <message><source>Records</source><translation>Records</translation></message>
+    <message><source>Playtime</source><translation>Temps de jeu</translation></message>
+    <message><source>Actions logged</source><translation>Actions enregistrées</translation></message>
+    <message><source>Population</source><translation>Population</translation></message>
+    <message><source>Gold</source><translation>Or</translation></message>
+    <message><source>Army power</source><translation>Puissance de l'armée</translation></message>
+    <message><source>Best marks</source><translation>Meilleurs scores</translation></message>
+    <message><source>Nothing to boast about yet.</source><translation>Rien dont se vanter pour l'instant.</translation></message>
+    <message><source>Peak population</source><translation>Population maximale</translation></message>
+    <message><source>Peak gold</source><translation>Or maximal</translation></message>
+    <message><source>Total gold earned</source><translation>Or total gagné</translation></message>
+    <message><source>Territory held</source><translation>Territoires tenus</translation></message>
+    <message><source>Peak army power</source><translation>Puissance d'armée maximale</translation></message>
+    <message><source>Raids won</source><translation>Raids gagnés</translation></message>
+    <message><source>Badgers armed</source><translation>Blaireaux armés</translation></message>
+    <message><source>Buildings raised</source><translation>Bâtiments érigés</translation></message>
+    <message><source>Biggest haul</source><translation>Plus gros butin</translation></message>
+    <message><source>Reached</source><translation>Atteint</translation></message>
+    <message><source>Shelter</source><translation>Abri</translation></message>
+    <message><source>Depths</source><translation>Profondeurs</translation></message>
+    <message><source>Muster</source><translation>Mobilisation</translation></message>
+    <message><source>The raids</source><translation>Les raids</translation></message>
+    <message><source>Escalation</source><translation>Escalade</translation></message>
 </context>
 <context>
     <name>SettingsPage</name>

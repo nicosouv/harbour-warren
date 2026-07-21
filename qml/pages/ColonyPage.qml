@@ -68,19 +68,27 @@ Page {
 
         PullDownMenu {
             MenuItem { text: qsTr("Settings"); onClicked: pageStack.push(Qt.resolvedUrl("SettingsPage.qml")) }
+            MenuItem { text: qsTr("Records"); onClicked: pageStack.push(Qt.resolvedUrl("StatsPage.qml")) }
         }
 
         Column {
             id: col
             width: page.width
 
-            VillageView {
+            // The warren, front and centre — grows with everything you build.
+            Rectangle {
                 x: Theme.horizontalPageMargin
                 width: parent.width - 2 * Theme.horizontalPageMargin
-                height: Theme.itemSizeHuge * 1.5
-                population: Game.population
-                stage: Game.stage
-                counts: buildingCounts()
+                height: Theme.itemSizeHuge * 2.2
+                radius: Theme.paddingMedium
+                color: "#20242e"
+                clip: true
+                VillageView {
+                    anchors.fill: parent
+                    population: Game.population
+                    stage: Game.stage
+                    counts: buildingCounts()
+                }
             }
 
             // Manual dig — the only thing to do at the very start, and always a fallback.

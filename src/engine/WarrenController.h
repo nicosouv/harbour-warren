@@ -8,6 +8,7 @@
 #include <QSettings>
 #include <QTimer>
 #include <QVariantList>
+#include <QVector>
 #include "EventStore.h"
 #include "GameState.h"
 #include "Clock.h"
@@ -95,6 +96,13 @@ public:
     // Formatting helper for QML.
     Q_INVOKABLE QString fmt(double value) const;
 
+    // Stats: a downsampled time-series for a metric (population/gold/materials/food/army/territory).
+    Q_INVOKABLE QVariantList series(const QString& key) const;   // [{ t, v }]
+    // Records / leaderboard: personal bests with the timestamp they were set.
+    Q_INVOKABLE QVariantList records() const;                     // [{ key, value, at }]
+    Q_INVOKABLE double playtimeMs() const;
+    Q_INVOKABLE int eventCount() const;
+
     // Actions — each flushes pending accrual, then appends exactly one event.
     Q_INVOKABLE void arrive();
     Q_INVOKABLE void tap();
@@ -116,6 +124,8 @@ signals:
     void raidResolved(int target, int outcome, int committed, int losses);
 
 private:
+    struct Sample { qint64 t; int pop; double gold; double mat; double food; double army; int terr; };
+
     void appendAndApply(const QString& kind, const QString& payload);
     void appendSimple(const QString& kind, qint64 at);
     double liveRes(int res) const;
@@ -123,6 +133,9 @@ private:
     double rateOf(int res) const;
     bool beatSeen(const QString& key) const;
     void onUiTick();
+    void recordSample(qint64 t);
+    void updateRecords(qint64 now);
+    void bumpRecord(const QString& key, double value, qint64 now);
 
     SystemClock m_clock;
     EventStore  m_store;
@@ -138,6 +151,9 @@ private:
     double m_welcomeMs = 0.0;
     double m_welcomeGold = 0.0;
     int    m_welcomePop = 0;
+
+    QVector<Sample> m_hist;
+    qint64 m_firstTs = 0;
 };
 
 } // namespace warren

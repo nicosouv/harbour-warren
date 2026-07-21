@@ -29,9 +29,16 @@ WarrenController::WarrenController(QObject* parent)
     m_store.bootstrap(entropy != 0 ? entropy : Q_UINT64_C(0xC0FFEE));
     m_salt = m_store.installSalt();
 
-    m_state = fold(m_store.events(), m_salt);
+    m_state = GameState();
+    const QVector<Event> events = m_store.events();
+    if (!events.isEmpty()) m_firstTs = events.first().tsMs;
+    for (int i = 0; i < events.size(); ++i) {
+        applyEvent(m_state, events.at(i), m_salt);
+        recordSample(events.at(i).tsMs);
+    }
 
     const qint64 now = m_clock.nowMs();
+    if (m_firstTs == 0) m_firstTs = now;
     if (m_state.lastSeenMs > 0 && now - m_state.lastSeenMs > 5000) {
         qint64 ms = now - m_state.lastSeenMs;
         if (ms > kOfflineCapMs) ms = kOfflineCapMs;
@@ -49,6 +56,7 @@ WarrenController::WarrenController(QObject* parent)
         m_welcomePending = ms > kWelcomeMs;
     }
     m_lastFlushMs = now;
+    updateRecords(now);
 
     connect(&m_uiTimer, &QTimer::timeout, this, &WarrenController::onUiTick);
     m_uiTimer.start(1000);
@@ -255,6 +263,117 @@ QString WarrenController::fmt(double value) const
     return loc.toString(value, 'f', 2) + QLatin1String(kSuffix[i]);
 }
 
+void WarrenController::recordSample(qint64 t)
+{
+    Sample s;
+    s.t = t;
+    s.pop = m_state.population;
+    s.gold = m_state.res[Gold];
+    s.mat = m_state.res[Materials];
+    s.food = m_state.res[Food];
+    s.army = armyPower(m_state);
+    s.terr = m_state.territory;
+    m_hist.append(s);
+    if (m_hist.size() > 4000) {
+        QVector<Sample> slim;
+        slim.reserve(m_hist.size() / 2 + 1);
+        for (int i = 0; i < m_hist.size(); i += 2) slim.append(m_hist.at(i));
+        m_hist = slim;
+    }
+}
+
+void WarrenController::bumpRecord(const QString& key, double value, qint64 now)
+{
+    const QString vk = QStringLiteral("rec/") + key + QStringLiteral("_v");
+    if (value > m_settings.value(vk, 0.0).toDouble()) {
+        m_settings.setValue(vk, value);
+        m_settings.setValue(QStringLiteral("rec/") + key + QStringLiteral("_at"),
+                            static_cast<double>(now));
+    }
+}
+
+void WarrenController::updateRecords(qint64 now)
+{
+    bumpRecord(QStringLiteral("peakPopulation"), m_state.population, now);
+    bumpRecord(QStringLiteral("peakGold"), m_state.res[Gold], now);
+    bumpRecord(QStringLiteral("totalGoldEarned"), m_state.goldEarned, now);
+    bumpRecord(QStringLiteral("peakTerritory"), m_state.territory, now);
+    bumpRecord(QStringLiteral("peakArmyPower"), armyPower(m_state), now);
+    bumpRecord(QStringLiteral("raidsWon"), m_state.raidsWon, now);
+    bumpRecord(QStringLiteral("unitsTrained"), m_state.unitsTrained, now);
+    bumpRecord(QStringLiteral("buildingsBuilt"), m_state.buildingsBuilt, now);
+    for (int k = 1; k <= 5; ++k) {
+        if (m_state.stage >= k) {
+            const QString sk = QStringLiteral("rec/stage%1_at").arg(k);
+            if (!m_settings.contains(sk)) m_settings.setValue(sk, static_cast<double>(now));
+        }
+    }
+}
+
+QVariantList WarrenController::series(const QString& key) const
+{
+    QVariantList out;
+    const int n = m_hist.size();
+    if (n == 0) return out;
+    const int step = n > 120 ? (n + 119) / 120 : 1;
+    for (int i = 0; i < n; i += step) {
+        const Sample& s = m_hist.at(i);
+        double v = 0.0;
+        if (key == QLatin1String("population")) v = s.pop;
+        else if (key == QLatin1String("gold")) v = s.gold;
+        else if (key == QLatin1String("materials")) v = s.mat;
+        else if (key == QLatin1String("food")) v = s.food;
+        else if (key == QLatin1String("army")) v = s.army;
+        else if (key == QLatin1String("territory")) v = s.terr;
+        QVariantMap m;
+        m.insert(QStringLiteral("t"), static_cast<double>(s.t));
+        m.insert(QStringLiteral("v"), v);
+        out.append(m);
+    }
+    return out;
+}
+
+QVariantList WarrenController::records() const
+{
+    static const char* const keys[] = {
+        "peakPopulation", "peakGold", "totalGoldEarned", "peakTerritory",
+        "peakArmyPower", "raidsWon", "unitsTrained", "buildingsBuilt", "biggestRaidLoot"
+    };
+    QVariantList out;
+    for (int i = 0; i < 9; ++i) {
+        const QString k = QLatin1String(keys[i]);
+        const double v = m_settings.value(QStringLiteral("rec/") + k + QStringLiteral("_v"), 0.0).toDouble();
+        if (v <= 0.0) continue;
+        QVariantMap m;
+        m.insert(QStringLiteral("key"), k);
+        m.insert(QStringLiteral("value"), v);
+        m.insert(QStringLiteral("at"),
+                 m_settings.value(QStringLiteral("rec/") + k + QStringLiteral("_at"), 0.0).toDouble());
+        out.append(m);
+    }
+    for (int st = 1; st <= 5; ++st) {
+        const QString sk = QStringLiteral("rec/stage%1_at").arg(st);
+        if (m_settings.contains(sk)) {
+            QVariantMap m;
+            m.insert(QStringLiteral("key"), QStringLiteral("stage%1_at").arg(st));
+            m.insert(QStringLiteral("value"), m_settings.value(sk).toDouble() - m_firstTs);
+            m.insert(QStringLiteral("at"), m_settings.value(sk).toDouble());
+            out.append(m);
+        }
+    }
+    return out;
+}
+
+double WarrenController::playtimeMs() const
+{
+    return m_firstTs == 0 ? 0.0 : static_cast<double>(m_clock.nowMs() - m_firstTs);
+}
+
+int WarrenController::eventCount() const
+{
+    return m_store.eventCount();
+}
+
 void WarrenController::appendAndApply(const QString& kind, const QString& payload)
 {
     const qint64 now = m_clock.nowMs();
@@ -296,6 +415,8 @@ void WarrenController::flushNow()
                        QString::fromUtf8(QJsonDocument(p).toJson(QJsonDocument::Compact)));
         m_pendingTaps = 0;
     }
+    recordSample(now);
+    updateRecords(now);
     emit stateChanged();
     emit liveChanged();
 }
@@ -304,6 +425,7 @@ void WarrenController::onUiTick()
 {
     if (m_clock.nowMs() - m_lastFlushMs >= kFlushMs)
         flushNow();
+    updateRecords(m_clock.nowMs());
     emit liveChanged();
 }
 
@@ -393,6 +515,11 @@ void WarrenController::raid(int t)
     appendAndApply(QLatin1String("raid"),
                    QString::fromUtf8(QJsonDocument(p).toJson(QJsonDocument::Compact)));
     if (m_state.raidCount > countBefore) {
+        if (m_state.lastRaidOutcome == 1 || m_state.lastRaidOutcome == 2) {
+            const double sc = m_state.lastRaidOutcome == 1 ? 1.0 : kLootCostlyScale;
+            bumpRecord(QStringLiteral("biggestRaidLoot"),
+                       kTarget[m_state.lastRaidTarget].lootGold * sc, m_clock.nowMs());
+        }
         emit raidResolved(m_state.lastRaidTarget, m_state.lastRaidOutcome,
                           m_state.lastRaidCommitted, m_state.lastRaidLosses);
     }
@@ -446,7 +573,10 @@ void WarrenController::clearData()
     m_state = GameState();
     m_pendingTaps = 0;
     m_welcomePending = false;
+    m_hist.clear();
+    m_firstTs = m_clock.nowMs();
     m_settings.remove(QStringLiteral("narr"));
+    m_settings.remove(QStringLiteral("rec"));
     m_lastFlushMs = m_clock.nowMs();
     emit stateChanged();
     emit liveChanged();
