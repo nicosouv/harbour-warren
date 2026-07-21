@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+X-Nemo-Application-Type=silica-qt5
+Icon=harbour-warren
+Exec=harbour-warren
+Name=Warren
+Comment=Dig, build, conquer
+
+[X-Sailjail]
+# Fully offline: no Internet, no camera, no media. Only its own sandbox (SQLite + QSettings).
+Permissions=
+OrganizationName=harbour-warren
+ApplicationName=harbour-warren

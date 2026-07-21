@@ -1,0 +1,116 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+
+env:
+  SAILFISH_RELEASE: '4.5.0.18'
+
+jobs:
+  unit-tests:
+    name: "Engine unit tests"
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Qt
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends qtbase5-dev qtbase5-dev-tools qt5-qmake libqt5sql5-sqlite make g++
+      - name: Build tests
+        run: |
+          export PATH=/usr/lib/qt5/bin:$PATH
+          cd tests
+          qmake tests.pro
+          make -j2
+      - name: Run tests
+        run: cd tests && ./tst_warren
+
+  build:
+    name: "Build RPM for ${{ matrix.arch }}"
+    needs: [unit-tests]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [armv7hl, i486, aarch64]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Extract version
+        id: version
+        run: |
+          if [[ $GITHUB_REF == refs/tags/* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/v}
+          else
+            VERSION="0.1.0"
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+      - name: Update spec version
+        run: |
+          sed -i "s/^Version:.*/Version:    ${{ steps.version.outputs.version }}/" rpm/harbour-warren.spec
+      - name: Build RPM
+        uses: R1tschY/sailfish-build-rpm@v1
+        with:
+          arch: ${{ matrix.arch }}
+          release: ${{ env.SAILFISH_RELEASE }}
+          fix-version: false
+      - name: Upload RPM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: rpm-${{ matrix.arch }}
+          path: RPMS/*.rpm
+
+  create-release:
+    needs: [build]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Extract version
+        id: version
+        run: echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: rpms
+      - name: Create release body
+        run: |
+          cat > release_notes.md << 'EOF'
+          # Warren ${{ steps.version.outputs.version }}
+
+          A colony idle game for Sailfish OS. Dig, build, mine, keep the lights on, raise an army
+          and raid your neighbours — while a narrator judges you throughout. Fully offline.
+
+          ## Installation
+
+          Download the RPM for your device:
+          - **armv7hl**: Jolla 1, Jolla C, Xperia X, Xperia XA2
+          - **aarch64**: Xperia 10 / 10 II / 10 III / 10 IV
+          - **i486**: Sailfish OS Emulator
+
+          ```bash
+          devel-su
+          pkcon install-local harbour-warren-*.rpm
+          ```
+          Or tap the RPM in File Browser.
+          EOF
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          body_path: release_notes.md
+          files: |
+            rpms/rpm-armv7hl/*.rpm
+            rpms/rpm-i486/*.rpm
+            rpms/rpm-aarch64/*.rpm
+          draft: false
+          prerelease: false

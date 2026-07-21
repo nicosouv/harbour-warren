@@ -1,0 +1,55 @@
+name: PR Build Check
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+env:
+  SAILFISH_RELEASE: '4.5.0.18'
+
+jobs:
+  unit-tests:
+    name: "Engine unit tests"
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Qt
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends qtbase5-dev qtbase5-dev-tools qt5-qmake libqt5sql5-sqlite make g++
+      - name: Build tests
+        run: |
+          export PATH=/usr/lib/qt5/bin:$PATH
+          cd tests
+          qmake tests.pro
+          make -j2
+      - name: Run tests
+        run: cd tests && ./tst_warren
+
+  build-check:
+    name: "Build Check - ${{ matrix.arch }}"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [armv7hl, aarch64, i486]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Build RPM
+        uses: R1tschY/sailfish-build-rpm@v1
+        with:
+          arch: ${{ matrix.arch }}
+          release: ${{ env.SAILFISH_RELEASE }}
+          fix-version: false
+      - name: Verify RPM created
+        run: |
+          if [ -z "$(find RPMS -name '*.rpm' -type f)" ]; then
+            echo "Error: No RPM package was created"
+            exit 1
+          fi
+          echo "Build successful for ${{ matrix.arch }}"
+          ls -lh RPMS/*.rpm
