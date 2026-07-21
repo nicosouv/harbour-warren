@@ -2,7 +2,6 @@ import QtQuick 2.6
 import Sailfish.Silica 1.0
 import QtGraphicalEffects 1.0
 import Nemo.Notifications 1.0
-import Nemo.DBus 2.0
 import "pages"
 import "cover"
 import "components"
@@ -168,15 +167,8 @@ ApplicationWindow {
             hapticsLoader.item.play()
     }
 
-    // Tapping any notification opens (or raises) the app, via D-Bus.
-    DBusAdaptor {
-        service: "harbour.warren"
-        iface: "harbour.warren"
-        path: "/"
-        function openApp() {
-            app.activate()
-        }
-    }
+    // Tapping any notification raises the running app. The D-Bus name is owned in C++ (main.cpp),
+    // so the call reaches the live instance instead of launching a second one.
     property var notifAction: [ {
         "name": "default",
         "service": "harbour.warren",

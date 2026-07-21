@@ -6,14 +6,27 @@
 #include <QTranslator>
 #include <QLocale>
 #include <QSettings>
+#include <QDBusConnection>
+#include <QDBusMessage>
 #include <sailfishapp.h>
 
+#include "Activator.h"
 #include "engine/AppId.h"
 #include "engine/WarrenController.h"
 
 int main(int argc, char* argv[])
 {
     QScopedPointer<QGuiApplication> app(SailfishApp::application(argc, argv));
+
+    // Single instance. Own harbour.warren up front; if it is already taken, another copy is
+    // running — ask it to come forward and quit, so a notification never opens a second warren.
+    QDBusConnection bus = QDBusConnection::sessionBus();
+    const QString kService = QStringLiteral("harbour.warren");
+    if (!bus.registerService(kService)) {
+        bus.call(QDBusMessage::createMethodCall(kService, QStringLiteral("/"),
+                                                kService, QStringLiteral("openApp")));
+        return 0;
+    }
 
     QSettings settings(QLatin1String(warren::AppId::kOrganization),
                        QLatin1String(warren::AppId::kApplication));
@@ -33,6 +46,10 @@ int main(int argc, char* argv[])
     view->rootContext()->setContextProperty(QStringLiteral("Game"), &controller);
     view->setSource(SailfishApp::pathTo(QStringLiteral("qml/harbour-warren.qml")));
     view->show();
+
+    // Handle the notification's raise request in this instance.
+    Activator activator(view.data());
+    bus.registerObject(QStringLiteral("/"), &activator, QDBusConnection::ExportAllSlots);
 
     return app->exec();
 }
