@@ -132,7 +132,7 @@ static const qint64 kFlushMs      = Q_INT64_C(30000);
 static const qint64 kWelcomeMs    = Q_INT64_C(1800000);   // recap shown past 30 min away
 
 // --- Events: recurring, escalating, one at a time (the anti-"nothing left after 5 min"). ------
-enum Event {
+enum EventId {
     EvStorm = 0, EvRats, EvWanderer, EvRain, EvMerchant,
     EvTransformer, EvCollapse, EvTax, EvScouts, EvFeast, EventCount
 };
