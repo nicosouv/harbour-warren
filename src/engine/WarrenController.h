@@ -21,6 +21,11 @@ class WarrenController : public QObject
     Q_PROPERTY(QString appVersion READ appVersion CONSTANT)
     Q_PROPERTY(QString language READ language WRITE setLanguage NOTIFY languageChanged)
     Q_PROPERTY(bool reduceFx READ reduceFx WRITE setReduceFx NOTIFY prefsChanged)
+    Q_PROPERTY(int notchMargin READ notchMargin WRITE setNotchMargin NOTIFY prefsChanged)
+    Q_PROPERTY(bool notifyRaids READ notifyRaids WRITE setNotifyRaids NOTIFY prefsChanged)
+    Q_PROPERTY(bool haptics READ haptics WRITE setHaptics NOTIFY prefsChanged)
+    Q_PROPERTY(bool fastBattle READ fastBattle WRITE setFastBattle NOTIFY prefsChanged)
+    Q_PROPERTY(bool fullNumbers READ fullNumbers WRITE setFullNumbers NOTIFY prefsChanged)
 
     Q_PROPERTY(bool arrived READ arrived NOTIFY stateChanged)
     Q_PROPERTY(int stage READ stage NOTIFY stateChanged)
@@ -63,6 +68,16 @@ public:
     void setLanguage(const QString& code);
     bool reduceFx() const;
     void setReduceFx(bool on);
+    int notchMargin() const;
+    void setNotchMargin(int level);
+    bool notifyRaids() const;
+    void setNotifyRaids(bool on);
+    bool haptics() const;
+    void setHaptics(bool on);
+    bool fastBattle() const;
+    void setFastBattle(bool on);
+    bool fullNumbers() const;
+    void setFullNumbers(bool on);
 
     bool arrived() const;
     int stage() const;

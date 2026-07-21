@@ -13,6 +13,7 @@ Page {
         onStateChanged: {
             page.recs = Game.records()
             popChart.requestPaint(); goldChart.requestPaint(); armyChart.requestPaint()
+            foodChart.requestPaint(); matChart.requestPaint(); terrChart.requestPaint()
         }
     }
 
@@ -90,6 +91,20 @@ Page {
                 onPaint: page.drawSeries(popChart, "population", "#e6e0d4")
             }
 
+            SectionHeader { text: qsTr("Food") }
+            Canvas {
+                id: foodChart; x: Theme.horizontalPageMargin
+                width: page.width - 2 * Theme.horizontalPageMargin; height: Theme.itemSizeLarge
+                onPaint: page.drawSeries(foodChart, "food", "#7da33f")
+            }
+
+            SectionHeader { text: qsTr("Materials") }
+            Canvas {
+                id: matChart; x: Theme.horizontalPageMargin
+                width: page.width - 2 * Theme.horizontalPageMargin; height: Theme.itemSizeLarge
+                onPaint: page.drawSeries(matChart, "materials", "#b0895a")
+            }
+
             SectionHeader { text: qsTr("Gold") }
             Canvas {
                 id: goldChart; x: Theme.horizontalPageMargin
@@ -102,6 +117,13 @@ Page {
                 id: armyChart; x: Theme.horizontalPageMargin
                 width: page.width - 2 * Theme.horizontalPageMargin; height: Theme.itemSizeLarge
                 onPaint: page.drawSeries(armyChart, "army", "#b85050")
+            }
+
+            SectionHeader { text: qsTr("Territory") }
+            Canvas {
+                id: terrChart; x: Theme.horizontalPageMargin
+                width: page.width - 2 * Theme.horizontalPageMargin; height: Theme.itemSizeLarge
+                onPaint: page.drawSeries(terrChart, "territory", "#2a9d8f")
             }
 
             SectionHeader { text: qsTr("Best marks") }

@@ -1,8 +1,10 @@
 import QtQuick 2.6
 import Sailfish.Silica 1.0
 import QtGraphicalEffects 1.0
+import Nemo.Notifications 1.0
 import "pages"
 import "cover"
+import "components"
 
 ApplicationWindow {
     id: app
@@ -87,6 +89,33 @@ ApplicationWindow {
     initialPage: Component { ColonyPage { } }
     cover: Component { CoverPage { } }
     allowedOrientations: defaultAllowedOrientations
+
+    // Haptics, isolated: if Nemo.Ngf is missing the Loader errors and buzz() is a no-op.
+    Loader { id: hapticsLoader; source: Qt.resolvedUrl("components/Haptics.qml") }
+    function buzz() {
+        if (Game.haptics && hapticsLoader.status === Loader.Ready && hapticsLoader.item)
+            hapticsLoader.item.play()
+    }
+
+    // Opt-in: tell the chief when a raid target is ready while the app is in the background.
+    Notification {
+        id: raidNotif
+        appName: "Warren"
+        summary: qsTr("A raid target is ready")
+    }
+    property bool wasAnyRaidReady: false
+    Connections {
+        target: Game
+        onLiveChanged: {
+            var any = false
+            var ts = Game.targets
+            for (var i = 0; i < ts.length; i++) if (ts[i].ready) { any = true; break }
+            if (any && !app.wasAnyRaidReady && !Qt.application.active
+                && Game.notifyRaids && Game.raidsUnlocked)
+                raidNotif.publish()
+            app.wasAnyRaidReady = any
+        }
+    }
 
     function maybeNarrate() {
         if (narrator.line !== "" || battle.visible || welcome.visible || !Game.arrived)
@@ -222,44 +251,85 @@ ApplicationWindow {
         Loader { anchors.fill: parent; sourceComponent: backdrop; onLoaded: item.active = Qt.binding(function(){ return battle.visible }) }
         MouseArea { anchors.fill: parent }
 
+        // Your badgers (left, striped faces) charge the foxes (right). No doubt who is who.
+        Column {
+            anchors { verticalCenter: parent.verticalCenter; verticalCenterOffset: -Theme.itemSizeSmall * 1.2; left: parent.left; leftMargin: Theme.horizontalPageMargin }
+            spacing: Theme.paddingSmall
+            Label { text: qsTr("Your badgers"); font.pixelSize: Theme.fontSizeExtraSmall; color: Theme.secondaryColor }
+        }
+        Column {
+            anchors { verticalCenter: parent.verticalCenter; verticalCenterOffset: Theme.itemSizeSmall * 1.6; right: parent.right; rightMargin: Theme.horizontalPageMargin }
+            Label { text: qsTr("The enemy"); font.pixelSize: Theme.fontSizeExtraSmall; color: "#d8935a" }
+        }
         Row {
             id: attackers
-            anchors { verticalCenter: parent.verticalCenter; verticalCenterOffset: -Theme.itemSizeSmall }
-            x: parent.width * 0.12 + battle.clash * parent.width * 0.24
-            spacing: 3
+            anchors { verticalCenter: parent.verticalCenter; verticalCenterOffset: -Theme.itemSizeSmall * 0.5 }
+            x: parent.width * 0.06 + battle.clash * parent.width * 0.22
+            spacing: 4
             Repeater {
-                model: Math.min(24, battle.committed)
-                Rectangle {
-                    width: Theme.paddingMedium; height: Theme.paddingLarge; radius: 1; color: "#2b2b30"
-                    opacity: (index >= Math.min(24, battle.committed) - Math.round(battle.losses * 24 / Math.max(1, battle.committed)) && battle.clash >= 1) ? 0.12 : 1
-                    Rectangle { width: parent.width; height: 3; color: "#e6e0d4"; anchors.top: parent.top }
+                model: Math.min(12, battle.committed)
+                Image {
+                    source: Qt.resolvedUrl("images/badger-side.png")
+                    smooth: false
+                    mirror: true   // face the enemy
+                    width: Theme.iconSizeSmall * 1.1; height: width * 0.85
+                    fillMode: Image.PreserveAspectFit
+                    opacity: (index >= Math.min(12, battle.committed) - Math.round(battle.losses * 12 / Math.max(1, battle.committed)) && battle.clash >= 1) ? 0.15 : 1
                     Behavior on opacity { NumberAnimation { duration: 400 } }
                 }
             }
         }
         Row {
             id: defenders
-            anchors { verticalCenter: parent.verticalCenter; verticalCenterOffset: Theme.itemSizeSmall }
-            x: parent.width * 0.88 - width - battle.clash * parent.width * 0.24
-            spacing: 3
-            layoutDirection: Qt.RightToLeft
-            Repeater { model: 14; Rectangle { width: Theme.paddingMedium; height: Theme.paddingLarge; radius: 1; color: "#7a3a3a" } }
+            anchors { verticalCenter: parent.verticalCenter; verticalCenterOffset: Theme.itemSizeSmall * 0.7 }
+            x: parent.width * 0.94 - width - battle.clash * parent.width * 0.22
+            spacing: 4
+            Repeater {
+                model: 10
+                Image {
+                    source: Qt.resolvedUrl("images/fox-side.png")
+                    smooth: false
+                    width: Theme.iconSizeSmall * 1.2; height: width * 0.5
+                    fillMode: Image.PreserveAspectFit
+                    opacity: (battle.outcome !== 3 && battle.clash >= 1 && index < 6) ? 0.15 : 1
+                    Behavior on opacity { NumberAnimation { duration: 400 } }
+                }
+            }
         }
         SequentialAnimation {
             id: anim
-            NumberAnimation { target: battle; property: "clash"; from: 0; to: 1; duration: 900; easing.type: Easing.InCubic }
-            ScriptAction { script: resultLabel.visible = true }
+            NumberAnimation {
+                target: battle; property: "clash"; from: 0; to: 1
+                duration: Game.fastBattle ? 250 : 900
+                easing.type: Easing.InCubic
+            }
+            ScriptAction {
+                script: {
+                    resultLabel.visible = true
+                    if (battle.outcome === 1 || battle.outcome === 2) confettiFx.burst()
+                }
+            }
         }
+        Confetti { id: confettiFx; anchors.fill: parent }
+
         Column {
             anchors { bottom: parent.bottom; bottomMargin: Theme.itemSizeLarge; horizontalCenter: parent.horizontalCenter }
             width: parent.width - 4 * Theme.horizontalPageMargin
-            spacing: Theme.paddingLarge
+            spacing: Theme.paddingMedium
+            Label {
+                visible: resultLabel.visible
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: battle.outcome === 3 ? qsTr("DEFEAT") : qsTr("VICTORY")
+                font.pixelSize: Theme.fontSizeExtraLarge
+                font.bold: true
+                color: battle.outcome === 3 ? "#c0603a" : "#e0b23a"
+            }
             Label {
                 id: resultLabel; visible: false
                 width: parent.width; wrapMode: Text.Wrap; horizontalAlignment: Text.AlignHCenter
                 text: app.raidOutcomeText(battle.outcome)
                 font.pixelSize: Theme.fontSizeMedium; font.italic: true
-                color: battle.outcome === 3 ? "#c0603a" : Theme.highlightColor
+                color: Theme.secondaryHighlightColor
             }
             Button {
                 visible: resultLabel.visible; anchors.horizontalCenter: parent.horizontalCenter

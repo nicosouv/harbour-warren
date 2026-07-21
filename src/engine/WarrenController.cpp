@@ -99,6 +99,64 @@ void WarrenController::setReduceFx(bool on)
     emit prefsChanged();
 }
 
+int WarrenController::notchMargin() const
+{
+    // 0 none / 1 small (default, the Jolla C2 camera area) / 2 large
+    return m_settings.value(QStringLiteral("notchMargin"), 1).toInt();
+}
+
+void WarrenController::setNotchMargin(int level)
+{
+    if (level < 0) level = 0;
+    if (level > 2) level = 2;
+    m_settings.setValue(QStringLiteral("notchMargin"), level);
+    emit prefsChanged();
+}
+
+bool WarrenController::notifyRaids() const
+{
+    return m_settings.value(QStringLiteral("notifyRaids"), false).toBool();
+}
+
+void WarrenController::setNotifyRaids(bool on)
+{
+    m_settings.setValue(QStringLiteral("notifyRaids"), on);
+    emit prefsChanged();
+}
+
+bool WarrenController::haptics() const
+{
+    return m_settings.value(QStringLiteral("haptics"), true).toBool();
+}
+
+void WarrenController::setHaptics(bool on)
+{
+    m_settings.setValue(QStringLiteral("haptics"), on);
+    emit prefsChanged();
+}
+
+bool WarrenController::fastBattle() const
+{
+    return m_settings.value(QStringLiteral("fastBattle"), false).toBool();
+}
+
+void WarrenController::setFastBattle(bool on)
+{
+    m_settings.setValue(QStringLiteral("fastBattle"), on);
+    emit prefsChanged();
+}
+
+bool WarrenController::fullNumbers() const
+{
+    return m_settings.value(QStringLiteral("fullNumbers"), false).toBool();
+}
+
+void WarrenController::setFullNumbers(bool on)
+{
+    m_settings.setValue(QStringLiteral("fullNumbers"), on);
+    emit prefsChanged();
+}
+
 bool WarrenController::arrived() const { return m_state.arrived; }
 int WarrenController::stage() const { return m_state.stage; }
 int WarrenController::population() const { return m_state.population; }
@@ -254,11 +312,13 @@ QVariantList WarrenController::targets() const
 
 QString WarrenController::fmt(double value) const
 {
+    QLocale loc;
+    if (fullNumbers() && (value >= 1000.0 || value <= -1000.0))
+        return loc.toString(static_cast<qint64>(value >= 0 ? value + 0.5 : value - 0.5));
     static const char* const kSuffix[] = { "", " k", " M", " B", " T", " P", " E" };
     double a = value < 0 ? -value : value;
     int i = 0;
     while (a >= 1000.0 && i < 6) { a /= 1000.0; value /= 1000.0; ++i; }
-    QLocale loc;
     if (i == 0) return loc.toString(value, 'f', value < 100 && value != std::floor(value) ? 1 : 0);
     return loc.toString(value, 'f', 2) + QLatin1String(kSuffix[i]);
 }

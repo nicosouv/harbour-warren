@@ -52,6 +52,11 @@
     <message><source>Continue</source><translation>Continuer</translation></message>
     <message><source>You have four badgers and a hole in the ground. Make something of it, or don't. I'll be here either way.</source><translation>Vous avez quatre blaireaux et un trou dans le sol. Faites-en quelque chose, ou pas. Je serai là dans les deux cas.</translation></message>
     <message><source>Start digging</source><translation>Commencer à creuser</translation></message>
+    <message><source>A raid target is ready</source><translation>Une cible de raid est prête</translation></message>
+    <message><source>Your badgers</source><translation>Vos blaireaux</translation></message>
+    <message><source>The enemy</source><translation>L'ennemi</translation></message>
+    <message><source>VICTORY</source><translation>VICTOIRE</translation></message>
+    <message><source>DEFEAT</source><translation>DÉFAITE</translation></message>
 </context>
 <context>
     <name>ColonyPage</name>
@@ -81,6 +86,12 @@
     <message><source>intel</source><translation>renseignement</translation></message>
     <message><source>Raid</source><translation>Raid</translation></message>
     <message><source>Records</source><translation>Records</translation></message>
+    <message><source>+3 housing</source><translation>+3 logements</translation></message>
+    <message><source>more food storage, better foraging</source><translation>plus de stockage de nourriture, meilleure cueillette</translation></message>
+    <message><source>better gathering</source><translation>meilleure récolte</translation></message>
+    <message><source>better mining</source><translation>meilleur minage</translation></message>
+    <message><source>buy energy; powers the colony</source><translation>acheter de l'énergie ; alimente la colonie</translation></message>
+    <message><source>train soldiers</source><translation>former des soldats</translation></message>
 </context>
 <context>
     <name>StatsPage</name>
@@ -91,6 +102,9 @@
     <message><source>Gold</source><translation>Or</translation></message>
     <message><source>Army power</source><translation>Puissance de l'armée</translation></message>
     <message><source>Best marks</source><translation>Meilleurs scores</translation></message>
+    <message><source>Food</source><translation>Nourriture</translation></message>
+    <message><source>Materials</source><translation>Matériaux</translation></message>
+    <message><source>Territory</source><translation>Territoire</translation></message>
     <message><source>Nothing to boast about yet.</source><translation>Rien dont se vanter pour l'instant.</translation></message>
     <message><source>Peak population</source><translation>Population maximale</translation></message>
     <message><source>Peak gold</source><translation>Or maximal</translation></message>
@@ -111,6 +125,19 @@
 <context>
     <name>SettingsPage</name>
     <message><source>Settings</source><translation>Réglages</translation></message>
+    <message><source>Display</source><translation>Affichage</translation></message>
+    <message><source>Top margin (camera notch)</source><translation>Marge haute (encoche caméra)</translation></message>
+    <message><source>Shifts the header clear of a front camera, e.g. on the Jolla C2.</source><translation>Décale l'en-tête sous la caméra frontale, p. ex. sur le Jolla C2.</translation></message>
+    <message><source>None</source><translation>Aucune</translation></message>
+    <message><source>Small</source><translation>Petite</translation></message>
+    <message><source>Large</source><translation>Grande</translation></message>
+    <message><source>Reduce visual effects</source><translation>Réduire les effets visuels</translation></message>
+    <message><source>Full numbers</source><translation>Nombres complets</translation></message>
+    <message><source>1,234,567 instead of 1.23 M</source><translation>1 234 567 au lieu de 1,23 M</translation></message>
+    <message><source>Gameplay</source><translation>Jeu</translation></message>
+    <message><source>Fast battle animation</source><translation>Animation de bataille rapide</translation></message>
+    <message><source>Haptic feedback</source><translation>Retour haptique</translation></message>
+    <message><source>Notify when a raid is ready</source><translation>Me prévenir quand un raid est prêt</translation></message>
     <message><source>Language</source><translation>Langue</translation></message>
     <message><source>Takes effect after restarting the app.</source><translation>Prend effet au prochain lancement de l'application.</translation></message>
     <message><source>System default</source><translation>Langue du système</translation></message>

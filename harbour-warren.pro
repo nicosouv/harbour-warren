@@ -31,6 +31,8 @@ DISTFILES += qml/harbour-warren.qml \
     qml/pages/SettingsPage.qml \
     qml/pages/StatsPage.qml \
     qml/components/VillageView.qml \
+    qml/components/Confetti.qml \
+    qml/components/Haptics.qml \
     rpm/harbour-warren.spec \
     harbour-warren.desktop
 

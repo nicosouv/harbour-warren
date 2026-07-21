@@ -26,6 +26,53 @@ Page {
                 onCurrentIndexChanged: Game.language = currentIndex === 1 ? "en" : currentIndex === 2 ? "fr" : ""
             }
 
+            SectionHeader { text: qsTr("Display") }
+
+            ComboBox {
+                label: qsTr("Top margin (camera notch)")
+                description: qsTr("Shifts the header clear of a front camera, e.g. on the Jolla C2.")
+                currentIndex: Game.notchMargin
+                menu: ContextMenu {
+                    MenuItem { text: qsTr("None") }
+                    MenuItem { text: qsTr("Small") }
+                    MenuItem { text: qsTr("Large") }
+                }
+                onCurrentIndexChanged: Game.notchMargin = currentIndex
+            }
+
+            TextSwitch {
+                text: qsTr("Reduce visual effects")
+                checked: Game.reduceFx
+                onCheckedChanged: Game.reduceFx = checked
+            }
+
+            TextSwitch {
+                text: qsTr("Full numbers")
+                description: qsTr("1,234,567 instead of 1.23 M")
+                checked: Game.fullNumbers
+                onCheckedChanged: Game.fullNumbers = checked
+            }
+
+            SectionHeader { text: qsTr("Gameplay") }
+
+            TextSwitch {
+                text: qsTr("Fast battle animation")
+                checked: Game.fastBattle
+                onCheckedChanged: Game.fastBattle = checked
+            }
+
+            TextSwitch {
+                text: qsTr("Haptic feedback")
+                checked: Game.haptics
+                onCheckedChanged: Game.haptics = checked
+            }
+
+            TextSwitch {
+                text: qsTr("Notify when a raid is ready")
+                checked: Game.notifyRaids
+                onCheckedChanged: Game.notifyRaids = checked
+            }
+
             SectionHeader { text: qsTr("Data") }
 
             ListItem {

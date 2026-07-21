@@ -17,6 +17,7 @@ CoverBackground {
         population: Game.population
         stage: Game.stage
         counts: buildingCounts()
+        blackout: Game.blackout
     }
 
     Label {

@@ -52,6 +52,11 @@
     <message><source>Continue</source><translation>Continue</translation></message>
     <message><source>You have four badgers and a hole in the ground. Make something of it, or don't. I'll be here either way.</source><translation>You have four badgers and a hole in the ground. Make something of it, or don't. I'll be here either way.</translation></message>
     <message><source>Start digging</source><translation>Start digging</translation></message>
+    <message><source>A raid target is ready</source><translation>A raid target is ready</translation></message>
+    <message><source>Your badgers</source><translation>Your badgers</translation></message>
+    <message><source>The enemy</source><translation>The enemy</translation></message>
+    <message><source>VICTORY</source><translation>VICTORY</translation></message>
+    <message><source>DEFEAT</source><translation>DEFEAT</translation></message>
 </context>
 <context>
     <name>ColonyPage</name>
@@ -81,6 +86,12 @@
     <message><source>intel</source><translation>intel</translation></message>
     <message><source>Raid</source><translation>Raid</translation></message>
     <message><source>Records</source><translation>Records</translation></message>
+    <message><source>+3 housing</source><translation>+3 housing</translation></message>
+    <message><source>more food storage, better foraging</source><translation>more food storage, better foraging</translation></message>
+    <message><source>better gathering</source><translation>better gathering</translation></message>
+    <message><source>better mining</source><translation>better mining</translation></message>
+    <message><source>buy energy; powers the colony</source><translation>buy energy; powers the colony</translation></message>
+    <message><source>train soldiers</source><translation>train soldiers</translation></message>
 </context>
 <context>
     <name>StatsPage</name>
@@ -91,6 +102,9 @@
     <message><source>Gold</source><translation>Gold</translation></message>
     <message><source>Army power</source><translation>Army power</translation></message>
     <message><source>Best marks</source><translation>Best marks</translation></message>
+    <message><source>Food</source><translation>Food</translation></message>
+    <message><source>Materials</source><translation>Materials</translation></message>
+    <message><source>Territory</source><translation>Territory</translation></message>
     <message><source>Nothing to boast about yet.</source><translation>Nothing to boast about yet.</translation></message>
     <message><source>Peak population</source><translation>Peak population</translation></message>
     <message><source>Peak gold</source><translation>Peak gold</translation></message>
@@ -111,6 +125,19 @@
 <context>
     <name>SettingsPage</name>
     <message><source>Settings</source><translation>Settings</translation></message>
+    <message><source>Display</source><translation>Display</translation></message>
+    <message><source>Top margin (camera notch)</source><translation>Top margin (camera notch)</translation></message>
+    <message><source>Shifts the header clear of a front camera, e.g. on the Jolla C2.</source><translation>Shifts the header clear of a front camera, e.g. on the Jolla C2.</translation></message>
+    <message><source>None</source><translation>None</translation></message>
+    <message><source>Small</source><translation>Small</translation></message>
+    <message><source>Large</source><translation>Large</translation></message>
+    <message><source>Reduce visual effects</source><translation>Reduce visual effects</translation></message>
+    <message><source>Full numbers</source><translation>Full numbers</translation></message>
+    <message><source>1,234,567 instead of 1.23 M</source><translation>1,234,567 instead of 1.23 M</translation></message>
+    <message><source>Gameplay</source><translation>Gameplay</translation></message>
+    <message><source>Fast battle animation</source><translation>Fast battle animation</translation></message>
+    <message><source>Haptic feedback</source><translation>Haptic feedback</translation></message>
+    <message><source>Notify when a raid is ready</source><translation>Notify when a raid is ready</translation></message>
     <message><source>Language</source><translation>Language</translation></message>
     <message><source>Takes effect after restarting the app.</source><translation>Takes effect after restarting the app.</translation></message>
     <message><source>System default</source><translation>System default</translation></message>
