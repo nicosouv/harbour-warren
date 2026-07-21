@@ -86,12 +86,13 @@ Page {
     // Fixed resource header — pixel icons, shifted clear of any camera notch.
     Column {
         id: header
+        spacing: Theme.paddingSmall
         anchors {
             top: parent.top
             left: parent.left
             right: parent.right
             // No reliable notch detection on Sailfish: shift for everyone, adjustable in Settings.
-            topMargin: Theme.paddingMedium
+            topMargin: Theme.paddingLarge
                        + (Game.notchMargin === 1 ? Theme.paddingLarge * 2
                           : Game.notchMargin === 2 ? Theme.paddingLarge * 4 : 0)
         }
@@ -151,6 +152,9 @@ Page {
             color: "#c0a24a"
         }
 
+        // Breathing room between the objective block and the resource bar.
+        Item { width: 1; height: Theme.paddingMedium }
+
         Flow {
             width: parent.width - 2 * Theme.horizontalPageMargin
             x: Theme.horizontalPageMargin
@@ -198,7 +202,7 @@ Page {
     }
 
     SilicaFlickable {
-        anchors { top: header.bottom; left: parent.left; right: parent.right; bottom: parent.bottom; topMargin: Theme.paddingSmall }
+        anchors { top: header.bottom; left: parent.left; right: parent.right; bottom: parent.bottom; topMargin: Theme.paddingLarge }
         clip: true
         contentHeight: col.height
 
@@ -296,16 +300,17 @@ Page {
                     }
                 }
 
-                // The reward floats up: +1 food, no ambiguity.
+                // The reward floats up showing exactly what turned up: an apple, or a log of wood.
                 Row {
                     id: floatReward
+                    property bool wasMat: false
                     anchors.horizontalCenter: parent.horizontalCenter
                     spacing: 4
                     opacity: 0
                     Label { text: "+1"; color: Theme.highlightColor; font.pixelSize: Theme.fontSizeMedium }
                     Image {
                         anchors.verticalCenter: parent.verticalCenter
-                        source: Qt.resolvedUrl("../images/res-food.png")
+                        source: Qt.resolvedUrl(floatReward.wasMat ? "../images/res-materials.png" : "../images/res-food.png")
                         smooth: false
                         width: Theme.iconSizeExtraSmall; height: width
                         fillMode: Image.PreserveAspectFit
@@ -323,7 +328,7 @@ Page {
                 MouseArea {
                     id: digArea
                     anchors.fill: parent
-                    onClicked: { Game.tap(); app.buzz(); digPulse.restart(); floatAnim.restart() }
+                    onClicked: { Game.tap(); floatReward.wasMat = Game.lastTapMat; app.buzz(); digPulse.restart(); floatAnim.restart() }
                 }
                 SequentialAnimation {
                     id: digPulse
@@ -570,9 +575,10 @@ Page {
                         fillMode: Image.PreserveAspectFit
                     }
                     Column {
-                        anchors { left: unitIcon.right; leftMargin: Theme.paddingMedium; verticalCenter: parent.verticalCenter }
-                        width: parent.width * 0.45
+                        anchors { left: unitIcon.right; leftMargin: Theme.paddingMedium; right: trainBtn.left; rightMargin: Theme.paddingMedium; verticalCenter: parent.verticalCenter }
                         Label {
+                            width: parent.width
+                            truncationMode: TruncationMode.Fade
                             text: app.unitName(modelData.key) + "  ×" + modelData.count
                                   + "  ·  " + qsTr("power") + " " + Game.fmt(modelData.power)
                         }
@@ -594,6 +600,7 @@ Page {
                         }
                     }
                     Button {
+                        id: trainBtn
                         anchors { right: parent.right; rightMargin: Theme.horizontalPageMargin; verticalCenter: parent.verticalCenter }
                         preferredWidth: Theme.buttonWidthSmall
                         text: qsTr("Train")

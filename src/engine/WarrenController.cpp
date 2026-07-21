@@ -660,8 +660,21 @@ void WarrenController::flushNow()
 void WarrenController::onUiTick()
 {
     const qint64 now = m_clock.nowMs();
-    if (now - m_lastFlushMs >= kFlushMs)
+    if (now - m_lastFlushMs >= kFlushMs) {
         flushNow();
+    } else if (m_state.arrived) {
+        // Bank a birth or a finished building the instant it is due — otherwise the count and the
+        // construction bar sit frozen (at the last flush, or at 100%) until the next 30 s flush.
+        const double secs = (now - m_lastFlushMs) / 1000.0;
+        bool due = false;
+        if (secs > 0.0 && growing()) {
+            const double bb = m_state.brood + kGrowthRate * secs;
+            if (std::floor(bb) >= 1.0) due = true;
+        }
+        if (!due && m_state.siteBld >= 0 && m_state.assigned[Build] > 0 && buildProgress() >= 1.0)
+            due = true;
+        if (due) flushNow();
+    }
 
     // Fire an event when the seeded roll and cooldowns allow, and none is active.
     if (m_state.arrived && m_state.eventActive < 0) {

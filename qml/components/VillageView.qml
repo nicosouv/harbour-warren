@@ -170,6 +170,15 @@ Item {
         NumberAnimation { to: 0; duration: 160 }
     }
 
+    // A shared breeze, -1..1, gently swaying the greenery.
+    property real wind: 0
+    SequentialAnimation on wind {
+        running: view.visible && Qt.application.active && !view.reduceFx
+        loops: Animation.Infinite
+        NumberAnimation { to: 1; duration: 1900; easing.type: Easing.InOutSine }
+        NumberAnimation { to: -1; duration: 2300; easing.type: Easing.InOutSine }
+    }
+
     // Cloud shape: a lumpy pixel puff, reused for both depth layers.
     Component {
         id: cloudPuff
@@ -269,27 +278,40 @@ Item {
         }
     }
 
-    // Layered hill silhouettes at the skyline: depth, and the sun/moon sets behind them.
-    Canvas {
-        anchors.fill: parent
-        onPaint: {
-            var ctx = getContext("2d"); ctx.clearRect(0, 0, width, height)
-            var g = height * view.horizon
-            function ridge(color, base, amp, freq, ph) {
-                ctx.fillStyle = color
-                ctx.beginPath(); ctx.moveTo(0, g + 4)
-                for (var x = 0; x <= width; x += 2) {
-                    var hy = g - base - amp * Math.sin(x / freq + ph) - amp * 0.4 * Math.sin(x / (freq * 0.4) + ph * 2)
-                    ctx.lineTo(x, hy)
-                }
-                ctx.lineTo(width, g + 4); ctx.closePath(); ctx.fill()
+    // Parallax mountains: three silhouette layers drifting at different speeds; the far range is
+    // taller and hazier, the near hills lower and darker. Each canvas is twice the view width with
+    // a periodic profile, so the drift wraps seamlessly. The sun and moon set behind them.
+    Repeater {
+        model: [ { color: "#3c4a5e", base: 0.15, amp: 0.10, dur: 190000, ph: 0.0 },
+                 { color: "#313c4d", base: 0.08, amp: 0.13, dur: 132000, ph: 1.3 },
+                 { color: "#262d3a", base: 0.02, amp: 0.16, dur: 94000,  ph: 2.7 } ]
+        Item {
+            width: view.width * 2; height: view.height
+            NumberAnimation on x {
+                from: 0; to: -view.width; duration: modelData.dur; loops: Animation.Infinite
+                running: view.visible && Qt.application.active && !view.reduceFx
             }
-            ridge("#39424e", height * 0.02, height * 0.055, 62, 0.0)   // far ridge, hazy
-            ridge("#2c3038", 0, height * 0.085, 44, 2.1)               // near ridge, darker
+            Canvas {
+                anchors.fill: parent
+                onPaint: {
+                    var ctx = getContext("2d"); ctx.clearRect(0, 0, width, height)
+                    var vw = view.width, g = view.height * view.horizon
+                    ctx.fillStyle = modelData.color
+                    ctx.beginPath(); ctx.moveTo(0, g + 4)
+                    for (var x = 0; x <= width; x += 3) {
+                        var u = x / vw
+                        var hy = g - modelData.base * view.height
+                                 - modelData.amp * view.height * (0.5 + 0.5 * Math.sin(2 * Math.PI * u + modelData.ph))
+                                 - modelData.amp * 0.5 * view.height * (0.5 + 0.5 * Math.sin(2 * Math.PI * u * 2 + modelData.ph * 1.7))
+                        ctx.lineTo(x, hy)
+                    }
+                    ctx.lineTo(width, g + 4); ctx.closePath(); ctx.fill()
+                }
+                onWidthChanged: requestPaint()
+                onHeightChanged: requestPaint()
+                Component.onCompleted: requestPaint()
+            }
         }
-        onWidthChanged: requestPaint()
-        onHeightChanged: requestPaint()
-        Component.onCompleted: requestPaint()
     }
 
     // --- Ground -----------------------------------------------------------------------------
@@ -331,6 +353,40 @@ Item {
         onWidthChanged: requestPaint()
         onHeightChanged: requestPaint()
         Component.onCompleted: requestPaint()
+    }
+
+    // Greenery: wind-swayed trees and a fringe of grass. Pure decoration — no collision.
+    Repeater {
+        model: [ { x: 0.05, y: 0.50, s: 1.0 }, { x: 0.93, y: 0.55, s: 0.85 }, { x: 0.55, y: 0.485, s: 0.7 } ]
+        Item {
+            x: view.width * modelData.x; y: view.height * modelData.y
+            width: view.width * 0.05 * modelData.s; height: width * 2.1
+            Rectangle {   // trunk
+                anchors.horizontalCenter: parent.horizontalCenter
+                y: parent.height * 0.5; width: Math.max(2, parent.width * 0.16); height: parent.height * 0.5
+                color: "#5a4632"; antialiasing: false
+            }
+            Item {        // foliage leans in the breeze
+                width: parent.width; height: parent.height * 0.62
+                transformOrigin: Item.Bottom
+                rotation: view.wind * 4 * modelData.s
+                Rectangle { x: parent.width*0.20; y: parent.height*0.30; width: parent.width*0.60; height: parent.height*0.60; radius: width/2; color: "#4c6a3c"; antialiasing: false }
+                Rectangle { x: parent.width*0.05; y: parent.height*0.42; width: parent.width*0.50; height: parent.height*0.50; radius: width/2; color: "#3f5a33"; antialiasing: false }
+                Rectangle { x: parent.width*0.42; y: parent.height*0.10; width: parent.width*0.50; height: parent.height*0.55; radius: width/2; color: "#557040"; antialiasing: false }
+            }
+        }
+    }
+    Repeater {
+        model: 16
+        Rectangle {
+            width: 2; height: view.height * (0.03 + 0.02 * view.jitter(index * 17 + 2, 1))
+            antialiasing: false
+            color: index % 2 === 0 ? "#4e6036" : "#5f7444"
+            x: view.width * (0.02 + 0.96 * view.jitter(index * 29 + 4, 1))
+            y: view.height * (0.56 + 0.34 * view.jitter(index * 13 + 6, 1))
+            transformOrigin: Item.Bottom
+            rotation: view.wind * (8 + (index % 3) * 3)
+        }
     }
 
     // Night falls on the ground too: a soft darkening that tracks daylight.
@@ -375,10 +431,23 @@ Item {
         model: Math.min(14, view.population)
         Item {
             id: badger
-            width: view.width * 0.040; height: width
+            width: view.width * 0.036; height: width
             x: view.width * (0.04 + 0.88 * view.jitter(index * 13 + 1, 1))
             y: view.height * (0.60 + 0.30 * view.jitter(index * 31 + 2, 1))
             z: 2
+            transform: Translate { id: wander }
+
+            // Idle wander: a gentle side-to-side shuffle so the colony never looks frozen.
+            SequentialAnimation {
+                running: view.visible && Qt.application.active && !view.reduceFx
+                loops: Animation.Infinite
+                PauseAnimation { duration: 400 + (index % 6) * 320 }
+                NumberAnimation { target: wander; property: "x"; to: view.width * 0.013; duration: 1500; easing.type: Easing.InOutSine }
+                PauseAnimation { duration: 500 + (index % 4) * 260 }
+                NumberAnimation { target: wander; property: "x"; to: -view.width * 0.013; duration: 1700; easing.type: Easing.InOutSine }
+                PauseAnimation { duration: 300 }
+                NumberAnimation { target: wander; property: "x"; to: 0; duration: 1300; easing.type: Easing.InOutSine }
+            }
 
             Image {
                 id: spr

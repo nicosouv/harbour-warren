@@ -1,6 +1,6 @@
 Name:       harbour-warren
 Summary:    A colony idle game for Sailfish OS
-Version:    0.4.2
+Version:    0.4.3
 Release:    1
 Group:      Applications/Amusements
 License:    MIT
