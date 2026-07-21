@@ -459,12 +459,14 @@ QVariantList WarrenController::unitsList() const
         QVariantMap m;
         m.insert(QStringLiteral("index"), u);
         m.insert(QStringLiteral("key"), QLatin1String(d.id));
+        const double cg = warren::unitCostGold(m_state, u);
+        const double cm = warren::unitCostMaterials(m_state, u);
         m.insert(QStringLiteral("count"), m_state.units[u]);
-        m.insert(QStringLiteral("costGold"), d.costGold);
-        m.insert(QStringLiteral("costMaterials"), d.costMaterials);
+        m.insert(QStringLiteral("costGold"), cg);
+        m.insert(QStringLiteral("costMaterials"), cm);
         m.insert(QStringLiteral("costPop"), d.costPop);
         m.insert(QStringLiteral("power"), d.power);
-        const bool afford = liveRes(Gold) >= d.costGold && liveRes(Materials) >= d.costMaterials
+        const bool afford = liveRes(Gold) >= cg && liveRes(Materials) >= cm
                             && m_state.population >= d.costPop && m_state.buildings[Barracks] >= 1;
         m.insert(QStringLiteral("affordable"), afford);
         out.append(m);

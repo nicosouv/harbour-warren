@@ -245,6 +245,18 @@ double buildCost(const GameState& s, int b, int n)
     return first * (std::pow(r, n) - 1.0) / (r - 1.0);
 }
 
+// Unit prices climb with the size of the standing army, so gold and materials never just pile up.
+double unitCostGold(const GameState& s, int u)
+{
+    if (u < 0 || u >= UnitCount) return 0.0;
+    return kUnit[u].costGold * std::pow(kUnit[u].costGrowth, s.units[u]);
+}
+double unitCostMaterials(const GameState& s, int u)
+{
+    if (u < 0 || u >= UnitCount) return 0.0;
+    return kUnit[u].costMaterials * std::pow(kUnit[u].costGrowth, s.units[u]);
+}
+
 double armyPower(const GameState& s)
 {
     double p = 0.0;
@@ -395,18 +407,20 @@ void applyEvent(GameState& s, const Event& e, quint64 salt)
         if (u >= 0 && u < UnitCount && s.stage >= kUnit[u].unlockStage
             && s.buildings[Barracks] >= 1) {
             const UnitDef& d = kUnit[u];
-            const int affordPop = s.population / (d.costPop > 0 ? d.costPop : 1);
-            if (n > affordPop) n = affordPop;
-            while (n > 0 && (s.res[Gold] < d.costGold * n || s.res[Materials] < d.costMaterials * n))
-                --n;
-            if (n > 0) {
-                s.res[Gold] -= d.costGold * n;
-                s.res[Materials] -= d.costMaterials * n;
-                s.population -= d.costPop * n;
-                s.units[u] += n;
-                s.unitsTrained += n;
-                reassignWithin(s);
+            // Buy them one at a time: each soldier costs more than the last (army-size scaling).
+            int made = 0;
+            for (int k = 0; k < n; ++k) {
+                const double cg = unitCostGold(s, u), cm = unitCostMaterials(s, u);
+                if (s.population < d.costPop || s.res[Gold] < cg || s.res[Materials] < cm) break;
+                s.res[Gold] -= cg;
+                s.res[Materials] -= cm;
+                s.population -= d.costPop;
+                s.units[u] += 1;
+                s.unitsTrained += 1;
+                ++made;
             }
+            if (made > 0)
+                reassignWithin(s);
         }
     } else if (e.kind == QLatin1String("raid")) {
         const int t = p.value(QLatin1String("t")).toInt(-1);

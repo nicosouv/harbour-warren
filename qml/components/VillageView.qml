@@ -289,8 +289,13 @@ Item {
 
     // Fixed mountains: three silhouette planes for depth — far range tall and hazy, near hills low
     // and dark. They don't move; the layering IS the parallax. The sun and moon set behind them.
+    // Canvas content is repainted whenever the view returns to screen, or Sailfish drops its backing
+    // when the app is minimised and the mountains vanish until something forces a repaint.
     Canvas {
+        id: mountains
         anchors.fill: parent
+        renderTarget: Canvas.Image
+        renderStrategy: Canvas.Immediate
         onPaint: {
             var ctx = getContext("2d"); ctx.clearRect(0, 0, width, height)
             var g = height * view.horizon
@@ -312,7 +317,12 @@ Item {
         }
         onWidthChanged: requestPaint()
         onHeightChanged: requestPaint()
+        onVisibleChanged: if (visible) requestPaint()
         Component.onCompleted: requestPaint()
+        Connections {
+            target: Qt.application
+            onActiveChanged: if (Qt.application.active) mountains.requestPaint()
+        }
     }
 
     // --- Ground -----------------------------------------------------------------------------
@@ -327,7 +337,10 @@ Item {
     }
     // Ground texture: dirt grain, pebbles, grass tufts. Painted once.
     Canvas {
+        id: groundTex
         anchors.fill: parent
+        renderTarget: Canvas.Image
+        renderStrategy: Canvas.Immediate
         onPaint: {
             var ctx = getContext("2d")
             ctx.clearRect(0, 0, width, height)
@@ -358,7 +371,12 @@ Item {
         }
         onWidthChanged: requestPaint()
         onHeightChanged: requestPaint()
+        onVisibleChanged: if (visible) requestPaint()
         Component.onCompleted: requestPaint()
+        Connections {
+            target: Qt.application
+            onActiveChanged: if (Qt.application.active) groundTex.requestPaint()
+        }
     }
 
     // Greenery: wind-swayed trees and a fringe of grass. Pure decoration — no collision.

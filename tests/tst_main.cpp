@@ -208,7 +208,9 @@ void TstWarren::foldTrainCosts()
     QCOMPARE(s.units[Militia], 2);
     QCOMPARE(s.unitsTrained, 2);
     QCOMPARE(s.population, 8);                    // two workers became soldiers
-    QVERIFY(std::fabs(s.res[Gold] - (1000 - 2 * kUnit[Militia].costGold)) < 1e-9);
+    // Prices climb per unit: first at base, second dearer by costGrowth.
+    const double expGold = 1000 - kUnit[Militia].costGold * (1.0 + kUnit[Militia].costGrowth);
+    QVERIFY(std::fabs(s.res[Gold] - expGold) < 1e-6);
 }
 
 void TstWarren::foldRaidGradient()

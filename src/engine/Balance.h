@@ -78,10 +78,11 @@ struct UnitDef {
     double power;
     double foodUpkeep;   // per second
     int    unlockStage;
+    double costGrowth;   // each unit owned makes the next one this much dearer
 };
 static const UnitDef kUnit[UnitCount] = {
-    { "militia", 50.0,  20.0,  1, 5.0,  0.16, 3 },
-    { "veteran", 320.0, 110.0, 1, 26.0, 0.30, 5 },
+    { "militia", 50.0,  20.0,  1, 5.0,  0.16, 3, 1.15 },
+    { "veteran", 320.0, 110.0, 1, 26.0, 0.30, 5, 1.18 },
 };
 
 // --- Raid targets -----------------------------------------------------------------------------

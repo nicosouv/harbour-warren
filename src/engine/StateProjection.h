@@ -24,6 +24,8 @@ double foodConsumption(const GameState& s);
 double energyDrain(const GameState& s);
 double netFood(const GameState& s);
 double buildCost(const GameState& s, int bld, int n);
+double unitCostGold(const GameState& s, int u);
+double unitCostMaterials(const GameState& s, int u);
 double armyPower(const GameState& s);
 bool   targetUnlocked(const GameState& s, int t);
 qint64 raidCooldownLeft(const GameState& s, int t, qint64 nowMs);
