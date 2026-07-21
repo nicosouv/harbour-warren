@@ -450,6 +450,8 @@ Page {
                                   + (Game.builders > 0 && Game.buildEtaSec > 0
                                      ? " · " + page.fmtEta(Game.buildEtaSec)
                                      : (Game.builders <= 0 ? " · " + qsTr("stalled") : ""))
+                                  + (Game.powered ? " · " + qsTr("energy +25%")
+                                     : (Game.blackout ? " · " + qsTr("blackout −30%") : ""))
                             font.pixelSize: Theme.fontSizeExtraSmall
                             color: Game.builders > 0 ? Theme.highlightColor : "#c0603a"
                         }
@@ -532,6 +534,15 @@ Page {
                         text: Game.blackout ? qsTr("The lights are out.") : qsTr("Buy energy with gold")
                         color: Game.blackout ? "#c0603a" : Theme.primaryColor
                         font.pixelSize: Theme.fontSizeSmall
+                    }
+                    Label {
+                        text: Game.powered ? qsTr("Powered: +25% production and building")
+                              : Game.blackout ? qsTr("Blackout: −30% production and building")
+                              : qsTr("Keep it powered: +25% production and building")
+                        color: Game.powered ? "#3ab5a6" : Game.blackout ? "#c0603a" : Theme.secondaryColor
+                        font.pixelSize: Theme.fontSizeExtraSmall
+                        width: parent.width
+                        truncationMode: TruncationMode.Fade
                     }
                     Rectangle {
                         width: parent.width; height: 6; radius: 2

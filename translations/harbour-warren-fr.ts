@@ -171,6 +171,11 @@
     <message><source>breeding</source><translation>reproduction</translation></message>
     <message><source>Assign badgers to forage: well fed, the colony breeds on its own.</source><translation>Assignez des blaireaux à la cueillette : bien nourrie, la colonie se reproduit toute seule.</translation></message>
     <message><source>a new badger</source><translation>un nouveau blaireau</translation></message>
+    <message><source>energy +25%</source><translation>énergie +25%</translation></message>
+    <message><source>blackout −30%</source><translation>panne −30%</translation></message>
+    <message><source>Powered: +25% production and building</source><translation>Alimenté : +25% production et construction</translation></message>
+    <message><source>Blackout: −30% production and building</source><translation>Panne : −30% production et construction</translation></message>
+    <message><source>Keep it powered: +25% production and building</source><translation>Gardez le courant : +25% production et construction</translation></message>
 </context>
 <context>
     <name>VillageView</name>
@@ -178,6 +183,24 @@
     <message><source>Whoa, pitch black in here.</source><translation>Oulah, il fait tout noir ici.</translation></message>
     <message><source>Who didn't pay the bill?</source><translation>Qui n'a pas payé la facture ?</translation></message>
     <message><source>We're hungry.</source><translation>On a faim.</translation></message>
+    <message><source>Is it night already?</source><translation>Il fait déjà nuit ?</translation></message>
+    <message><source>I can't see my paws.</source><translation>Je ne vois plus mes pattes.</translation></message>
+    <message><source>Someone light a candle.</source><translation>Que quelqu'un allume une bougie.</translation></message>
+    <message><source>Cosy. Terrifying, but cosy.</source><translation>Douillet. Terrifiant, mais douillet.</translation></message>
+    <message><source>I stubbed a claw.</source><translation>Je me suis cogné une griffe.</translation></message>
+    <message><source>My stomach is filing a complaint.</source><translation>Mon estomac dépose une réclamation.</translation></message>
+    <message><source>Is it dinner yet?</source><translation>C'est bientôt le dîner ?</translation></message>
+    <message><source>I'd trade gold for a berry.</source><translation>J'échangerais de l'or contre une baie.</translation></message>
+    <message><source>Rationing. Again.</source><translation>Rationnement. Encore.</translation></message>
+    <message><source>I ate a pebble. No regrets.</source><translation>J'ai mangé un caillou. Aucun regret.</translation></message>
+    <message><source>Another day of digging.</source><translation>Encore une journée à creuser.</translation></message>
+    <message><source>I dug a hole. Apparently it matters.</source><translation>J'ai creusé un trou. Paraît que c'est important.</translation></message>
+    <message><source>Is this a career?</source><translation>C'est ça, une carrière ?</translation></message>
+    <message><source>Found a rock. Riveting.</source><translation>Trouvé un caillou. Palpitant.</translation></message>
+    <message><source>Morale is a concept, I'm told.</source><translation>Le moral est un concept, paraît-il.</translation></message>
+    <message><source>The narrator is watching, isn't he?</source><translation>Le narrateur nous observe, non ?</translation></message>
+    <message><source>Nice weather for holes.</source><translation>Beau temps pour creuser des trous.</translation></message>
+    <message><source>I'd like a raise. In berries.</source><translation>Je veux une augmentation. En baies.</translation></message>
 </context>
 <context>
     <name>StatsPage</name>

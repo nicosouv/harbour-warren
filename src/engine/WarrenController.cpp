@@ -346,6 +346,12 @@ bool WarrenController::starving() const
     return liveRes(Food) <= 0.5 && netFood(m_state) < 0.0;
 }
 
+bool WarrenController::powered() const
+{
+    // Trading post with energy in the tank: production and construction run 25% faster.
+    return m_state.buildings[TradingPost] >= 1 && liveRes(Energy) > 0.0;
+}
+
 bool WarrenController::growing() const
 {
     return m_state.population < warren::housingCap(m_state) && liveRes(Food) > kGrowthFoodFloor;

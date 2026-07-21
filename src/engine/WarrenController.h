@@ -53,6 +53,7 @@ class WarrenController : public QObject
     Q_PROPERTY(bool energyActive READ energyActive NOTIFY stateChanged)
     Q_PROPERTY(bool tradingUnlocked READ tradingUnlocked NOTIFY stateChanged)
     Q_PROPERTY(bool blackout READ blackout NOTIFY liveChanged)
+    Q_PROPERTY(bool powered READ powered NOTIFY liveChanged)
     Q_PROPERTY(bool starving READ starving NOTIFY liveChanged)
     Q_PROPERTY(bool growing READ growing NOTIFY liveChanged)
     Q_PROPERTY(double broodProgress READ broodProgress NOTIFY liveChanged)
@@ -122,6 +123,7 @@ public:
     bool energyActive() const;
     bool tradingUnlocked() const;
     bool blackout() const;
+    bool powered() const;
     bool starving() const;
     bool growing() const;
     double broodProgress() const;

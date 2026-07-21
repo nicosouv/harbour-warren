@@ -171,6 +171,11 @@
     <message><source>breeding</source><translation>breeding</translation></message>
     <message><source>Assign badgers to forage: well fed, the colony breeds on its own.</source><translation>Assign badgers to forage: well fed, the colony breeds on its own.</translation></message>
     <message><source>a new badger</source><translation>a new badger</translation></message>
+    <message><source>energy +25%</source><translation>energy +25%</translation></message>
+    <message><source>blackout −30%</source><translation>blackout −30%</translation></message>
+    <message><source>Powered: +25% production and building</source><translation>Powered: +25% production and building</translation></message>
+    <message><source>Blackout: −30% production and building</source><translation>Blackout: −30% production and building</translation></message>
+    <message><source>Keep it powered: +25% production and building</source><translation>Keep it powered: +25% production and building</translation></message>
 </context>
 <context>
     <name>VillageView</name>
@@ -178,6 +183,24 @@
     <message><source>Whoa, pitch black in here.</source><translation>Whoa, pitch black in here.</translation></message>
     <message><source>Who didn't pay the bill?</source><translation>Who didn't pay the bill?</translation></message>
     <message><source>We're hungry.</source><translation>We're hungry.</translation></message>
+    <message><source>Is it night already?</source><translation>Is it night already?</translation></message>
+    <message><source>I can't see my paws.</source><translation>I can't see my paws.</translation></message>
+    <message><source>Someone light a candle.</source><translation>Someone light a candle.</translation></message>
+    <message><source>Cosy. Terrifying, but cosy.</source><translation>Cosy. Terrifying, but cosy.</translation></message>
+    <message><source>I stubbed a claw.</source><translation>I stubbed a claw.</translation></message>
+    <message><source>My stomach is filing a complaint.</source><translation>My stomach is filing a complaint.</translation></message>
+    <message><source>Is it dinner yet?</source><translation>Is it dinner yet?</translation></message>
+    <message><source>I'd trade gold for a berry.</source><translation>I'd trade gold for a berry.</translation></message>
+    <message><source>Rationing. Again.</source><translation>Rationing. Again.</translation></message>
+    <message><source>I ate a pebble. No regrets.</source><translation>I ate a pebble. No regrets.</translation></message>
+    <message><source>Another day of digging.</source><translation>Another day of digging.</translation></message>
+    <message><source>I dug a hole. Apparently it matters.</source><translation>I dug a hole. Apparently it matters.</translation></message>
+    <message><source>Is this a career?</source><translation>Is this a career?</translation></message>
+    <message><source>Found a rock. Riveting.</source><translation>Found a rock. Riveting.</translation></message>
+    <message><source>Morale is a concept, I'm told.</source><translation>Morale is a concept, I'm told.</translation></message>
+    <message><source>The narrator is watching, isn't he?</source><translation>The narrator is watching, isn't he?</translation></message>
+    <message><source>Nice weather for holes.</source><translation>Nice weather for holes.</translation></message>
+    <message><source>I'd like a raise. In berries.</source><translation>I'd like a raise. In berries.</translation></message>
 </context>
 <context>
     <name>StatsPage</name>

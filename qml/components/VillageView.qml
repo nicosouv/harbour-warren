@@ -96,17 +96,26 @@ Item {
 
     property var siteKeys: ["burrow", "granary", "workshop", "mineshaft", "tradingpost", "barracks"]
 
-    function speaks(index) {
-        if (view.blackout) return index % 4 === 0
-        if (view.starving) return index % 3 === 0
-        return false
-    }
-    function bubbleText(index) {
-        if (view.blackout) {
-            var dark = [qsTr("Good night."), qsTr("Whoa, pitch black in here."), qsTr("Who didn't pay the bill?")]
-            return dark[index % dark.length]
-        }
-        if (view.starving) return qsTr("We're hungry.")
+    // Chatter pools. Non-deterministic on purpose — pure cosmetics, never touches game state.
+    readonly property var darkLines: [
+        qsTr("Good night."), qsTr("Whoa, pitch black in here."), qsTr("Who didn't pay the bill?"),
+        qsTr("Is it night already?"), qsTr("I can't see my paws."), qsTr("Someone light a candle."),
+        qsTr("Cosy. Terrifying, but cosy."), qsTr("I stubbed a claw.")
+    ]
+    readonly property var hungerLines: [
+        qsTr("We're hungry."), qsTr("My stomach is filing a complaint."), qsTr("Is it dinner yet?"),
+        qsTr("I'd trade gold for a berry."), qsTr("Rationing. Again."), qsTr("I ate a pebble. No regrets.")
+    ]
+    readonly property var idleLines: [
+        qsTr("Another day of digging."), qsTr("I dug a hole. Apparently it matters."),
+        qsTr("Is this a career?"), qsTr("Found a rock. Riveting."),
+        qsTr("Morale is a concept, I'm told."), qsTr("The narrator is watching, isn't he?"),
+        qsTr("Nice weather for holes."), qsTr("I'd like a raise. In berries.")
+    ]
+    function pickPhrase() {
+        if (view.blackout) return view.darkLines[Math.floor(Math.random() * view.darkLines.length)]
+        if (view.starving) return view.hungerLines[Math.floor(Math.random() * view.hungerLines.length)]
+        if (Math.random() < 0.14) return view.idleLines[Math.floor(Math.random() * view.idleLines.length)]
         return ""
     }
 
@@ -509,27 +518,37 @@ Item {
                 PauseAnimation { duration: 650 + (index % 4) * 220 }
             }
 
-            // Speech: hunger, or grumbling in the dark. Blinks in like chatter.
+            // Speech: each badger pipes up on its own irregular beat, so the colony chatters
+            // unevenly instead of in chorus. A pool of lines; hunger and the dark override idle.
+            property string bubbleMsg: ""
+            Timer {
+                interval: 3000 + Math.floor(Math.random() * 7000)
+                repeat: true
+                running: index < 7 && view.visible && Qt.application.active
+                onTriggered: {
+                    interval = 2500 + Math.floor(Math.random() * 7000)
+                    if (badger.bubbleMsg.length === 0) {
+                        var m = view.pickPhrase()
+                        if (m.length > 0) { badger.bubbleMsg = m; bubbleHide.restart() }
+                    }
+                }
+            }
+            Timer { id: bubbleHide; interval: 2700; onTriggered: badger.bubbleMsg = "" }
             Rectangle {
                 id: bubble
-                visible: index < 8 && view.speaks(index)
-                color: Qt.rgba(0.96, 0.95, 0.9, 0.92); radius: 3
-                width: bubbleLbl.width + 8; height: bubbleLbl.height + 4
+                visible: badger.bubbleMsg.length > 0
+                color: Qt.rgba(0.97, 0.96, 0.91, 0.94); radius: 4
+                width: bubbleLbl.width + 12; height: bubbleLbl.height + 7
                 anchors.horizontalCenter: spr.horizontalCenter
-                y: -height - 2; opacity: 0; z: 5
+                y: -height - 3; z: 5
+                opacity: badger.bubbleMsg.length > 0 ? 1 : 0
+                Behavior on opacity { NumberAnimation { duration: 200 } }
+                scale: badger.bubbleMsg.length > 0 ? 1 : 0.6
+                Behavior on scale { NumberAnimation { duration: 180; easing.type: Easing.OutBack } }
                 Label {
                     id: bubbleLbl; anchors.centerIn: parent
-                    text: view.bubbleText(index); color: "#2a2018"
-                    font.pixelSize: Math.max(9, view.width * 0.030)
-                }
-                SequentialAnimation on opacity {
-                    running: bubble.visible
-                    loops: Animation.Infinite
-                    PauseAnimation { duration: (index % 4) * 650 }
-                    NumberAnimation { to: 1; duration: 200 }
-                    PauseAnimation { duration: 1900 }
-                    NumberAnimation { to: 0; duration: 300 }
-                    PauseAnimation { duration: 1500 }
+                    text: badger.bubbleMsg; color: "#241d15"
+                    font.pixelSize: Math.max(11, view.width * 0.038)
                 }
             }
         }
