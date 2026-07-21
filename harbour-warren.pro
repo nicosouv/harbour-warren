@@ -14,8 +14,7 @@ SOURCES += src/main.cpp \
     src/engine/StateProjection.cpp \
     src/engine/WarrenController.cpp
 
-HEADERS += src/Activator.h \
-    src/engine/AppId.h \
+HEADERS += src/engine/AppId.h \
     src/engine/Balance.h \
     src/engine/Clock.h \
     src/engine/Rng.h \
@@ -24,7 +23,7 @@ HEADERS += src/Activator.h \
     src/engine/StateProjection.h \
     src/engine/WarrenController.h
 
-QT += sql dbus
+QT += sql
 
 DISTFILES += qml/harbour-warren.qml \
     qml/cover/CoverPage.qml \
