@@ -7,14 +7,46 @@ Page {
     id: page
 
     property var recs: Game.records()
+    property var silly: Game.sillyStats()
+    property var globals: Game.globalStats()
 
     Connections {
         target: Game
         onStateChanged: {
             page.recs = Game.records()
+            page.silly = Game.sillyStats()
+            page.globals = Game.globalStats()
             popChart.requestPaint(); goldChart.requestPaint(); armyChart.requestPaint()
             foodChart.requestPaint(); matChart.requestPaint(); terrChart.requestPaint()
         }
+    }
+
+    function sillyLabel(key) {
+        if (key === "shovelStrikes") return qsTr("Shovel strikes")
+        if (key === "unemployment") return qsTr("Unemployment rate")
+        if (key === "gdpPerBadger") return qsTr("GDP per badger")
+        if (key === "powerBills") return qsTr("Power bills paid")
+        if (key === "foxesInconvenienced") return qsTr("Foxes inconvenienced")
+        if (key === "formativeExperiences") return qsTr("\"Formative experiences\"")
+        if (key === "offlineBirths") return qsTr("Badgers born while you were away")
+        return key
+    }
+    function sillyValue(key, v) {
+        if (key === "unemployment") return v.toFixed(0) + " %"
+        if (key === "gdpPerBadger") return Game.fmt(v)
+        return Game.fmt(v)
+    }
+    function globalLabel(key) {
+        if (key === "runs") return qsTr("Games started")
+        if (key === "totalPlaytime") return qsTr("Total playtime")
+        if (key === "totalGold") return qsTr("Gold earned, all games")
+        if (key === "totalRaids") return qsTr("Raids won, all games")
+        if (key === "totalTaps") return qsTr("Shovel strikes, all games")
+        return key
+    }
+    function globalValue(key, v) {
+        if (key === "totalPlaytime") return dur(v)
+        return Game.fmt(v)
     }
 
     function stageName(n) {
@@ -81,6 +113,7 @@ Page {
 
             PageHeader { title: qsTr("Records") }
 
+            SectionHeader { text: qsTr("This game") }
             DetailItem { label: qsTr("Playtime"); value: page.dur(Game.playtimeMs()) }
             DetailItem { label: qsTr("Actions logged"); value: "" + Game.eventCount() }
 
@@ -124,6 +157,24 @@ Page {
                 id: terrChart; x: Theme.horizontalPageMargin
                 width: page.width - 2 * Theme.horizontalPageMargin; height: Theme.itemSizeLarge
                 onPaint: page.drawSeries(terrChart, "territory", "#2a9d8f")
+            }
+
+            SectionHeader { text: qsTr("Absurd numbers") }
+            Repeater {
+                model: page.silly
+                DetailItem {
+                    label: page.sillyLabel(modelData.key)
+                    value: page.sillyValue(modelData.key, modelData.value)
+                }
+            }
+
+            SectionHeader { text: qsTr("All time") }
+            Repeater {
+                model: page.globals
+                DetailItem {
+                    label: page.globalLabel(modelData.key)
+                    value: page.globalValue(modelData.key, modelData.value)
+                }
             }
 
             SectionHeader { text: qsTr("Best marks") }

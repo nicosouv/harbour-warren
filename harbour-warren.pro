@@ -36,6 +36,11 @@ DISTFILES += qml/harbour-warren.qml \
     rpm/harbour-warren.spec \
     harbour-warren.desktop
 
+# D-Bus activation: tapping a notification raises the running app or launches it.
+dbus.files = dbus/harbour.warren.service
+dbus.path = /usr/share/dbus-1/services
+INSTALLS += dbus
+
 SAILFISHAPP_ICONS = 86x86 108x108 128x128 172x172
 
 CONFIG += sailfishapp_i18n

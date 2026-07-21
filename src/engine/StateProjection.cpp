@@ -182,8 +182,10 @@ void applyEvent(GameState& s, const Event& e, quint64 salt)
         s.arrived = true;
     } else if (e.kind == QLatin1String("tap")) {
         const int n = p.value(QLatin1String("n")).toInt();
-        if (n > 0)
+        if (n > 0) {
             s.res[Food] = clampd(s.res[Food] + kDigFood * n, 0.0, foodCap(s));
+            s.tapsTotal += n;
+        }
     } else if (e.kind == QLatin1String("assign")) {
         const int j = p.value(QLatin1String("j")).toInt(-1);
         const int d = p.value(QLatin1String("d")).toInt();
@@ -196,15 +198,14 @@ void applyEvent(GameState& s, const Event& e, quint64 salt)
             s.assigned[j] = nv;
         }
     } else if (e.kind == QLatin1String("build")) {
+        // Opens a construction site (one at a time). Builders finish it during ticks.
         const int b = p.value(QLatin1String("b")).toInt(-1);
-        int n = p.value(QLatin1String("n")).toInt();
-        if (n < 1) n = 1;
-        if (b >= 0 && b < BldCount && s.stage >= kBld[b].unlockStage) {
-            const double cost = buildCost(s, b, n);
+        if (b >= 0 && b < BldCount && s.stage >= kBld[b].unlockStage && s.siteBld < 0) {
+            const double cost = buildCost(s, b, 1);
             if (s.res[Materials] >= cost) {
                 s.res[Materials] -= cost;
-                s.buildings[b] += n;
-                s.buildingsBuilt += n;
+                s.siteBld = b;
+                s.siteProgress = 0.0;
             }
         }
     } else if (e.kind == QLatin1String("buyenergy")) {
@@ -214,6 +215,7 @@ void applyEvent(GameState& s, const Event& e, quint64 salt)
             if (s.res[Gold] >= cost) {
                 s.res[Gold] -= cost;
                 s.res[Energy] = clampd(s.res[Energy] + amount, 0.0, energyCap(s));
+                s.energyBuys += 1;
             }
         }
     } else if (e.kind == QLatin1String("train")) {
@@ -274,6 +276,7 @@ void applyEvent(GameState& s, const Event& e, quint64 salt)
                 s.res[Gold] *= (1.0 - kDefeatLossFrac);
                 s.res[Materials] *= (1.0 - kDefeatLossFrac);
                 s.intel[t] = clampd(s.intel[t] + kIntelPerDefeat, 0.0, kIntelCap);
+                s.raidsLost += 1;
             }
             s.lastRaidMs = at;
             s.lastRaidTarget = t;
@@ -299,6 +302,17 @@ void applyEvent(GameState& s, const Event& e, quint64 salt)
 
         if (s.stage >= 2)
             s.res[Energy] = clampd(s.res[Energy] - energyDrain(s) * secs, 0.0, energyCap(s));
+
+        // Builders raise the site; the dark slows them like everyone else.
+        if (s.siteBld >= 0 && s.assigned[Build] > 0) {
+            s.siteProgress += s.assigned[Build] * kJobBase[Build] * energyMult(s) * secs;
+            if (s.siteProgress >= kBld[s.siteBld].work) {
+                s.buildings[s.siteBld] += 1;
+                s.buildingsBuilt += 1;
+                s.siteBld = -1;
+                s.siteProgress = 0.0;
+            }
+        }
 
         // Growth: fed and housed colonies raise a new worker over time.
         if (s.res[Food] > kGrowthFoodFloor && s.population < housingCap(s))

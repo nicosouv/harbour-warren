@@ -118,15 +118,34 @@ void TstWarren::foldBuildCostAndGate()
     GameState s = fold(v, kSalt);
     QVERIFY(s.stage >= 1);                       // grew to >=6 and advanced
 
-    // now gather materials and build
+    // now gather materials and open a construction site
     v << assign(Gather, 3) << tick(600000, 1400000);
     s = fold(v, kSalt);
     QVERIFY(s.res[Materials] > kBld[Burrow].baseCost);
     const double before = s.res[Materials];
     v << build(Burrow, 1500000);
     s = fold(v, kSalt);
-    QCOMPARE(s.buildings[Burrow], 1);
+    QCOMPARE(s.buildings[Burrow], 0);            // paid, but not built yet
+    QCOMPARE(s.siteBld, int(Burrow));
     QVERIFY(s.res[Materials] < before);
+
+    // a second site cannot open while one is active
+    const double mats = s.res[Materials];
+    v << build(Granary, 1500001);
+    s = fold(v, kSalt);
+    QCOMPARE(s.siteBld, int(Burrow));
+    QCOMPARE(s.res[Materials], mats);
+
+    // no builders, no progress
+    v << tick(300000, 1800000);
+    s = fold(v, kSalt);
+    QCOMPARE(s.buildings[Burrow], 0);
+
+    // builders finish it
+    v << assign(Forage, -2, 1800001) << assign(Build, 2, 1800002) << tick(300000, 2100000);
+    s = fold(v, kSalt);
+    QCOMPARE(s.buildings[Burrow], 1);
+    QCOMPARE(s.siteBld, -1);
 }
 
 void TstWarren::foldStageAdvance()
@@ -241,9 +260,9 @@ void TstWarren::simulationProgression()
     qint64 t = 1000;
     auto push = [&](const Event& e) { log.append(e); applyEvent(s, log.last(), kSalt); };
 
-    auto rebalance = [&](int f, int g, int m) {
+    auto rebalance = [&](int f, int g, int m, int b) {
         // issue deltas to reach a target distribution (remove first, then add)
-        int tgt[JobCount] = { f, g, m };
+        int tgt[JobCount] = { f, g, m, b };
         for (int j = 0; j < JobCount; ++j)
             if (tgt[j] < s.assigned[j]) push(assign(j, tgt[j] - s.assigned[j], t));
         for (int j = 0; j < JobCount; ++j)
@@ -259,21 +278,26 @@ void TstWarren::simulationProgression()
         t += step;
         push(tick(step, t));
 
-        // keep at least half foraging so nobody starves; split the rest
+        // keep at least half foraging so nobody starves; split the rest, keep builders on site
         int p = s.population;
         int foragers = (p + 1) / 2;
         int rest = p - foragers;
-        int gatherers = 0, miners = 0;
-        if (s.stage >= 1) gatherers = (rest + 1) / 2;
-        if (s.stage >= 2) miners = rest - gatherers;
+        int builders = 0, gatherers = 0, miners = 0;
+        if (s.stage >= 1 && rest > 0) builders = rest >= 3 ? 2 : 1;
+        rest -= builders;
+        if (s.stage >= 2) { gatherers = (rest + 1) / 2; miners = rest - gatherers; }
         else gatherers = rest;
-        rebalance(foragers, gatherers, s.stage >= 2 ? miners : 0);
+        rebalance(foragers, gatherers, miners, s.stage >= 1 ? builders : 0);
 
-        // build what we can afford, cheapest useful first
-        for (int b = 0; b < BldCount; ++b) {
-            if (s.stage < kBld[b].unlockStage) continue;
-            if (s.res[Materials] >= buildCost(s, b, 1) * 1.2)
-                push(build(b, t));
+        // open a site when free, cheapest useful first
+        if (s.siteBld < 0) {
+            for (int b = 0; b < BldCount; ++b) {
+                if (s.stage < kBld[b].unlockStage) continue;
+                if (s.res[Materials] >= buildCost(s, b, 1) * 1.2) {
+                    push(build(b, t));
+                    break;
+                }
+            }
         }
         // keep the lights on
         if (s.stage >= 2 && s.buildings[TradingPost] >= 1 && s.res[Energy] < energyCap(s) * 0.3

@@ -31,10 +31,15 @@ Page {
         return c
     }
     // What each job pays out, and what each building is for — no guessing.
-    function jobResource(key) {
-        if (key === "forage") return "food"
-        if (key === "gather") return "materials"
-        return "gold"
+    function jobIcon(key) {
+        if (key === "forage") return "../images/res-food.png"
+        if (key === "gather") return "../images/res-materials.png"
+        if (key === "mine") return "../images/res-gold.png"
+        return "../images/dig.png"   // builders carry the shovel
+    }
+    function unitDesc(key) {
+        if (key === "militia") return qsTr("Cheap and fragile — the most power per gold.")
+        return qsTr("Five times the punch per badger — saves your population.")
     }
     function bldEffect(key) {
         if (key === "burrow") return qsTr("+3 housing")
@@ -119,7 +124,12 @@ Page {
 
         PullDownMenu {
             MenuItem { text: qsTr("Settings"); onClicked: pageStack.push(Qt.resolvedUrl("SettingsPage.qml")) }
+            MenuItem {
+                text: qsTr("New game")
+                onClicked: newGameRemorse.execute(qsTr("Starting over"), function() { Game.newGame() })
+            }
         }
+        RemorsePopup { id: newGameRemorse }
 
         Column {
             id: col
@@ -139,12 +149,14 @@ Page {
                     stage: Game.stage
                     counts: buildingCounts()
                     blackout: Game.blackout
+                    siteBld: Game.buildSite
+                    siteProgress: Game.buildProgress
                 }
             }
 
             Item { width: 1; height: Theme.paddingMedium }
 
-            // Dig: the styled manual action.
+            // Scavenge: rummage the ground for food — the icon says exactly what you get.
             Rectangle {
                 id: digBtn
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -169,21 +181,45 @@ Page {
                     }
                     Label {
                         anchors.verticalCenter: parent.verticalCenter
-                        text: qsTr("Dig")
+                        text: qsTr("Scavenge")
                         font.pixelSize: Theme.fontSizeLarge
                     }
                 }
+
+                // The reward floats up: +1 food, no ambiguity.
+                Row {
+                    id: floatReward
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    spacing: 4
+                    opacity: 0
+                    Label { text: "+1"; color: Theme.highlightColor; font.pixelSize: Theme.fontSizeMedium }
+                    Image {
+                        anchors.verticalCenter: parent.verticalCenter
+                        source: Qt.resolvedUrl("../images/res-food.png")
+                        smooth: false
+                        width: Theme.iconSizeExtraSmall; height: width
+                        fillMode: Image.PreserveAspectFit
+                    }
+                }
+                ParallelAnimation {
+                    id: floatAnim
+                    NumberAnimation { target: floatReward; property: "y"; from: 0; to: -Theme.itemSizeSmall; duration: 500 }
+                    SequentialAnimation {
+                        NumberAnimation { target: floatReward; property: "opacity"; to: 1; duration: 80 }
+                        NumberAnimation { target: floatReward; property: "opacity"; to: 0; duration: 400 }
+                    }
+                }
+
                 MouseArea {
                     id: digArea
                     anchors.fill: parent
-                    onClicked: { Game.tap(); app.buzz() }
+                    onClicked: { Game.tap(); app.buzz(); digPulse.restart(); floatAnim.restart() }
                 }
                 SequentialAnimation {
                     id: digPulse
                     NumberAnimation { target: digBtn; property: "scale"; to: 0.96; duration: 40 }
                     NumberAnimation { target: digBtn; property: "scale"; to: 1.0; duration: 90 }
                 }
-                Connections { target: digArea; onClicked: digPulse.restart() }
             }
 
             // Workers ----------------------------------------------------------------
@@ -202,14 +238,17 @@ Page {
                         Label { anchors.verticalCenter: parent.verticalCenter; text: app.jobName(modelData.key) }
                         Image {
                             anchors.verticalCenter: parent.verticalCenter
-                            source: Qt.resolvedUrl("../images/res-" + page.jobResource(modelData.key) + ".png")
+                            source: Qt.resolvedUrl(page.jobIcon(modelData.key))
                             smooth: false
                             width: Theme.iconSizeExtraSmall * 0.8; height: width
                             fillMode: Image.PreserveAspectFit
                         }
                         Label {
                             anchors.verticalCenter: parent.verticalCenter
-                            text: modelData.assigned + " · +" + Game.fmt(modelData.perSec * modelData.assigned) + "/s"
+                            text: modelData.assigned
+                                  + (modelData.key === "build"
+                                     ? (Game.buildSite >= 0 ? " · " + Math.round(Game.buildProgress * 100) + "%" : "")
+                                     : " · +" + Game.fmt(modelData.perSec * modelData.assigned) + "/s")
                             font.pixelSize: Theme.fontSizeExtraSmall
                             color: Theme.secondaryColor
                         }
@@ -257,16 +296,33 @@ Page {
                         width: parent.width * 0.45
                         Label {
                             text: app.bldName(modelData.key) + (modelData.count > 0 ? "  ×" + modelData.count : "")
-                            color: modelData.affordable ? Theme.primaryColor : Theme.secondaryColor
+                            color: modelData.affordable || modelData.site ? Theme.primaryColor : Theme.secondaryColor
                             truncationMode: TruncationMode.Fade
                             width: parent.width
                         }
                         Label {
+                            visible: !modelData.site
                             text: page.bldEffect(modelData.key)
                             font.pixelSize: Theme.fontSizeExtraSmall
                             color: Theme.secondaryColor
                             truncationMode: TruncationMode.Fade
                             width: parent.width
+                        }
+                        Label {
+                            visible: modelData.site
+                            text: qsTr("Under construction") + " · " + Math.round(modelData.progress * 100) + "%"
+                            font.pixelSize: Theme.fontSizeExtraSmall
+                            color: Theme.highlightColor
+                        }
+                        Rectangle {
+                            visible: modelData.site
+                            width: parent.width; height: 4; radius: 1
+                            color: Theme.rgba(Theme.primaryColor, 0.15)
+                            Rectangle {
+                                width: parent.width * modelData.progress; height: parent.height; radius: 1
+                                color: Theme.highlightColor
+                                Behavior on width { NumberAnimation { duration: 400 } }
+                            }
                         }
                     }
                     Row {
@@ -358,7 +414,17 @@ Page {
                     Column {
                         anchors { left: unitIcon.right; leftMargin: Theme.paddingMedium; verticalCenter: parent.verticalCenter }
                         width: parent.width * 0.45
-                        Label { text: app.unitName(modelData.key) + "  ×" + modelData.count }
+                        Label {
+                            text: app.unitName(modelData.key) + "  ×" + modelData.count
+                                  + "  ·  " + qsTr("power") + " " + Game.fmt(modelData.power)
+                        }
+                        Label {
+                            text: page.unitDesc(modelData.key)
+                            font.pixelSize: Theme.fontSizeExtraSmall
+                            color: Theme.secondaryColor
+                            truncationMode: TruncationMode.Fade
+                            width: parent.width
+                        }
                         Row {
                             spacing: Theme.paddingSmall
                             Image { anchors.verticalCenter: parent.verticalCenter; source: Qt.resolvedUrl("../images/res-gold.png"); smooth: false; width: Theme.iconSizeExtraSmall * 0.7; height: width; fillMode: Image.PreserveAspectFit }

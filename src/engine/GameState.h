@@ -20,6 +20,13 @@ struct GameState {
     int    buildings[Balance::BldCount] = { 0, 0, 0, 0, 0, 0 };
     int    buildingsBuilt = 0;      // lifetime count (stage gate)
 
+    int    siteBld = -1;            // the single construction site (-1: none)
+    double siteProgress = 0.0;      // work points delivered by builders
+
+    int    tapsTotal = 0;           // absurd-stats fodder
+    int    energyBuys = 0;
+    int    raidsLost = 0;
+
     int    units[Balance::UnitCount] = { 0, 0 };
     int    unitsTrained = 0;        // lifetime (stage gate)
 

@@ -54,6 +54,11 @@ WarrenController::WarrenController(QObject* parent)
         m_welcomePop = m_state.population - popBefore;
         m_welcomeMs = static_cast<double>(ms);
         m_welcomePending = ms > kWelcomeMs;
+        if (m_welcomePop > 0) {
+            // Absurd-stats fodder: badgers born while you were away.
+            const QString k = QStringLiteral("rec/offlineBirths_v");
+            m_settings.setValue(k, m_settings.value(k, 0.0).toDouble() + m_welcomePop);
+        }
     }
     m_lastFlushMs = now;
     updateRecords(now);
@@ -146,6 +151,46 @@ void WarrenController::setFastBattle(bool on)
     emit prefsChanged();
 }
 
+bool WarrenController::notifyEnergy() const
+{
+    return m_settings.value(QStringLiteral("notifyEnergy"), true).toBool();
+}
+
+void WarrenController::setNotifyEnergy(bool on)
+{
+    m_settings.setValue(QStringLiteral("notifyEnergy"), on);
+    emit prefsChanged();
+}
+
+int WarrenController::buildSite() const { return m_state.siteBld; }
+
+double WarrenController::buildProgress() const
+{
+    if (m_state.siteBld < 0) return 0.0;
+    return m_state.siteProgress / kBld[m_state.siteBld].work;
+}
+
+QVariantList WarrenController::sillyStats() const
+{
+    QVariantList out;
+    auto add = [&](const char* key, double v) {
+        QVariantMap m;
+        m.insert(QStringLiteral("key"), QLatin1String(key));
+        m.insert(QStringLiteral("value"), v);
+        out.append(m);
+    };
+    add("shovelStrikes", m_state.tapsTotal);
+    add("unemployment", m_state.population > 0
+        ? 100.0 * warren::idleWorkers(m_state) / m_state.population : 0.0);
+    add("gdpPerBadger", m_state.population > 0
+        ? m_state.goldEarned / m_state.population : 0.0);
+    add("powerBills", m_state.energyBuys);
+    add("foxesInconvenienced", m_state.raidsWon);
+    add("formativeExperiences", m_state.raidsLost);
+    add("offlineBirths", m_settings.value(QStringLiteral("rec/offlineBirths_v"), 0.0).toDouble());
+    return out;
+}
+
 bool WarrenController::fullNumbers() const
 {
     return m_settings.value(QStringLiteral("fullNumbers"), false).toBool();
@@ -234,11 +279,11 @@ QVariantList WarrenController::resources() const
 
 QVariantList WarrenController::jobs() const
 {
-    static const char* const keys[JobCount] = { "forage", "gather", "mine" };
+    static const char* const keys[JobCount] = { "forage", "gather", "mine", "build" };
     QVariantList out;
     for (int j = 0; j < JobCount; ++j) {
         bool visible = true;
-        if (j == Gather) visible = m_state.stage >= 1;
+        if (j == Gather || j == Build) visible = m_state.stage >= 1;
         else if (j == MineJob) visible = m_state.stage >= 2;
         QVariantMap m;
         m.insert(QStringLiteral("index"), j);
@@ -262,7 +307,11 @@ QVariantList WarrenController::buildings() const
         m.insert(QStringLiteral("key"), QLatin1String(kBld[b].id));
         m.insert(QStringLiteral("count"), m_state.buildings[b]);
         m.insert(QStringLiteral("cost"), cost);
-        m.insert(QStringLiteral("affordable"), liveRes(Materials) >= cost);
+        m.insert(QStringLiteral("affordable"),
+                 m_state.siteBld < 0 && liveRes(Materials) >= cost);
+        m.insert(QStringLiteral("site"), m_state.siteBld == b);
+        m.insert(QStringLiteral("progress"),
+                 m_state.siteBld == b ? m_state.siteProgress / kBld[b].work : 0.0);
         out.append(m);
     }
     return out;
@@ -521,7 +570,7 @@ void WarrenController::build(int b)
 {
     if (b < 0 || b >= BldCount) return;
     flushNow();
-    if (m_state.res[Materials] < buildCost(m_state, b, 1)) return;
+    if (m_state.siteBld >= 0 || m_state.res[Materials] < buildCost(m_state, b, 1)) return;
     QJsonObject p;
     p.insert(QLatin1String("b"), b);
     p.insert(QLatin1String("n"), 1);
@@ -627,6 +676,52 @@ void WarrenController::ackWelcome()
     emit stateChanged();
 }
 
+QVariantList WarrenController::globalStats() const
+{
+    auto g = [&](const char* k) {
+        return m_settings.value(QStringLiteral("glob/") + QLatin1String(k), 0.0).toDouble();
+    };
+    QVariantList out;
+    auto add = [&](const char* key, double v) {
+        QVariantMap m;
+        m.insert(QStringLiteral("key"), QLatin1String(key));
+        m.insert(QStringLiteral("value"), v);
+        out.append(m);
+    };
+    add("runs", g("runs") + 1);   // the current run counts
+    add("totalPlaytime", g("playtime") + playtimeMs());
+    add("totalGold", g("gold") + m_state.goldEarned);
+    add("totalRaids", g("raidsWon") + m_state.raidsWon);
+    add("totalTaps", g("taps") + m_state.tapsTotal);
+    return out;
+}
+
+void WarrenController::newGame()
+{
+    flushNow();
+    // Bank this run into the all-time ledger, then start clean. Records (rec/*) survive.
+    auto bump = [&](const char* k, double v) {
+        const QString key = QStringLiteral("glob/") + QLatin1String(k);
+        m_settings.setValue(key, m_settings.value(key, 0.0).toDouble() + v);
+    };
+    bump("runs", 1);
+    bump("playtime", playtimeMs());
+    bump("gold", m_state.goldEarned);
+    bump("raidsWon", m_state.raidsWon);
+    bump("taps", m_state.tapsTotal);
+
+    m_store.clearAll();
+    m_state = GameState();
+    m_pendingTaps = 0;
+    m_welcomePending = false;
+    m_hist.clear();
+    m_firstTs = m_clock.nowMs();
+    m_settings.remove(QStringLiteral("narr"));   // fresh narration for a fresh run
+    m_lastFlushMs = m_clock.nowMs();
+    emit stateChanged();
+    emit liveChanged();
+}
+
 void WarrenController::clearData()
 {
     m_store.clearAll();
@@ -637,6 +732,7 @@ void WarrenController::clearData()
     m_firstTs = m_clock.nowMs();
     m_settings.remove(QStringLiteral("narr"));
     m_settings.remove(QStringLiteral("rec"));
+    m_settings.remove(QStringLiteral("glob"));
     m_lastFlushMs = m_clock.nowMs();
     emit stateChanged();
     emit liveChanged();

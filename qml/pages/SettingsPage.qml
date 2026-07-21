@@ -73,6 +73,12 @@ Page {
                 onCheckedChanged: Game.notifyRaids = checked
             }
 
+            TextSwitch {
+                text: qsTr("Notify when the power runs out")
+                checked: Game.notifyEnergy
+                onCheckedChanged: Game.notifyEnergy = checked
+            }
+
             SectionHeader { text: qsTr("Data") }
 
             ListItem {

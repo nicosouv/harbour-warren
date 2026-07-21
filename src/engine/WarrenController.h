@@ -26,6 +26,9 @@ class WarrenController : public QObject
     Q_PROPERTY(bool haptics READ haptics WRITE setHaptics NOTIFY prefsChanged)
     Q_PROPERTY(bool fastBattle READ fastBattle WRITE setFastBattle NOTIFY prefsChanged)
     Q_PROPERTY(bool fullNumbers READ fullNumbers WRITE setFullNumbers NOTIFY prefsChanged)
+    Q_PROPERTY(bool notifyEnergy READ notifyEnergy WRITE setNotifyEnergy NOTIFY prefsChanged)
+    Q_PROPERTY(int buildSite READ buildSite NOTIFY stateChanged)
+    Q_PROPERTY(double buildProgress READ buildProgress NOTIFY liveChanged)
 
     Q_PROPERTY(bool arrived READ arrived NOTIFY stateChanged)
     Q_PROPERTY(int stage READ stage NOTIFY stateChanged)
@@ -78,6 +81,10 @@ public:
     void setFastBattle(bool on);
     bool fullNumbers() const;
     void setFullNumbers(bool on);
+    bool notifyEnergy() const;
+    void setNotifyEnergy(bool on);
+    int buildSite() const;
+    double buildProgress() const;
 
     bool arrived() const;
     int stage() const;
@@ -115,6 +122,9 @@ public:
     Q_INVOKABLE QVariantList series(const QString& key) const;   // [{ t, v }]
     // Records / leaderboard: personal bests with the timestamp they were set.
     Q_INVOKABLE QVariantList records() const;                     // [{ key, value, at }]
+    Q_INVOKABLE QVariantList sillyStats() const;                  // [{ key, value }] — the absurd ones
+    Q_INVOKABLE QVariantList globalStats() const;                 // all-time accumulators across runs
+    Q_INVOKABLE void newGame();                                   // fresh run; keeps records & globals
     Q_INVOKABLE double playtimeMs() const;
     Q_INVOKABLE int eventCount() const;
 

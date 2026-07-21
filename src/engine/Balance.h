@@ -11,11 +11,11 @@ namespace Balance {
 // --- Resources -------------------------------------------------------------------------------
 enum Res { Food = 0, Materials, Gold, Energy, ResCount };
 
-// --- Jobs (worker assignments). Each job feeds one resource. Mine unlocks at stage 2. ---------
-enum Job { Forage = 0, Gather, MineJob, JobCount };
-// job -> resource produced
-static const int kJobResource[JobCount] = { Food, Materials, Gold };
-static const double kJobBase[JobCount]  = { 0.55, 0.32, 0.22 };   // per worker per second
+// --- Jobs (worker assignments). Each job feeds one resource; builders feed the site. ----------
+enum Job { Forage = 0, Gather, MineJob, Build, JobCount };
+// job -> resource produced (-1: construction work)
+static const int kJobResource[JobCount] = { Food, Materials, Gold, -1 };
+static const double kJobBase[JobCount]  = { 0.55, 0.32, 0.22, 1.0 };  // per worker per second
 
 // --- Buildings -------------------------------------------------------------------------------
 enum Bld { Burrow = 0, Granary, Workshop, MineShaft, TradingPost, Barracks, BldCount };
@@ -26,14 +26,15 @@ struct BldDef {
     double baseCost;
     double costGrowth;
     int    unlockStage;  // building becomes buyable at this stage
+    double work;         // construction work points (builders deliver kJobBase[Build]/s each)
 };
 static const BldDef kBld[BldCount] = {
-    { "burrow",      Materials,   20.0, 1.15, 1 },
-    { "granary",     Materials,   45.0, 1.16, 1 },
-    { "workshop",    Materials,   70.0, 1.16, 1 },
-    { "mineshaft",   Materials,  120.0, 1.17, 2 },
-    { "tradingpost", Materials,  180.0, 1.18, 2 },
-    { "barracks",    Materials,  450.0, 1.20, 3 },
+    { "burrow",      Materials,   20.0, 1.15, 1,   90.0 },
+    { "granary",     Materials,   45.0, 1.16, 1,  150.0 },
+    { "workshop",    Materials,   70.0, 1.16, 1,  210.0 },
+    { "mineshaft",   Materials,  120.0, 1.17, 2,  320.0 },
+    { "tradingpost", Materials,  180.0, 1.18, 2,  420.0 },
+    { "barracks",    Materials,  450.0, 1.20, 3,  900.0 },
 };
 
 // Building effects (per owned unit).
@@ -127,6 +128,8 @@ static const int    kGateRaidsWon     = 1;      // 4 -> 5
 static const qint64 kOfflineCapMs = Q_INT64_C(604800000); // 7 days
 static const qint64 kFlushMs      = Q_INT64_C(30000);
 static const qint64 kWelcomeMs    = Q_INT64_C(1800000);   // recap shown past 30 min away
+
+// --- Absurd-statistics counters have no balance knobs; they are free. --------------------------
 
 // --- Starting state ---------------------------------------------------------------------------
 static const int    kStartPopulation = 4;

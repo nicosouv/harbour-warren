@@ -2,6 +2,7 @@ import QtQuick 2.6
 import Sailfish.Silica 1.0
 import QtGraphicalEffects 1.0
 import Nemo.Notifications 1.0
+import Nemo.DBus 2.0
 import "pages"
 import "cover"
 import "components"
@@ -27,6 +28,7 @@ ApplicationWindow {
         if (key === "forage") return qsTr("Forage")
         if (key === "gather") return qsTr("Gather")
         if (key === "mine") return qsTr("Mine")
+        if (key === "build") return qsTr("Build")
         return key
     }
     function bldName(key) {
@@ -97,13 +99,40 @@ ApplicationWindow {
             hapticsLoader.item.play()
     }
 
+    // Tapping any notification opens (or raises) the app, via D-Bus.
+    DBusAdaptor {
+        service: "harbour.warren"
+        iface: "harbour.warren"
+        path: "/"
+        function openApp() {
+            app.activate()
+        }
+    }
+    property var notifAction: [ {
+        "name": "default",
+        "service": "harbour.warren",
+        "path": "/",
+        "iface": "harbour.warren",
+        "method": "openApp"
+    } ]
+
     // Opt-in: tell the chief when a raid target is ready while the app is in the background.
     Notification {
         id: raidNotif
         appName: "Warren"
         summary: qsTr("A raid target is ready")
+        remoteActions: app.notifAction
+    }
+    // On by default: the colony went dark. That one you want to know about.
+    Notification {
+        id: energyNotif
+        appName: "Warren"
+        summary: qsTr("The power is out")
+        body: qsTr("Nobody is working. Naturally.")
+        remoteActions: app.notifAction
     }
     property bool wasAnyRaidReady: false
+    property bool wasBlackout: false
     Connections {
         target: Game
         onLiveChanged: {
@@ -114,6 +143,10 @@ ApplicationWindow {
                 && Game.notifyRaids && Game.raidsUnlocked)
                 raidNotif.publish()
             app.wasAnyRaidReady = any
+
+            if (Game.blackout && !app.wasBlackout && !Qt.application.active && Game.notifyEnergy)
+                energyNotif.publish()
+            app.wasBlackout = Game.blackout
         }
     }
 
@@ -152,8 +185,8 @@ ApplicationWindow {
                 id: grab; anchors.fill: parent; sourceItem: pageStack
                 live: active && !Game.reduceFx; hideSource: false; visible: false
             }
-            FastBlur { anchors.fill: parent; source: grab; radius: 48; visible: !Game.reduceFx }
-            Rectangle { anchors.fill: parent; color: "#101218"; opacity: Game.reduceFx ? 0.97 : 0.5 }
+            FastBlur { anchors.fill: parent; source: grab; radius: 64; visible: !Game.reduceFx }
+            Rectangle { anchors.fill: parent; color: "#101218"; opacity: Game.reduceFx ? 0.97 : 0.78 }
         }
     }
 
@@ -244,9 +277,13 @@ ApplicationWindow {
         property int committed: 0
         property int losses: 0
         property real clash: 0
+        property real meleeP: 0        // 0..1: the brawl itself
+        property int shownAtt: Math.min(12, committed)
+        property int deadAtt: Math.round(losses * shownAtt / Math.max(1, committed))
+        property int deadDef: outcome === 3 ? 2 : (outcome === 1 ? 9 : 6)
         function play(target, oc, comm, loss) {
             outcome = oc; committed = comm; losses = loss
-            clash = 0; resultLabel.visible = false; visible = true; anim.restart()
+            clash = 0; meleeP = 0; resultLabel.visible = false; visible = true; anim.restart()
         }
         Loader { anchors.fill: parent; sourceComponent: backdrop; onLoaded: item.active = Qt.binding(function(){ return battle.visible }) }
         MouseArea { anchors.fill: parent }
@@ -265,17 +302,24 @@ ApplicationWindow {
             id: attackers
             anchors { verticalCenter: parent.verticalCenter; verticalCenterOffset: -Theme.itemSizeSmall * 0.5 }
             x: parent.width * 0.06 + battle.clash * parent.width * 0.22
+              + (battle.meleeP > 0 && battle.meleeP < 1 ? Math.sin(battle.meleeP * 34) * 7 : 0)
             spacing: 4
             Repeater {
-                model: Math.min(12, battle.committed)
+                model: battle.shownAtt
                 Image {
+                    // The last ones in line fall one by one as the brawl progresses.
+                    property bool fallen: index >= battle.shownAtt
+                                          - Math.round(battle.deadAtt * battle.meleeP)
                     source: Qt.resolvedUrl("images/badger-side.png")
                     smooth: false
                     mirror: true   // face the enemy
                     width: Theme.iconSizeSmall * 1.1; height: width * 0.85
                     fillMode: Image.PreserveAspectFit
-                    opacity: (index >= Math.min(12, battle.committed) - Math.round(battle.losses * 12 / Math.max(1, battle.committed)) && battle.clash >= 1) ? 0.15 : 1
-                    Behavior on opacity { NumberAnimation { duration: 400 } }
+                    rotation: fallen ? 95 : (battle.meleeP > 0 && battle.meleeP < 1
+                                             ? Math.sin(battle.meleeP * 40 + index) * 8 : 0)
+                    opacity: fallen ? 0.25 : 1
+                    Behavior on rotation { NumberAnimation { duration: 250 } }
+                    Behavior on opacity { NumberAnimation { duration: 300 } }
                 }
             }
         }
@@ -283,25 +327,47 @@ ApplicationWindow {
             id: defenders
             anchors { verticalCenter: parent.verticalCenter; verticalCenterOffset: Theme.itemSizeSmall * 0.7 }
             x: parent.width * 0.94 - width - battle.clash * parent.width * 0.22
+              - (battle.meleeP > 0 && battle.meleeP < 1 ? Math.sin(battle.meleeP * 34) * 7 : 0)
             spacing: 4
             Repeater {
                 model: 10
                 Image {
+                    property bool fallen: index < Math.round(battle.deadDef * battle.meleeP)
                     source: Qt.resolvedUrl("images/fox-side.png")
                     smooth: false
                     width: Theme.iconSizeSmall * 1.2; height: width * 0.5
                     fillMode: Image.PreserveAspectFit
-                    opacity: (battle.outcome !== 3 && battle.clash >= 1 && index < 6) ? 0.15 : 1
-                    Behavior on opacity { NumberAnimation { duration: 400 } }
+                    rotation: fallen ? -95 : (battle.meleeP > 0 && battle.meleeP < 1
+                                              ? Math.sin(battle.meleeP * 40 + index + 3) * 8 : 0)
+                    opacity: fallen ? 0.25 : 1
+                    Behavior on rotation { NumberAnimation { duration: 250 } }
+                    Behavior on opacity { NumberAnimation { duration: 300 } }
                 }
+            }
+        }
+        // Sparks where the lines meet.
+        Repeater {
+            model: 5
+            Rectangle {
+                width: 6; height: 6
+                color: "#f0ece0"
+                visible: battle.meleeP > 0.05 && battle.meleeP < 0.95
+                x: battle.width * (0.42 + 0.16 * ((index * 29) % 10) / 10)
+                  + Math.sin(battle.meleeP * 50 + index * 2) * 10
+                y: battle.height * 0.5 + Math.cos(battle.meleeP * 44 + index * 3) * 26
+                opacity: 0.4 + 0.6 * Math.abs(Math.sin(battle.meleeP * 30 + index))
             }
         }
         SequentialAnimation {
             id: anim
             NumberAnimation {
                 target: battle; property: "clash"; from: 0; to: 1
-                duration: Game.fastBattle ? 250 : 900
+                duration: Game.fastBattle ? 220 : 800
                 easing.type: Easing.InCubic
+            }
+            NumberAnimation {
+                target: battle; property: "meleeP"; from: 0; to: 1
+                duration: Game.fastBattle ? 400 : 1500
             }
             ScriptAction {
                 script: {

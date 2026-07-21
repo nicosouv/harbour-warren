@@ -10,6 +10,9 @@
     <message><source>Forage</source><translation>Cueillir</translation></message>
     <message><source>Gather</source><translation>Récolter</translation></message>
     <message><source>Mine</source><translation>Miner</translation></message>
+    <message><source>Build</source><translation>Bâtir</translation></message>
+    <message><source>The power is out</source><translation>Panne de courant</translation></message>
+    <message><source>Nobody is working. Naturally.</source><translation>Plus personne ne travaille. Naturellement.</translation></message>
     <message><source>Burrow</source><translation>Terrier</translation></message>
     <message><source>Granary</source><translation>Grenier</translation></message>
     <message><source>Workshop</source><translation>Atelier</translation></message>
@@ -92,6 +95,12 @@
     <message><source>better mining</source><translation>meilleur minage</translation></message>
     <message><source>buy energy; powers the colony</source><translation>acheter de l'énergie ; alimente la colonie</translation></message>
     <message><source>train soldiers</source><translation>former des soldats</translation></message>
+    <message><source>Scavenge</source><translation>Fouiller</translation></message>
+    <message><source>Under construction</source><translation>En construction</translation></message>
+    <message><source>New game</source><translation>Nouvelle partie</translation></message>
+    <message><source>Starting over</source><translation>Nouvelle partie</translation></message>
+    <message><source>Cheap and fragile — the most power per gold.</source><translation>Pas chère et fragile — le plus de puissance par pièce d'or.</translation></message>
+    <message><source>Five times the punch per badger — saves your population.</source><translation>Cinq fois plus de puissance par blaireau — économise votre population.</translation></message>
 </context>
 <context>
     <name>StatsPage</name>
@@ -102,6 +111,21 @@
     <message><source>Gold</source><translation>Or</translation></message>
     <message><source>Army power</source><translation>Puissance de l'armée</translation></message>
     <message><source>Best marks</source><translation>Meilleurs scores</translation></message>
+    <message><source>This game</source><translation>Cette partie</translation></message>
+    <message><source>All time</source><translation>Global</translation></message>
+    <message><source>Absurd numbers</source><translation>Chiffres absurdes</translation></message>
+    <message><source>Shovel strikes</source><translation>Coups de pelle</translation></message>
+    <message><source>Unemployment rate</source><translation>Taux de chômage</translation></message>
+    <message><source>GDP per badger</source><translation>PIB par blaireau</translation></message>
+    <message><source>Power bills paid</source><translation>Factures d'électricité payées</translation></message>
+    <message><source>Foxes inconvenienced</source><translation>Renards contrariés</translation></message>
+    <message><source>"Formative experiences"</source><translation>« Expériences formatrices »</translation></message>
+    <message><source>Badgers born while you were away</source><translation>Blaireaux nés pendant votre absence</translation></message>
+    <message><source>Games started</source><translation>Parties lancées</translation></message>
+    <message><source>Total playtime</source><translation>Temps de jeu cumulé</translation></message>
+    <message><source>Gold earned, all games</source><translation>Or gagné, toutes parties</translation></message>
+    <message><source>Raids won, all games</source><translation>Raids gagnés, toutes parties</translation></message>
+    <message><source>Shovel strikes, all games</source><translation>Coups de pelle, toutes parties</translation></message>
     <message><source>Food</source><translation>Nourriture</translation></message>
     <message><source>Materials</source><translation>Matériaux</translation></message>
     <message><source>Territory</source><translation>Territoire</translation></message>
@@ -138,6 +162,7 @@
     <message><source>Fast battle animation</source><translation>Animation de bataille rapide</translation></message>
     <message><source>Haptic feedback</source><translation>Retour haptique</translation></message>
     <message><source>Notify when a raid is ready</source><translation>Me prévenir quand un raid est prêt</translation></message>
+    <message><source>Notify when the power runs out</source><translation>Me prévenir en cas de panne de courant</translation></message>
     <message><source>Language</source><translation>Langue</translation></message>
     <message><source>Takes effect after restarting the app.</source><translation>Prend effet au prochain lancement de l'application.</translation></message>
     <message><source>System default</source><translation>Langue du système</translation></message>

@@ -10,6 +10,9 @@
     <message><source>Forage</source><translation>Forage</translation></message>
     <message><source>Gather</source><translation>Gather</translation></message>
     <message><source>Mine</source><translation>Mine</translation></message>
+    <message><source>Build</source><translation>Build</translation></message>
+    <message><source>The power is out</source><translation>The power is out</translation></message>
+    <message><source>Nobody is working. Naturally.</source><translation>Nobody is working. Naturally.</translation></message>
     <message><source>Burrow</source><translation>Burrow</translation></message>
     <message><source>Granary</source><translation>Granary</translation></message>
     <message><source>Workshop</source><translation>Workshop</translation></message>
@@ -92,6 +95,12 @@
     <message><source>better mining</source><translation>better mining</translation></message>
     <message><source>buy energy; powers the colony</source><translation>buy energy; powers the colony</translation></message>
     <message><source>train soldiers</source><translation>train soldiers</translation></message>
+    <message><source>Scavenge</source><translation>Scavenge</translation></message>
+    <message><source>Under construction</source><translation>Under construction</translation></message>
+    <message><source>New game</source><translation>New game</translation></message>
+    <message><source>Starting over</source><translation>Starting over</translation></message>
+    <message><source>Cheap and fragile — the most power per gold.</source><translation>Cheap and fragile — the most power per gold.</translation></message>
+    <message><source>Five times the punch per badger — saves your population.</source><translation>Five times the punch per badger — saves your population.</translation></message>
 </context>
 <context>
     <name>StatsPage</name>
@@ -102,6 +111,21 @@
     <message><source>Gold</source><translation>Gold</translation></message>
     <message><source>Army power</source><translation>Army power</translation></message>
     <message><source>Best marks</source><translation>Best marks</translation></message>
+    <message><source>This game</source><translation>This game</translation></message>
+    <message><source>All time</source><translation>All time</translation></message>
+    <message><source>Absurd numbers</source><translation>Absurd numbers</translation></message>
+    <message><source>Shovel strikes</source><translation>Shovel strikes</translation></message>
+    <message><source>Unemployment rate</source><translation>Unemployment rate</translation></message>
+    <message><source>GDP per badger</source><translation>GDP per badger</translation></message>
+    <message><source>Power bills paid</source><translation>Power bills paid</translation></message>
+    <message><source>Foxes inconvenienced</source><translation>Foxes inconvenienced</translation></message>
+    <message><source>"Formative experiences"</source><translation>"Formative experiences"</translation></message>
+    <message><source>Badgers born while you were away</source><translation>Badgers born while you were away</translation></message>
+    <message><source>Games started</source><translation>Games started</translation></message>
+    <message><source>Total playtime</source><translation>Total playtime</translation></message>
+    <message><source>Gold earned, all games</source><translation>Gold earned, all games</translation></message>
+    <message><source>Raids won, all games</source><translation>Raids won, all games</translation></message>
+    <message><source>Shovel strikes, all games</source><translation>Shovel strikes, all games</translation></message>
     <message><source>Food</source><translation>Food</translation></message>
     <message><source>Materials</source><translation>Materials</translation></message>
     <message><source>Territory</source><translation>Territory</translation></message>
@@ -138,6 +162,7 @@
     <message><source>Fast battle animation</source><translation>Fast battle animation</translation></message>
     <message><source>Haptic feedback</source><translation>Haptic feedback</translation></message>
     <message><source>Notify when a raid is ready</source><translation>Notify when a raid is ready</translation></message>
+    <message><source>Notify when the power runs out</source><translation>Notify when the power runs out</translation></message>
     <message><source>Language</source><translation>Language</translation></message>
     <message><source>Takes effect after restarting the app.</source><translation>Takes effect after restarting the app.</translation></message>
     <message><source>System default</source><translation>System default</translation></message>
