@@ -24,6 +24,24 @@ Page {
         if (h >= 1) return h + " h " + m + " min"
         return Math.max(1, Math.ceil(ms / 60000)) + " min"
     }
+    function fmtEta(sec) {
+        var s = Math.ceil(sec)
+        if (s >= 60) return Math.floor(s / 60) + " min " + (s % 60) + " s"
+        return s + " s"
+    }
+    // The current stage's exit condition, spelled out so nobody is left tapping Scavenge forever.
+    function goalText() {
+        var k = Game.goalKind
+        if (k === "") return ""
+        var c = Game.goalCurrent, t = Game.goalTarget
+        var tail = " (" + Math.min(c, t) + "/" + t + ")"
+        if (k === "population") return qsTr("Grow the colony to %1 badgers").arg(t) + tail
+        if (k === "buildings") return qsTr("Raise %1 buildings").arg(t) + tail
+        if (k === "gold") return qsTr("Earn %1 gold").arg(t) + tail
+        if (k === "units") return qsTr("Train %1 soldiers").arg(t) + tail
+        if (k === "raids") return qsTr("Win a raid") + tail
+        return ""
+    }
     function buildingCounts() {
         var c = {}
         var b = Game.buildings
@@ -69,6 +87,14 @@ Page {
             text: qsTr("Stage") + " " + Game.stage + " · " + stageName(Game.stage)
             font.pixelSize: Theme.fontSizeExtraSmall
             color: Theme.secondaryColor
+        }
+        Label {
+            anchors.horizontalCenter: parent.horizontalCenter
+            visible: text.length > 0
+            text: page.goalText()
+            font.pixelSize: Theme.fontSizeExtraSmall
+            color: Theme.highlightColor
+            horizontalAlignment: Text.AlignHCenter
         }
 
         Flow {
@@ -149,6 +175,7 @@ Page {
                     stage: Game.stage
                     counts: buildingCounts()
                     blackout: Game.blackout
+                    starving: Game.starving
                     siteBld: Game.buildSite
                     siteProgress: Game.buildProgress
                 }
@@ -273,13 +300,28 @@ Page {
             // Buildings: sprite, cost with icon, and what it actually does. -----------
             SectionHeader { visible: Game.stage >= 1; text: qsTr("Buildings") }
 
+            // A site with no builders never finishes — say so, right under the header.
+            Label {
+                visible: Game.stage >= 1 && Game.buildSite >= 0 && Game.builders <= 0
+                x: Theme.horizontalPageMargin
+                width: col.width - 2 * Theme.horizontalPageMargin
+                wrapMode: Text.WordWrap
+                text: qsTr("You need at least one builder to construct a building.")
+                font.pixelSize: Theme.fontSizeExtraSmall
+                color: "#c0603a"
+            }
+
             Repeater {
                 model: Game.buildings
                 BackgroundItem {
                     width: col.width
                     height: Theme.itemSizeMedium
-                    enabled: modelData.affordable
-                    onClicked: { Game.build(modelData.index); app.buzz() }
+                    enabled: modelData.affordable || modelData.damaged
+                    onClicked: {
+                        if (modelData.damaged) Game.repairBuilding(modelData.index)
+                        else Game.build(modelData.index)
+                        app.buzz()
+                    }
 
                     Image {
                         id: bldIcon
@@ -301,7 +343,7 @@ Page {
                             width: parent.width
                         }
                         Label {
-                            visible: !modelData.site
+                            visible: !modelData.site && !modelData.damaged
                             text: page.bldEffect(modelData.key)
                             font.pixelSize: Theme.fontSizeExtraSmall
                             color: Theme.secondaryColor
@@ -309,10 +351,19 @@ Page {
                             width: parent.width
                         }
                         Label {
+                            visible: modelData.damaged
+                            text: qsTr("Damaged") + " · " + qsTr("repair") + " " + Game.fmt(modelData.repairCost)
+                            font.pixelSize: Theme.fontSizeExtraSmall
+                            color: "#c0603a"
+                        }
+                        Label {
                             visible: modelData.site
                             text: qsTr("Under construction") + " · " + Math.round(modelData.progress * 100) + "%"
+                                  + (Game.builders > 0 && Game.buildEtaSec > 0
+                                     ? " · " + page.fmtEta(Game.buildEtaSec)
+                                     : (Game.builders <= 0 ? " · " + qsTr("stalled") : ""))
                             font.pixelSize: Theme.fontSizeExtraSmall
-                            color: Theme.highlightColor
+                            color: Game.builders > 0 ? Theme.highlightColor : "#c0603a"
                         }
                         Rectangle {
                             visible: modelData.site
@@ -346,7 +397,31 @@ Page {
             }
 
             // Energy: the bar drains toward the dark. ---------------------------------
-            SectionHeader { visible: Game.tradingUnlocked; text: qsTr("Energy") }
+            SectionHeader { visible: Game.energyActive; text: qsTr("Energy") }
+            // No trading post yet: energy matters now, but you can't buy any until you build one.
+            BackgroundItem {
+                visible: Game.energyActive && !Game.tradingUnlocked
+                width: parent.width
+                height: Theme.itemSizeMedium
+                enabled: false
+                Image {
+                    id: enHintIcon
+                    x: Theme.horizontalPageMargin
+                    anchors.verticalCenter: parent.verticalCenter
+                    source: Qt.resolvedUrl("../images/res-energy.png")
+                    smooth: false
+                    width: Theme.iconSizeMedium; height: width
+                    fillMode: Image.PreserveAspectFit
+                    opacity: 0.5
+                }
+                Label {
+                    anchors { left: enHintIcon.right; leftMargin: Theme.paddingMedium; right: parent.right; rightMargin: Theme.horizontalPageMargin; verticalCenter: parent.verticalCenter }
+                    text: qsTr("Build a trading post to buy energy and power the colony.")
+                    wrapMode: Text.WordWrap
+                    font.pixelSize: Theme.fontSizeSmall
+                    color: Theme.secondaryColor
+                }
+            }
             BackgroundItem {
                 visible: Game.tradingUnlocked
                 width: parent.width

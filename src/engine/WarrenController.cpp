@@ -163,11 +163,56 @@ void WarrenController::setNotifyEnergy(bool on)
 }
 
 int WarrenController::buildSite() const { return m_state.siteBld; }
+int WarrenController::eventActiveQ() const { return m_state.eventActive; }
+int WarrenController::eventLevelQ() const
+{
+    return m_state.eventActive >= 0 ? m_state.eventLevel[m_state.eventActive] : 0;
+}
+
+void WarrenController::chooseEvent(int opt)
+{
+    if (m_state.eventActive < 0) return;
+    flushNow();
+    QJsonObject p;
+    p.insert(QLatin1String("ev"), m_state.eventActive);
+    p.insert(QLatin1String("opt"), opt);
+    p.insert(QLatin1String("at"), static_cast<double>(m_clock.nowMs()));
+    appendAndApply(QLatin1String("choose"),
+                   QString::fromUtf8(QJsonDocument(p).toJson(QJsonDocument::Compact)));
+    emit stateChanged();
+    emit liveChanged();
+}
+
+void WarrenController::repairBuilding(int b)
+{
+    if (b < 0 || b >= Balance::BldCount) return;
+    flushNow();
+    QJsonObject p;
+    p.insert(QLatin1String("b"), b);
+    p.insert(QLatin1String("at"), static_cast<double>(m_clock.nowMs()));
+    appendAndApply(QLatin1String("repairbld"),
+                   QString::fromUtf8(QJsonDocument(p).toJson(QJsonDocument::Compact)));
+    emit stateChanged();
+    emit liveChanged();
+}
 
 double WarrenController::buildProgress() const
 {
     if (m_state.siteBld < 0) return 0.0;
-    return m_state.siteProgress / kBld[m_state.siteBld].work;
+    // Project live between flushes, exactly like resources — otherwise the bar only jumps forward
+    // when something forces a flush (e.g. assigning a builder), and looks frozen the rest of the time.
+    double prog = m_state.siteProgress;
+    const int b = m_state.assigned[Build];
+    if (b > 0) {
+        const qint64 now = m_clock.nowMs();
+        double secs = (now - m_lastFlushMs) / 1000.0;
+        if (secs < 0) secs = 0;
+        prog += b * kJobBase[Build] * energyMult(m_state) * secs;
+    }
+    double p = prog / kBld[m_state.siteBld].work;
+    if (p > 1.0) p = 1.0;
+    if (p < 0.0) p = 0.0;
+    return p;
 }
 
 QVariantList WarrenController::sillyStats() const
@@ -207,6 +252,42 @@ int WarrenController::stage() const { return m_state.stage; }
 int WarrenController::population() const { return m_state.population; }
 int WarrenController::idleWorkersQ() const { return warren::idleWorkers(m_state); }
 int WarrenController::housingCapQ() const { return warren::housingCap(m_state); }
+QString WarrenController::goalKind() const
+{
+    switch (m_state.stage) {
+    case 0: return QStringLiteral("population");
+    case 1: return QStringLiteral("buildings");
+    case 2: return QStringLiteral("gold");
+    case 3: return QStringLiteral("units");
+    case 4: return QStringLiteral("raids");
+    default: return QString();
+    }
+}
+
+int WarrenController::goalCurrent() const
+{
+    switch (m_state.stage) {
+    case 0: return m_state.population;
+    case 1: return m_state.buildingsBuilt;
+    case 2: return static_cast<int>(m_state.goldEarned);
+    case 3: return m_state.unitsTrained;
+    case 4: return m_state.raidsWon;
+    default: return 0;
+    }
+}
+
+int WarrenController::goalTarget() const
+{
+    switch (m_state.stage) {
+    case 0: return kGatePopulation;
+    case 1: return kGateBuildings;
+    case 2: return static_cast<int>(kGateGoldEarned);
+    case 3: return kGateUnitsTrained;
+    case 4: return kGateRaidsWon;
+    default: return 0;
+    }
+}
+
 bool WarrenController::energyActive() const { return m_state.stage >= 2; }
 bool WarrenController::tradingUnlocked() const { return m_state.buildings[TradingPost] >= 1; }
 bool WarrenController::barracksUnlocked() const { return m_state.buildings[Barracks] >= 1; }
@@ -254,7 +335,15 @@ double WarrenController::liveRes(int res) const
 
 bool WarrenController::blackout() const
 {
-    return m_state.stage >= 2 && liveRes(Energy) <= 0.0;
+    // Only an electrified colony can go dark: no trading post means no lights to lose in the first
+    // place. Without this gate you hit stage 2, energy sits at 0, and the whole village blacks out
+    // with no way to fix it.
+    return m_state.stage >= 2 && m_state.buildings[TradingPost] >= 1 && liveRes(Energy) <= 0.0;
+}
+
+bool WarrenController::starving() const
+{
+    return liveRes(Food) <= 0.5 && netFood(m_state) < 0.0;
 }
 
 QVariantList WarrenController::resources() const
@@ -312,6 +401,8 @@ QVariantList WarrenController::buildings() const
         m.insert(QStringLiteral("site"), m_state.siteBld == b);
         m.insert(QStringLiteral("progress"),
                  m_state.siteBld == b ? m_state.siteProgress / kBld[b].work : 0.0);
+        m.insert(QStringLiteral("damaged"), bldDamaged(m_state, b));
+        m.insert(QStringLiteral("repairCost"), 40.0);
         out.append(m);
     }
     return out;
@@ -532,9 +623,25 @@ void WarrenController::flushNow()
 
 void WarrenController::onUiTick()
 {
-    if (m_clock.nowMs() - m_lastFlushMs >= kFlushMs)
+    const qint64 now = m_clock.nowMs();
+    if (now - m_lastFlushMs >= kFlushMs)
         flushNow();
-    updateRecords(m_clock.nowMs());
+
+    // Fire an event when the seeded roll and cooldowns allow, and none is active.
+    if (m_state.arrived && m_state.eventActive < 0) {
+        const int ev = rollEvent(m_state, m_salt, now);
+        if (ev >= 0) {
+            flushNow();
+            QJsonObject p;
+            p.insert(QLatin1String("ev"), ev);
+            p.insert(QLatin1String("at"), static_cast<double>(now));
+            appendAndApply(QLatin1String("event"),
+                           QString::fromUtf8(QJsonDocument(p).toJson(QJsonDocument::Compact)));
+            emit stateChanged();
+        }
+    }
+
+    updateRecords(now);
     emit liveChanged();
 }
 
@@ -548,8 +655,25 @@ void WarrenController::arrive()
 
 void WarrenController::tap()
 {
+    // Predict this find so the floating reward matches what the fold will bank.
+    const int idx = m_state.tapsTotal + m_pendingTaps;
+    m_lastTapMat = (m_state.stage >= 1 && (idx % 4) == 3);
     m_pendingTaps += 1;
     emit liveChanged();
+}
+
+bool WarrenController::lastTapMat() const { return m_lastTapMat; }
+int WarrenController::builders() const { return m_state.assigned[Build]; }
+
+double WarrenController::buildEtaSec() const
+{
+    if (m_state.siteBld < 0) return -1.0;
+    const int b = m_state.assigned[Build];
+    if (b <= 0) return -1.0;                 // stalled: no builders
+    const double rate = b * kJobBase[Build] * energyMult(m_state);
+    if (rate <= 0.0) return -1.0;
+    const double remaining = kBld[m_state.siteBld].work * (1.0 - buildProgress());
+    return remaining / rate;
 }
 
 void WarrenController::assign(int job, int delta)

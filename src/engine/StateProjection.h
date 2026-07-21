@@ -29,6 +29,10 @@ bool   targetUnlocked(const GameState& s, int t);
 qint64 raidCooldownLeft(const GameState& s, int t, qint64 nowMs);
 bool   raidReady(const GameState& s, int t, qint64 nowMs);
 
+bool   bldDamaged(const GameState& s, int b);
+bool   eventEligible(const GameState& s, int ev, qint64 nowMs);
+int    rollEvent(const GameState& s, quint64 salt, qint64 nowMs);   // event to fire, or -1
+
 // Fold one event into the state (in place). Invalid/unaffordable events degrade to no-ops so a
 // replayed log can never diverge.
 void applyEvent(GameState& s, const Event& e, quint64 salt);

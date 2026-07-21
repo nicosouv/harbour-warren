@@ -81,6 +81,75 @@ ApplicationWindow {
         if (key === "first_territory") return qsTr("Probably.")
         return qsTr("Onward.")
     }
+    // --- Events -----------------------------------------------------------------------------
+    property var eventKeys: ["storm", "rats", "wanderer", "rain", "merchant",
+                             "transformer", "collapse", "tax", "scouts", "feast"]
+    function evName(k) {
+        if (k === "storm") return qsTr("The storm")
+        if (k === "rats") return qsTr("Rats in the granary")
+        if (k === "wanderer") return qsTr("The wandering badger")
+        if (k === "rain") return qsTr("Pouring rain")
+        if (k === "merchant") return qsTr("The raccoon merchant")
+        if (k === "transformer") return qsTr("The transformer")
+        if (k === "collapse") return qsTr("Collapse in the mine")
+        if (k === "tax") return qsTr("The tax collector")
+        if (k === "scouts") return qsTr("Foxes on the prowl")
+        if (k === "feast") return qsTr("A feast is demanded")
+        return k
+    }
+    function evBody(k) {
+        if (k === "storm") return qsTr("The wind spent the night redecorating. A building lost its roof. The badgers study the hole with great interest and no initiative.")
+        if (k === "rats") return qsTr("Rats found the granary. They left a note: \"thanks\".")
+        if (k === "wanderer") return qsTr("A stranger waits at the entrance with a suitcase and an opinion about your gate.")
+        if (k === "rain") return qsTr("It's raining like the sky has a grudge. The foragers are unhappy.")
+        if (k === "merchant") return qsTr("A raccoon in a coat unfolds a stall. He says \"friend price\". You are not friends.")
+        if (k === "transformer") return qsTr("The transformer is making a noise like a badger with a cold. That is not a good sign.")
+        if (k === "collapse") return qsTr("A gallery caved in. A miner taps out a rhythm behind the rubble. A rather good rhythm.")
+        if (k === "tax") return qsTr("A badger in a suit is counting your granaries. He has a stamp. You have a problem.")
+        if (k === "scouts") return qsTr("Foxes prowl by the gate. They are counting your granaries. Out loud.")
+        if (k === "feast") return qsTr("The colony demands a feast. Banners have been painted. With your paint.")
+        return ""
+    }
+    function evA(k) {
+        if (k === "storm") return qsTr("Repair it")
+        if (k === "rats") return qsTr("Set traps")
+        if (k === "wanderer") return qsTr("Welcome him")
+        if (k === "rain") return qsTr("Carry on")
+        if (k === "merchant") return qsTr("Accept")
+        if (k === "transformer") return qsTr("Repair it")
+        if (k === "collapse") return qsTr("Dig him out")
+        if (k === "tax") return qsTr("Pay up")
+        if (k === "scouts") return qsTr("Pay them off")
+        if (k === "feast") return qsTr("Hold the feast")
+        return qsTr("Yes")
+    }
+    function evB(k) {
+        if (k === "storm") return qsTr("Leave it")
+        if (k === "rats") return qsTr("Share, then")
+        if (k === "wanderer") return qsTr("Refuse")
+        if (k === "rain") return qsTr("Everyone inside")
+        if (k === "merchant") return qsTr("Refuse")
+        if (k === "transformer") return qsTr("Wait it out")
+        if (k === "collapse") return qsTr("Seal the gallery")
+        if (k === "tax") return qsTr("Lose the records")
+        if (k === "scouts") return qsTr("Ignore them")
+        if (k === "feast") return qsTr("Refuse")
+        return qsTr("No")
+    }
+    function evReact(k, opt) {
+        if (k === "storm") return opt === 0 ? qsTr("Fixed. Nature takes note, and will try again.") : qsTr("A building open to the sky. Architecturally daring.")
+        if (k === "rats") return opt === 0 ? qsTr("The traps work. So do the rats, elsewhere.") : qsTr("You now feed two colonies. Only one pays the power bill.")
+        if (k === "wanderer") return opt === 0 ? qsTr("One more mouth. He says he \"brings experience\".") : qsTr("He left for the foxes. No hard feelings, surely.")
+        if (k === "rain") return opt === 0 ? qsTr("Soaked but productive. Well — soaked.") : qsTr("A break. The word will set a precedent.")
+        if (k === "merchant") return opt === 0 ? qsTr("He smiled a lot. So did you. One of you was right.") : qsTr("He left. His coat is worth more than your trading post.")
+        if (k === "transformer") return opt === 0 ? qsTr("Fixed. The noise has been promoted to \"purring\".") : qsTr("It did not pass. It never passes.")
+        if (k === "collapse") return opt === 0 ? qsTr("Saved. He swore never to return to the mine. He returned the next day.") : qsTr("A \"management decision\". That is the term you will use.")
+        if (k === "tax") return opt === 0 ? qsTr("Stamped receipt. You now officially fund something, somewhere.") : qsTr("The records are \"at a cousin's\". The collector has cousins too.")
+        if (k === "scouts") return opt === 0 ? qsTr("They took the coin and left. Cheaper than a fight, worse for the pride.") : qsTr("They came. You were warned. By me. Just now.")
+        if (k === "feast") return opt === 0 ? qsTr("They ate very well. They are already talking about the next one.") : qsTr("The word \"tyrant\" was used. Twice. Well enunciated.")
+        return qsTr("Onward.")
+    }
+
     function raidOutcomeText(outcome) {
         if (outcome === 1) return qsTr("A decisive victory. Try not to let it go to your head.")
         if (outcome === 2) return qsTr("A victory. Most of them even came back.")
@@ -151,7 +220,8 @@ ApplicationWindow {
     }
 
     function maybeNarrate() {
-        if (narrator.line !== "" || battle.visible || welcome.visible || !Game.arrived)
+        if (narrator.line !== "" || battle.visible || welcome.visible || !Game.arrived
+            || Game.eventActive >= 0)
             return
         var key = Game.pendingNarration
         if (key !== "") {
@@ -401,6 +471,76 @@ ApplicationWindow {
                 visible: resultLabel.visible; anchors.horizontalCenter: parent.horizontalCenter
                 text: qsTr("Continue")
                 onClicked: { battle.visible = false; app.maybeNarrate() }
+            }
+        }
+    }
+
+    // Events: a choice, then the narrator's verdict. Blurred, unmissable.
+    Item {
+        id: eventOverlay
+        anchors.fill: parent
+        z: 8700
+        property int curEv: -1
+        property int chosenOpt: 0
+        property bool reacting: false
+        visible: Game.eventActive >= 0 || reacting
+
+        function choose(opt) {
+            curEv = Game.eventActive
+            chosenOpt = opt
+            Game.chooseEvent(opt)
+            reacting = true
+        }
+
+        Loader { anchors.fill: parent; sourceComponent: backdrop; onLoaded: item.active = Qt.binding(function(){ return eventOverlay.visible }) }
+        MouseArea { anchors.fill: parent }
+
+        // Phase 1: the situation and the two choices.
+        Column {
+            anchors.centerIn: parent
+            width: parent.width - 3 * Theme.horizontalPageMargin
+            spacing: Theme.paddingLarge
+            visible: Game.eventActive >= 0 && !eventOverlay.reacting
+            Label {
+                width: parent.width; wrapMode: Text.Wrap; horizontalAlignment: Text.AlignHCenter
+                text: Game.eventActive >= 0 ? app.evName(app.eventKeys[Game.eventActive]) : ""
+                font.pixelSize: Theme.fontSizeLarge; font.bold: true; color: Theme.highlightColor
+            }
+            Label {
+                width: parent.width; wrapMode: Text.Wrap; horizontalAlignment: Text.AlignHCenter
+                text: Game.eventActive >= 0 ? app.evBody(app.eventKeys[Game.eventActive]) : ""
+                font.pixelSize: Theme.fontSizeMedium; font.italic: true; color: Theme.primaryColor
+            }
+            Item { width: 1; height: Theme.paddingMedium }
+            Button {
+                anchors.horizontalCenter: parent.horizontalCenter
+                preferredWidth: Theme.buttonWidthLarge
+                text: Game.eventActive >= 0 ? app.evA(app.eventKeys[Game.eventActive]) : ""
+                onClicked: eventOverlay.choose(0)
+            }
+            Button {
+                anchors.horizontalCenter: parent.horizontalCenter
+                preferredWidth: Theme.buttonWidthLarge
+                text: Game.eventActive >= 0 ? app.evB(app.eventKeys[Game.eventActive]) : ""
+                onClicked: eventOverlay.choose(1)
+            }
+        }
+
+        // Phase 2: the narrator's dry verdict.
+        Column {
+            anchors.centerIn: parent
+            width: parent.width - 3 * Theme.horizontalPageMargin
+            spacing: Theme.paddingLarge
+            visible: eventOverlay.reacting
+            Label {
+                width: parent.width; wrapMode: Text.Wrap; horizontalAlignment: Text.AlignHCenter
+                text: eventOverlay.curEv >= 0 ? app.evReact(app.eventKeys[eventOverlay.curEv], eventOverlay.chosenOpt) : ""
+                font.pixelSize: Theme.fontSizeMedium; font.italic: true; color: Theme.primaryColor
+            }
+            Button {
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: qsTr("Continue")
+                onClicked: { eventOverlay.reacting = false; app.maybeNarrate() }
             }
         }
     }

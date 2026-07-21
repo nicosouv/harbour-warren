@@ -27,6 +27,19 @@ struct GameState {
     int    energyBuys = 0;
     int    raidsLost = 0;
 
+    // Events -----------------------------------------------------------------------------------
+    int    eventActive = -1;        // the event currently offered (-1: none)
+    int    eventsSeen = 0;          // total events fired (seeds the roll)
+    qint64 lastEventMs = 0;         // global cooldown anchor
+    int    eventLevel[Balance::EventCount] = {};   // escalation level per event
+    qint64 eventLastMs[Balance::EventCount] = {};  // per-event cooldown anchor
+
+    quint32 damaged = 0;            // bitmask over buildings whose bonus is suspended (storm)
+
+    // Temporary modifiers, expired lazily at each event's instant.
+    double modProdFactor = 1.0;   qint64 modProdUntil = 0;
+    double modDrainFactor = 1.0;  qint64 modDrainUntil = 0;
+
     int    units[Balance::UnitCount] = { 0, 0 };
     int    unitsTrained = 0;        // lifetime (stage gate)
 

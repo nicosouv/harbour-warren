@@ -60,11 +60,13 @@ static const double kBlackout     = 0.70;   // production factor when the post h
 static const double kEnergyPrice  = 0.5;    // gold per energy (trading post)
 
 // --- Population growth ------------------------------------------------------------------------
-static const double kGrowthRate     = 0.02; // brood progress per second when fed & housed
-static const double kGrowthFoodFloor = 5.0; // need at least this much food stored to grow
+// Slowed hard: at 0.02 the colony hit 12 badgers in ~5 min, outrunning the whole event catalogue.
+static const double kGrowthRate     = 0.0045; // brood progress per second when fed & housed
+static const double kGrowthFoodFloor = 5.0;   // need at least this much food stored to grow
 
-// --- Manual action ----------------------------------------------------------------------------
-static const double kDigFood = 1.0;         // tap in the early game
+// --- Manual action (Scavenge). Mostly food; every 4th find (from stage 1) turns up materials. --
+static const double kDigFood = 1.0;
+static const double kDigMat  = 1.0;
 
 // --- Units (army) -----------------------------------------------------------------------------
 enum Unit { Militia = 0, Veteran, UnitCount };
@@ -128,6 +130,42 @@ static const int    kGateRaidsWon     = 1;      // 4 -> 5
 static const qint64 kOfflineCapMs = Q_INT64_C(604800000); // 7 days
 static const qint64 kFlushMs      = Q_INT64_C(30000);
 static const qint64 kWelcomeMs    = Q_INT64_C(1800000);   // recap shown past 30 min away
+
+// --- Events: recurring, escalating, one at a time (the anti-"nothing left after 5 min"). ------
+enum Event {
+    EvStorm = 0, EvRats, EvWanderer, EvRain, EvMerchant,
+    EvTransformer, EvCollapse, EvTax, EvScouts, EvFeast, EventCount
+};
+struct EventDef {
+    const char* id;
+    int    tier;         // 1 survival, 2 commerce, 3 war, 4 empire
+    qint64 cooldownMs;   // per-event real-time cooldown before it can recur
+};
+static const EventDef kEvent[EventCount] = {
+    { "storm",       1, Q_INT64_C(2700000)  },  // 45 min
+    { "rats",        1, Q_INT64_C(3600000)  },  // 60 min
+    { "wanderer",    1, Q_INT64_C(2700000)  },
+    { "rain",        1, Q_INT64_C(3600000)  },
+    { "merchant",    2, Q_INT64_C(2700000)  },
+    { "transformer", 2, Q_INT64_C(4500000)  },  // 75 min
+    { "collapse",    2, Q_INT64_C(5400000)  },  // 90 min
+    { "tax",         2, Q_INT64_C(5400000)  },
+    { "scouts",      3, Q_INT64_C(3600000)  },
+    { "feast",       4, Q_INT64_C(5400000)  },
+};
+static const qint64 kEventGlobalCd = Q_INT64_C(1200000);  // 20 min between any two events
+static const double kEventChance    = 0.5;                // roll per eligible window
+static const qint64 kModStormBonusMs = Q_INT64_C(0);     // storm damage lasts until repaired
+static const qint64 kModShortMs      = Q_INT64_C(3600000);   // 1 h temporary modifiers
+static const qint64 kModFeastMs      = Q_INT64_C(7200000);   // 2 h
+static const double kFeastFoodCost   = 0.40;   // fraction of stored food
+static const double kFeastProd       = 1.25;
+static const double kFeastRefusePenalty = 0.90;
+static const double kRatsFoodLoss    = 0.20;
+static const double kTaxGoldFrac     = 0.12;
+static const double kScoutsLoss      = 0.15;
+static const double kMerchantSell    = 0.30;   // sells this fraction of food
+static const double kMerchantRate    = 2.5;    // gold per food unit sold
 
 // --- Absurd-statistics counters have no balance knobs; they are free. --------------------------
 

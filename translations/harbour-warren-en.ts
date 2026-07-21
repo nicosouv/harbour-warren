@@ -60,6 +60,65 @@
     <message><source>The enemy</source><translation>The enemy</translation></message>
     <message><source>VICTORY</source><translation>VICTORY</translation></message>
     <message><source>DEFEAT</source><translation>DEFEAT</translation></message>
+    <message><source>The storm</source><translation>The storm</translation></message>
+    <message><source>Rats in the granary</source><translation>Rats in the granary</translation></message>
+    <message><source>The wandering badger</source><translation>The wandering badger</translation></message>
+    <message><source>Pouring rain</source><translation>Pouring rain</translation></message>
+    <message><source>The raccoon merchant</source><translation>The raccoon merchant</translation></message>
+    <message><source>The transformer</source><translation>The transformer</translation></message>
+    <message><source>Collapse in the mine</source><translation>Collapse in the mine</translation></message>
+    <message><source>The tax collector</source><translation>The tax collector</translation></message>
+    <message><source>Foxes on the prowl</source><translation>Foxes on the prowl</translation></message>
+    <message><source>A feast is demanded</source><translation>A feast is demanded</translation></message>
+    <message><source>The wind spent the night redecorating. A building lost its roof. The badgers study the hole with great interest and no initiative.</source><translation>The wind spent the night redecorating. A building lost its roof. The badgers study the hole with great interest and no initiative.</translation></message>
+    <message><source>Rats found the granary. They left a note: "thanks".</source><translation>Rats found the granary. They left a note: "thanks".</translation></message>
+    <message><source>A stranger waits at the entrance with a suitcase and an opinion about your gate.</source><translation>A stranger waits at the entrance with a suitcase and an opinion about your gate.</translation></message>
+    <message><source>It's raining like the sky has a grudge. The foragers are unhappy.</source><translation>It's raining like the sky has a grudge. The foragers are unhappy.</translation></message>
+    <message><source>A raccoon in a coat unfolds a stall. He says "friend price". You are not friends.</source><translation>A raccoon in a coat unfolds a stall. He says "friend price". You are not friends.</translation></message>
+    <message><source>The transformer is making a noise like a badger with a cold. That is not a good sign.</source><translation>The transformer is making a noise like a badger with a cold. That is not a good sign.</translation></message>
+    <message><source>A gallery caved in. A miner taps out a rhythm behind the rubble. A rather good rhythm.</source><translation>A gallery caved in. A miner taps out a rhythm behind the rubble. A rather good rhythm.</translation></message>
+    <message><source>A badger in a suit is counting your granaries. He has a stamp. You have a problem.</source><translation>A badger in a suit is counting your granaries. He has a stamp. You have a problem.</translation></message>
+    <message><source>Foxes prowl by the gate. They are counting your granaries. Out loud.</source><translation>Foxes prowl by the gate. They are counting your granaries. Out loud.</translation></message>
+    <message><source>The colony demands a feast. Banners have been painted. With your paint.</source><translation>The colony demands a feast. Banners have been painted. With your paint.</translation></message>
+    <message><source>Repair it</source><translation>Repair it</translation></message>
+    <message><source>Set traps</source><translation>Set traps</translation></message>
+    <message><source>Welcome him</source><translation>Welcome him</translation></message>
+    <message><source>Carry on</source><translation>Carry on</translation></message>
+    <message><source>Accept</source><translation>Accept</translation></message>
+    <message><source>Dig him out</source><translation>Dig him out</translation></message>
+    <message><source>Pay up</source><translation>Pay up</translation></message>
+    <message><source>Pay them off</source><translation>Pay them off</translation></message>
+    <message><source>Hold the feast</source><translation>Hold the feast</translation></message>
+    <message><source>Yes</source><translation>Yes</translation></message>
+    <message><source>Leave it</source><translation>Leave it</translation></message>
+    <message><source>Share, then</source><translation>Share, then</translation></message>
+    <message><source>Refuse</source><translation>Refuse</translation></message>
+    <message><source>Everyone inside</source><translation>Everyone inside</translation></message>
+    <message><source>Wait it out</source><translation>Wait it out</translation></message>
+    <message><source>Seal the gallery</source><translation>Seal the gallery</translation></message>
+    <message><source>Lose the records</source><translation>Lose the records</translation></message>
+    <message><source>Ignore them</source><translation>Ignore them</translation></message>
+    <message><source>No</source><translation>No</translation></message>
+    <message><source>Fixed. Nature takes note, and will try again.</source><translation>Fixed. Nature takes note, and will try again.</translation></message>
+    <message><source>A building open to the sky. Architecturally daring.</source><translation>A building open to the sky. Architecturally daring.</translation></message>
+    <message><source>The traps work. So do the rats, elsewhere.</source><translation>The traps work. So do the rats, elsewhere.</translation></message>
+    <message><source>You now feed two colonies. Only one pays the power bill.</source><translation>You now feed two colonies. Only one pays the power bill.</translation></message>
+    <message><source>One more mouth. He says he "brings experience".</source><translation>One more mouth. He says he "brings experience".</translation></message>
+    <message><source>He left for the foxes. No hard feelings, surely.</source><translation>He left for the foxes. No hard feelings, surely.</translation></message>
+    <message><source>Soaked but productive. Well — soaked.</source><translation>Soaked but productive. Well — soaked.</translation></message>
+    <message><source>A break. The word will set a precedent.</source><translation>A break. The word will set a precedent.</translation></message>
+    <message><source>He smiled a lot. So did you. One of you was right.</source><translation>He smiled a lot. So did you. One of you was right.</translation></message>
+    <message><source>He left. His coat is worth more than your trading post.</source><translation>He left. His coat is worth more than your trading post.</translation></message>
+    <message><source>Fixed. The noise has been promoted to "purring".</source><translation>Fixed. The noise has been promoted to "purring".</translation></message>
+    <message><source>It did not pass. It never passes.</source><translation>It did not pass. It never passes.</translation></message>
+    <message><source>Saved. He swore never to return to the mine. He returned the next day.</source><translation>Saved. He swore never to return to the mine. He returned the next day.</translation></message>
+    <message><source>A "management decision". That is the term you will use.</source><translation>A "management decision". That is the term you will use.</translation></message>
+    <message><source>Stamped receipt. You now officially fund something, somewhere.</source><translation>Stamped receipt. You now officially fund something, somewhere.</translation></message>
+    <message><source>The records are "at a cousin's". The collector has cousins too.</source><translation>The records are "at a cousin's". The collector has cousins too.</translation></message>
+    <message><source>They took the coin and left. Cheaper than a fight, worse for the pride.</source><translation>They took the coin and left. Cheaper than a fight, worse for the pride.</translation></message>
+    <message><source>They came. You were warned. By me. Just now.</source><translation>They came. You were warned. By me. Just now.</translation></message>
+    <message><source>They ate very well. They are already talking about the next one.</source><translation>They ate very well. They are already talking about the next one.</translation></message>
+    <message><source>The word "tyrant" was used. Twice. Well enunciated.</source><translation>The word "tyrant" was used. Twice. Well enunciated.</translation></message>
 </context>
 <context>
     <name>ColonyPage</name>
@@ -101,6 +160,21 @@
     <message><source>Starting over</source><translation>Starting over</translation></message>
     <message><source>Cheap and fragile — the most power per gold.</source><translation>Cheap and fragile — the most power per gold.</translation></message>
     <message><source>Five times the punch per badger — saves your population.</source><translation>Five times the punch per badger — saves your population.</translation></message>
+    <message><source>stalled</source><translation>stalled</translation></message>
+    <message><source>You need at least one builder to construct a building.</source><translation>You need at least one builder to construct a building.</translation></message>
+    <message><source>Build a trading post to buy energy and power the colony.</source><translation>Build a trading post to buy energy and power the colony.</translation></message>
+    <message><source>Grow the colony to %1 badgers</source><translation>Grow the colony to %1 badgers</translation></message>
+    <message><source>Raise %1 buildings</source><translation>Raise %1 buildings</translation></message>
+    <message><source>Earn %1 gold</source><translation>Earn %1 gold</translation></message>
+    <message><source>Train %1 soldiers</source><translation>Train %1 soldiers</translation></message>
+    <message><source>Win a raid</source><translation>Win a raid</translation></message>
+</context>
+<context>
+    <name>VillageView</name>
+    <message><source>Good night.</source><translation>Good night.</translation></message>
+    <message><source>Whoa, pitch black in here.</source><translation>Whoa, pitch black in here.</translation></message>
+    <message><source>Who didn't pay the bill?</source><translation>Who didn't pay the bill?</translation></message>
+    <message><source>We're hungry.</source><translation>We're hungry.</translation></message>
 </context>
 <context>
     <name>StatsPage</name>

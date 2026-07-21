@@ -60,6 +60,65 @@
     <message><source>The enemy</source><translation>L'ennemi</translation></message>
     <message><source>VICTORY</source><translation>VICTOIRE</translation></message>
     <message><source>DEFEAT</source><translation>DÉFAITE</translation></message>
+    <message><source>The storm</source><translation>La tempête</translation></message>
+    <message><source>Rats in the granary</source><translation>Des rats au grenier</translation></message>
+    <message><source>The wandering badger</source><translation>Le blaireau errant</translation></message>
+    <message><source>Pouring rain</source><translation>Pluie battante</translation></message>
+    <message><source>The raccoon merchant</source><translation>Le marchand raton laveur</translation></message>
+    <message><source>The transformer</source><translation>Le transformateur</translation></message>
+    <message><source>Collapse in the mine</source><translation>Effondrement dans la mine</translation></message>
+    <message><source>The tax collector</source><translation>Le contrôleur des impôts</translation></message>
+    <message><source>Foxes on the prowl</source><translation>Renards en reconnaissance</translation></message>
+    <message><source>A feast is demanded</source><translation>Le festin réclamé</translation></message>
+    <message><source>The wind spent the night redecorating. A building lost its roof. The badgers study the hole with great interest and no initiative.</source><translation>Le vent a passé la nuit à redécorer. Un bâtiment a perdu son toit. Les blaireaux regardent le trou avec beaucoup d'intérêt et aucune initiative.</translation></message>
+    <message><source>Rats found the granary. They left a note: "thanks".</source><translation>Des rats ont trouvé le grenier. Ils ont laissé un mot : « merci ».</translation></message>
+    <message><source>A stranger waits at the entrance with a suitcase and an opinion about your gate.</source><translation>Un inconnu attend devant l'entrée avec une valise et une opinion sur votre portail.</translation></message>
+    <message><source>It's raining like the sky has a grudge. The foragers are unhappy.</source><translation>Il pleut comme si le ciel avait un compte à régler. Les cueilleurs font la grimace.</translation></message>
+    <message><source>A raccoon in a coat unfolds a stall. He says "friend price". You are not friends.</source><translation>Un raton laveur en manteau déplie un étal. Il dit « prix d'ami ». Vous n'êtes pas amis.</translation></message>
+    <message><source>The transformer is making a noise like a badger with a cold. That is not a good sign.</source><translation>Le transformateur fait un bruit de blaireau enrhumé. Ce n'est pas bon signe.</translation></message>
+    <message><source>A gallery caved in. A miner taps out a rhythm behind the rubble. A rather good rhythm.</source><translation>Une galerie s'est effondrée. Un mineur coincé derrière tape en rythme. Plutôt bon, le rythme.</translation></message>
+    <message><source>A badger in a suit is counting your granaries. He has a stamp. You have a problem.</source><translation>Un blaireau en costume compte vos greniers. Il a un tampon. Vous avez un problème.</translation></message>
+    <message><source>Foxes prowl by the gate. They are counting your granaries. Out loud.</source><translation>Des renards rôdent près du portail. Ils comptent vos greniers. À voix haute.</translation></message>
+    <message><source>The colony demands a feast. Banners have been painted. With your paint.</source><translation>La colonie réclame un festin. Des banderoles ont été peintes. Avec votre peinture.</translation></message>
+    <message><source>Repair it</source><translation>Réparer</translation></message>
+    <message><source>Set traps</source><translation>Poser des pièges</translation></message>
+    <message><source>Welcome him</source><translation>L'accueillir</translation></message>
+    <message><source>Carry on</source><translation>On continue</translation></message>
+    <message><source>Accept</source><translation>Accepter</translation></message>
+    <message><source>Dig him out</source><translation>Le sauver</translation></message>
+    <message><source>Pay up</source><translation>Payer</translation></message>
+    <message><source>Pay them off</source><translation>Les soudoyer</translation></message>
+    <message><source>Hold the feast</source><translation>Offrir le festin</translation></message>
+    <message><source>Yes</source><translation>Oui</translation></message>
+    <message><source>Leave it</source><translation>Laisser comme ça</translation></message>
+    <message><source>Share, then</source><translation>Partager, disons</translation></message>
+    <message><source>Refuse</source><translation>Refuser</translation></message>
+    <message><source>Everyone inside</source><translation>Tout le monde à l'abri</translation></message>
+    <message><source>Wait it out</source><translation>Attendre que ça passe</translation></message>
+    <message><source>Seal the gallery</source><translation>Condamner la galerie</translation></message>
+    <message><source>Lose the records</source><translation>Égarer les registres</translation></message>
+    <message><source>Ignore them</source><translation>Les ignorer</translation></message>
+    <message><source>No</source><translation>Non</translation></message>
+    <message><source>Fixed. Nature takes note, and will try again.</source><translation>Réparé. La nature prend note et réessaiera.</translation></message>
+    <message><source>A building open to the sky. Architecturally daring.</source><translation>Un bâtiment à ciel ouvert. Très audacieux, architecturalement.</translation></message>
+    <message><source>The traps work. So do the rats, elsewhere.</source><translation>Les pièges fonctionnent. Les rats aussi, ailleurs.</translation></message>
+    <message><source>You now feed two colonies. Only one pays the power bill.</source><translation>Vous nourrissez désormais deux colonies. Une seule paie l'énergie.</translation></message>
+    <message><source>One more mouth. He says he "brings experience".</source><translation>Une bouche de plus. Il paraît qu'il « apporte de l'expérience ».</translation></message>
+    <message><source>He left for the foxes. No hard feelings, surely.</source><translation>Il est parti chez les renards. Sans rancune, sûrement.</translation></message>
+    <message><source>Soaked but productive. Well — soaked.</source><translation>Trempés mais productifs. Enfin, trempés.</translation></message>
+    <message><source>A break. The word will set a precedent.</source><translation>Une pause. Le mot fera jurisprudence.</translation></message>
+    <message><source>He smiled a lot. So did you. One of you was right.</source><translation>Il souriait beaucoup. Vous aussi. L'un de vous deux avait raison.</translation></message>
+    <message><source>He left. His coat is worth more than your trading post.</source><translation>Il est reparti. Son manteau vaut plus que votre comptoir.</translation></message>
+    <message><source>Fixed. The noise has been promoted to "purring".</source><translation>Réparé. Le bruit a été promu « ronronnement ».</translation></message>
+    <message><source>It did not pass. It never passes.</source><translation>Ça n'est pas passé. Ça ne passe jamais.</translation></message>
+    <message><source>Saved. He swore never to return to the mine. He returned the next day.</source><translation>Sauvé. Il a juré de ne jamais retourner à la mine. Il y est retourné le lendemain.</translation></message>
+    <message><source>A "management decision". That is the term you will use.</source><translation>Une « décision de gestionnaire ». C'est le terme que vous emploierez.</translation></message>
+    <message><source>Stamped receipt. You now officially fund something, somewhere.</source><translation>Reçu tamponné. Vous financez officiellement quelque chose, quelque part.</translation></message>
+    <message><source>The records are "at a cousin's". The collector has cousins too.</source><translation>Les registres sont « chez un cousin ». Le contrôleur a des cousins aussi.</translation></message>
+    <message><source>They took the coin and left. Cheaper than a fight, worse for the pride.</source><translation>Ils ont pris la pièce et sont partis. Moins cher qu'une bagarre, pire pour l'orgueil.</translation></message>
+    <message><source>They came. You were warned. By me. Just now.</source><translation>Ils sont venus. Vous étiez prévenu. Par moi. À l'instant même.</translation></message>
+    <message><source>They ate very well. They are already talking about the next one.</source><translation>Ils ont très bien mangé. Ils parlent déjà du prochain.</translation></message>
+    <message><source>The word "tyrant" was used. Twice. Well enunciated.</source><translation>Le mot « tyran » a été prononcé. Deux fois. Bien articulé.</translation></message>
 </context>
 <context>
     <name>ColonyPage</name>
@@ -101,6 +160,21 @@
     <message><source>Starting over</source><translation>Nouvelle partie</translation></message>
     <message><source>Cheap and fragile — the most power per gold.</source><translation>Pas chère et fragile — le plus de puissance par pièce d'or.</translation></message>
     <message><source>Five times the punch per badger — saves your population.</source><translation>Cinq fois plus de puissance par blaireau — économise votre population.</translation></message>
+    <message><source>stalled</source><translation>à l'arrêt</translation></message>
+    <message><source>You need at least one builder to construct a building.</source><translation>Attention, vous devez avoir au moins 1 bâtisseur pour construire un bâtiment.</translation></message>
+    <message><source>Build a trading post to buy energy and power the colony.</source><translation>Construisez un comptoir de commerce pour acheter de l'énergie et alimenter la colonie.</translation></message>
+    <message><source>Grow the colony to %1 badgers</source><translation>Faites grandir la colonie jusqu'à %1 blaireaux</translation></message>
+    <message><source>Raise %1 buildings</source><translation>Construisez %1 bâtiments</translation></message>
+    <message><source>Earn %1 gold</source><translation>Gagnez %1 pièces d'or</translation></message>
+    <message><source>Train %1 soldiers</source><translation>Formez %1 soldats</translation></message>
+    <message><source>Win a raid</source><translation>Remportez un raid</translation></message>
+</context>
+<context>
+    <name>VillageView</name>
+    <message><source>Good night.</source><translation>Bonne nuit.</translation></message>
+    <message><source>Whoa, pitch black in here.</source><translation>Oulah, il fait tout noir ici.</translation></message>
+    <message><source>Who didn't pay the bill?</source><translation>Qui n'a pas payé la facture ?</translation></message>
+    <message><source>We're hungry.</source><translation>On a faim.</translation></message>
 </context>
 <context>
     <name>StatsPage</name>

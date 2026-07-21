@@ -29,9 +29,18 @@ class WarrenController : public QObject
     Q_PROPERTY(bool notifyEnergy READ notifyEnergy WRITE setNotifyEnergy NOTIFY prefsChanged)
     Q_PROPERTY(int buildSite READ buildSite NOTIFY stateChanged)
     Q_PROPERTY(double buildProgress READ buildProgress NOTIFY liveChanged)
+    Q_PROPERTY(int eventActive READ eventActiveQ NOTIFY stateChanged)
+    Q_PROPERTY(int eventLevel READ eventLevelQ NOTIFY stateChanged)
+    Q_PROPERTY(bool lastTapMat READ lastTapMat NOTIFY liveChanged)
+    Q_PROPERTY(int builders READ builders NOTIFY stateChanged)
+    Q_PROPERTY(double buildEtaSec READ buildEtaSec NOTIFY liveChanged)
 
     Q_PROPERTY(bool arrived READ arrived NOTIFY stateChanged)
     Q_PROPERTY(int stage READ stage NOTIFY stateChanged)
+    // The next milestone that lifts the current stage — shown so the player is never guessing.
+    Q_PROPERTY(QString goalKind READ goalKind NOTIFY stateChanged)
+    Q_PROPERTY(int goalCurrent READ goalCurrent NOTIFY stateChanged)
+    Q_PROPERTY(int goalTarget READ goalTarget NOTIFY stateChanged)
 
     Q_PROPERTY(QVariantList resources READ resources NOTIFY liveChanged)
     Q_PROPERTY(int population READ population NOTIFY stateChanged)
@@ -43,6 +52,7 @@ class WarrenController : public QObject
     Q_PROPERTY(bool energyActive READ energyActive NOTIFY stateChanged)
     Q_PROPERTY(bool tradingUnlocked READ tradingUnlocked NOTIFY stateChanged)
     Q_PROPERTY(bool blackout READ blackout NOTIFY liveChanged)
+    Q_PROPERTY(bool starving READ starving NOTIFY liveChanged)
 
     Q_PROPERTY(bool barracksUnlocked READ barracksUnlocked NOTIFY stateChanged)
     Q_PROPERTY(bool raidsUnlocked READ raidsUnlocked NOTIFY stateChanged)
@@ -85,9 +95,17 @@ public:
     void setNotifyEnergy(bool on);
     int buildSite() const;
     double buildProgress() const;
+    int eventActiveQ() const;
+    int eventLevelQ() const;
+    bool lastTapMat() const;
+    int builders() const;
+    double buildEtaSec() const;
 
     bool arrived() const;
     int stage() const;
+    QString goalKind() const;
+    int goalCurrent() const;
+    int goalTarget() const;
 
     QVariantList resources() const;
     int population() const;
@@ -99,6 +117,7 @@ public:
     bool energyActive() const;
     bool tradingUnlocked() const;
     bool blackout() const;
+    bool starving() const;
 
     bool barracksUnlocked() const;
     bool raidsUnlocked() const;
@@ -137,6 +156,8 @@ public:
     Q_INVOKABLE void train(int u, int n);
     Q_INVOKABLE void raid(int t);
     Q_INVOKABLE void flushNow();
+    Q_INVOKABLE void chooseEvent(int opt);
+    Q_INVOKABLE void repairBuilding(int b);
     Q_INVOKABLE void ackNarration();
     Q_INVOKABLE void ackWelcome();
     Q_INVOKABLE void clearData();
@@ -172,6 +193,7 @@ private:
     int    m_pendingTaps = 0;
     QTimer m_uiTimer;
 
+    bool   m_lastTapMat = false;
     bool   m_welcomePending = false;
     double m_welcomeMs = 0.0;
     double m_welcomeGold = 0.0;
