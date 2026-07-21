@@ -168,6 +168,9 @@
     <message><source>Earn %1 gold</source><translation>Earn %1 gold</translation></message>
     <message><source>Train %1 soldiers</source><translation>Train %1 soldiers</translation></message>
     <message><source>Win a raid</source><translation>Win a raid</translation></message>
+    <message><source>breeding</source><translation>breeding</translation></message>
+    <message><source>Assign badgers to forage: well fed, the colony breeds on its own.</source><translation>Assign badgers to forage: well fed, the colony breeds on its own.</translation></message>
+    <message><source>a new badger</source><translation>a new badger</translation></message>
 </context>
 <context>
     <name>VillageView</name>
@@ -230,6 +233,13 @@
     <message><source>Small</source><translation>Small</translation></message>
     <message><source>Large</source><translation>Large</translation></message>
     <message><source>Reduce visual effects</source><translation>Reduce visual effects</translation></message>
+    <message><source>Freezes the day/night cycle and badger animations.</source><translation>Freezes the day/night cycle and badger animations.</translation></message>
+    <message><source>Village ambiance</source><translation>Village ambiance</translation></message>
+    <message><source>An animated day/night cycle, or a fixed time of day.</source><translation>An animated day/night cycle, or a fixed time of day.</translation></message>
+    <message><source>Day/night cycle</source><translation>Day/night cycle</translation></message>
+    <message><source>Dawn</source><translation>Dawn</translation></message>
+    <message><source>Dusk</source><translation>Dusk</translation></message>
+    <message><source>Night</source><translation>Night</translation></message>
     <message><source>Full numbers</source><translation>Full numbers</translation></message>
     <message><source>1,234,567 instead of 1.23 M</source><translation>1,234,567 instead of 1.23 M</translation></message>
     <message><source>Gameplay</source><translation>Gameplay</translation></message>

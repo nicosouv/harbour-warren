@@ -27,6 +27,7 @@ class WarrenController : public QObject
     Q_PROPERTY(bool fastBattle READ fastBattle WRITE setFastBattle NOTIFY prefsChanged)
     Q_PROPERTY(bool fullNumbers READ fullNumbers WRITE setFullNumbers NOTIFY prefsChanged)
     Q_PROPERTY(bool notifyEnergy READ notifyEnergy WRITE setNotifyEnergy NOTIFY prefsChanged)
+    Q_PROPERTY(int ambiance READ ambiance WRITE setAmbiance NOTIFY prefsChanged)
     Q_PROPERTY(int buildSite READ buildSite NOTIFY stateChanged)
     Q_PROPERTY(double buildProgress READ buildProgress NOTIFY liveChanged)
     Q_PROPERTY(int eventActive READ eventActiveQ NOTIFY stateChanged)
@@ -53,6 +54,8 @@ class WarrenController : public QObject
     Q_PROPERTY(bool tradingUnlocked READ tradingUnlocked NOTIFY stateChanged)
     Q_PROPERTY(bool blackout READ blackout NOTIFY liveChanged)
     Q_PROPERTY(bool starving READ starving NOTIFY liveChanged)
+    Q_PROPERTY(bool growing READ growing NOTIFY liveChanged)
+    Q_PROPERTY(double broodProgress READ broodProgress NOTIFY liveChanged)
 
     Q_PROPERTY(bool barracksUnlocked READ barracksUnlocked NOTIFY stateChanged)
     Q_PROPERTY(bool raidsUnlocked READ raidsUnlocked NOTIFY stateChanged)
@@ -93,6 +96,8 @@ public:
     void setFullNumbers(bool on);
     bool notifyEnergy() const;
     void setNotifyEnergy(bool on);
+    int ambiance() const;
+    void setAmbiance(int mode);
     int buildSite() const;
     double buildProgress() const;
     int eventActiveQ() const;
@@ -118,6 +123,8 @@ public:
     bool tradingUnlocked() const;
     bool blackout() const;
     bool starving() const;
+    bool growing() const;
+    double broodProgress() const;
 
     bool barracksUnlocked() const;
     bool raidsUnlocked() const;

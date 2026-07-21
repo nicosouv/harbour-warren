@@ -40,8 +40,22 @@ Page {
                 onCurrentIndexChanged: Game.notchMargin = currentIndex
             }
 
+            ComboBox {
+                label: qsTr("Village ambiance")
+                description: qsTr("An animated day/night cycle, or a fixed time of day.")
+                currentIndex: Game.ambiance
+                menu: ContextMenu {
+                    MenuItem { text: qsTr("Day/night cycle") }
+                    MenuItem { text: qsTr("Dawn") }
+                    MenuItem { text: qsTr("Dusk") }
+                    MenuItem { text: qsTr("Night") }
+                }
+                onCurrentIndexChanged: Game.ambiance = currentIndex
+            }
+
             TextSwitch {
                 text: qsTr("Reduce visual effects")
+                description: qsTr("Freezes the day/night cycle and badger animations.")
                 checked: Game.reduceFx
                 onCheckedChanged: Game.reduceFx = checked
             }

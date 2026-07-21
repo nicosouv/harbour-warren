@@ -346,6 +346,42 @@ bool WarrenController::starving() const
     return liveRes(Food) <= 0.5 && netFood(m_state) < 0.0;
 }
 
+bool WarrenController::growing() const
+{
+    return m_state.population < warren::housingCap(m_state) && liveRes(Food) > kGrowthFoodFloor;
+}
+
+double WarrenController::broodProgress() const
+{
+    // 0..1 toward the next badger, projected live like resources. Zero when there is no room.
+    if (m_state.population >= warren::housingCap(m_state)) return 0.0;
+    double b = m_state.brood;
+    if (liveRes(Food) > kGrowthFoodFloor) {
+        const qint64 now = m_clock.nowMs();
+        double secs = (now - m_lastFlushMs) / 1000.0;
+        if (secs < 0) secs = 0;
+        b += kGrowthRate * secs;
+    }
+    b -= std::floor(b);
+    if (b < 0.0) b = 0.0;
+    if (b > 1.0) b = 1.0;
+    return b;
+}
+
+int WarrenController::ambiance() const
+{
+    // 0 animated day/night cycle (default) / 1 dawn / 2 dusk / 3 night
+    return m_settings.value(QStringLiteral("ambiance"), 0).toInt();
+}
+
+void WarrenController::setAmbiance(int mode)
+{
+    if (mode < 0) mode = 0;
+    if (mode > 3) mode = 3;
+    m_settings.setValue(QStringLiteral("ambiance"), mode);
+    emit prefsChanged();
+}
+
 QVariantList WarrenController::resources() const
 {
     static const char* const keys[ResCount] = { "food", "materials", "gold", "energy" };

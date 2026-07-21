@@ -11,6 +11,20 @@ Page {
             pageStack.pushAttached(Qt.resolvedUrl("StatsPage.qml"))
     }
 
+    // Announce every birth: population only rises through breeding here, so a jump means new badgers.
+    property int lastPop: -1
+    Connections {
+        target: Game
+        onStateChanged: {
+            if (page.lastPop >= 0 && Game.population > page.lastPop) {
+                birthToast.delta = Game.population - page.lastPop
+                birthAnim.restart()
+                app.buzz()
+            }
+            page.lastPop = Game.population
+        }
+    }
+
     function stageName(s) {
         if (s === 0) return qsTr("Founding")
         if (s === 1) return qsTr("Shelter")
@@ -96,6 +110,46 @@ Page {
             color: Theme.highlightColor
             horizontalAlignment: Text.AlignHCenter
         }
+        // Reproduction: fed and housed badgers breed on their own. Show it happening so "grow the
+        // colony" is never a mystery — you can watch the next badger coming.
+        Row {
+            anchors.horizontalCenter: parent.horizontalCenter
+            visible: Game.growing
+            spacing: Theme.paddingSmall
+            Image {
+                anchors.verticalCenter: parent.verticalCenter
+                source: Qt.resolvedUrl("../images/badger-front.png")
+                smooth: false; width: Theme.iconSizeExtraSmall * 0.7; height: width
+                fillMode: Image.PreserveAspectFit
+            }
+            Rectangle {
+                anchors.verticalCenter: parent.verticalCenter
+                width: Theme.itemSizeHuge; height: 5; radius: 2
+                color: Theme.rgba(Theme.primaryColor, 0.15)
+                Rectangle {
+                    width: parent.width * Game.broodProgress; height: parent.height; radius: 2
+                    color: "#7fae5a"
+                    Behavior on width { NumberAnimation { duration: 400 } }
+                }
+            }
+            Label {
+                anchors.verticalCenter: parent.verticalCenter
+                text: qsTr("breeding")
+                font.pixelSize: Theme.fontSizeExtraSmall
+                color: Theme.secondaryColor
+            }
+        }
+        // Not growing yet at the start: point at the actual lever — food, from foragers.
+        Label {
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: parent.width - 2 * Theme.horizontalPageMargin
+            horizontalAlignment: Text.AlignHCenter
+            wrapMode: Text.WordWrap
+            visible: Game.stage === 0 && !Game.growing && Game.population < Game.housingCap
+            text: qsTr("Assign badgers to forage: well fed, the colony breeds on its own.")
+            font.pixelSize: Theme.fontSizeExtraSmall
+            color: "#c0a24a"
+        }
 
         Flow {
             width: parent.width - 2 * Theme.horizontalPageMargin
@@ -178,6 +232,35 @@ Page {
                     starving: Game.starving
                     siteBld: Game.buildSite
                     siteProgress: Game.buildProgress
+                    ambiance: Game.ambiance
+                    reduceFx: Game.reduceFx
+                }
+
+                // A birth is announced right on the village: a new badger, unmistakably.
+                Row {
+                    id: birthToast
+                    property int delta: 1
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    y: parent.height * 0.5
+                    spacing: Theme.paddingSmall
+                    opacity: 0
+                    Label { anchors.verticalCenter: parent.verticalCenter; text: "+" + birthToast.delta; color: "#9fd06a"; font.pixelSize: Theme.fontSizeMedium; font.bold: true }
+                    Image {
+                        anchors.verticalCenter: parent.verticalCenter
+                        source: Qt.resolvedUrl("../images/badger-front.png")
+                        smooth: false; width: Theme.iconSizeSmall; height: width
+                        fillMode: Image.PreserveAspectFit
+                    }
+                    Label { anchors.verticalCenter: parent.verticalCenter; text: qsTr("a new badger"); color: Theme.primaryColor; font.pixelSize: Theme.fontSizeSmall }
+                }
+                ParallelAnimation {
+                    id: birthAnim
+                    NumberAnimation { target: birthToast; property: "y"; from: birthToast.parent.height * 0.5; to: birthToast.parent.height * 0.24; duration: 1400; easing.type: Easing.OutQuad }
+                    SequentialAnimation {
+                        NumberAnimation { target: birthToast; property: "opacity"; to: 1; duration: 220 }
+                        PauseAnimation { duration: 800 }
+                        NumberAnimation { target: birthToast; property: "opacity"; to: 0; duration: 380 }
+                    }
                 }
             }
 

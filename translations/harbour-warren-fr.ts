@@ -168,6 +168,9 @@
     <message><source>Earn %1 gold</source><translation>Gagnez %1 pièces d'or</translation></message>
     <message><source>Train %1 soldiers</source><translation>Formez %1 soldats</translation></message>
     <message><source>Win a raid</source><translation>Remportez un raid</translation></message>
+    <message><source>breeding</source><translation>reproduction</translation></message>
+    <message><source>Assign badgers to forage: well fed, the colony breeds on its own.</source><translation>Assignez des blaireaux à la cueillette : bien nourrie, la colonie se reproduit toute seule.</translation></message>
+    <message><source>a new badger</source><translation>un nouveau blaireau</translation></message>
 </context>
 <context>
     <name>VillageView</name>
@@ -230,6 +233,13 @@
     <message><source>Small</source><translation>Petite</translation></message>
     <message><source>Large</source><translation>Grande</translation></message>
     <message><source>Reduce visual effects</source><translation>Réduire les effets visuels</translation></message>
+    <message><source>Freezes the day/night cycle and badger animations.</source><translation>Fige le cycle jour/nuit et les animations des blaireaux.</translation></message>
+    <message><source>Village ambiance</source><translation>Ambiance du village</translation></message>
+    <message><source>An animated day/night cycle, or a fixed time of day.</source><translation>Un cycle jour/nuit animé, ou une heure fixe.</translation></message>
+    <message><source>Day/night cycle</source><translation>Cycle jour/nuit</translation></message>
+    <message><source>Dawn</source><translation>Aube</translation></message>
+    <message><source>Dusk</source><translation>Crépuscule</translation></message>
+    <message><source>Night</source><translation>Nuit</translation></message>
     <message><source>Full numbers</source><translation>Nombres complets</translation></message>
     <message><source>1,234,567 instead of 1.23 M</source><translation>1 234 567 au lieu de 1,23 M</translation></message>
     <message><source>Gameplay</source><translation>Jeu</translation></message>
