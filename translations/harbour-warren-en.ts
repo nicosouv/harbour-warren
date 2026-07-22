@@ -234,6 +234,11 @@
     <message><source>home defence, foxes attack less</source><translation>home defence, foxes attack less</translation></message>
     <message><source>+10% to every yield</source><translation>+10% to every yield</translation></message>
     <message><source>Burrows full. Build a burrow to house more badgers.</source><translation>Burrows full. Build a burrow to house more badgers.</translation></message>
+    <message><source>your power</source><translation>your power</translation></message>
+    <message><source>crushing</source><translation>crushing</translation></message>
+    <message><source>favourable</source><translation>favourable</translation></message>
+    <message><source>risky</source><translation>risky</translation></message>
+    <message><source>suicidal</source><translation>suicidal</translation></message>
 </context>
 <context>
     <name>VillageView</name>

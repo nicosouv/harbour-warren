@@ -433,6 +433,19 @@ Page {
                     Row {
                         anchors { right: parent.right; rightMargin: Theme.horizontalPageMargin; verticalCenter: parent.verticalCenter }
                         spacing: Theme.paddingMedium
+                        // Bulk buttons appear once the colony is big enough to warrant them.
+                        Label {
+                            anchors.verticalCenter: parent.verticalCenter
+                            visible: Game.population > 4
+                            text: "-5"
+                            font.pixelSize: Theme.fontSizeSmall; font.family: "Monospace"
+                            color: modelData.assigned > 0 ? Theme.primaryColor : Theme.secondaryColor
+                            MouseArea {
+                                anchors.fill: parent; anchors.margins: -Theme.paddingSmall
+                                enabled: modelData.assigned > 0
+                                onClicked: { Game.assign(modelData.index, -5); app.buzz() }
+                            }
+                        }
                         IconButton {
                             icon.source: "image://theme/icon-m-remove"
                             enabled: modelData.assigned > 0
@@ -442,6 +455,18 @@ Page {
                             icon.source: "image://theme/icon-m-add"
                             enabled: Game.idleWorkers > 0
                             onClicked: { Game.assign(modelData.index, 1); app.buzz(); if (Math.random() < 0.34) app.quip("assign") }
+                        }
+                        Label {
+                            anchors.verticalCenter: parent.verticalCenter
+                            visible: Game.population > 4
+                            text: "+5"
+                            font.pixelSize: Theme.fontSizeSmall; font.family: "Monospace"
+                            color: Game.idleWorkers > 0 ? Theme.primaryColor : Theme.secondaryColor
+                            MouseArea {
+                                anchors.fill: parent; anchors.margins: -Theme.paddingSmall
+                                enabled: Game.idleWorkers > 0
+                                onClicked: { Game.assign(modelData.index, 5); app.buzz(); if (Math.random() < 0.34) app.quip("assign") }
+                            }
                         }
                     }
                 }
@@ -530,6 +555,7 @@ Page {
                         }
                     }
                     Row {
+                        visible: !modelData.site
                         anchors { right: parent.right; rightMargin: Theme.horizontalPageMargin; verticalCenter: parent.verticalCenter }
                         spacing: Theme.paddingSmall
                         Image {
@@ -545,6 +571,13 @@ Page {
                             font.family: "Monospace"
                             color: modelData.affordable ? "#b0895a" : Theme.secondaryColor
                         }
+                    }
+                    // While a site is up, the cost gives way to a cancel button (half the materials back).
+                    IconButton {
+                        visible: modelData.site
+                        anchors { right: parent.right; rightMargin: Theme.horizontalPageMargin; verticalCenter: parent.verticalCenter }
+                        icon.source: "image://theme/icon-m-cancel"
+                        onClicked: { Game.cancelBuild(); app.buzz() }
                     }
                 }
             }
@@ -746,6 +779,21 @@ Page {
                                   : qsTr("ready in") + " " + fmtCooldown(modelData.cooldownLeft)
                             font.pixelSize: Theme.fontSizeExtraSmall
                             color: modelData.ready ? Theme.secondaryColor : "#c0a24a"
+                        }
+                        // Odds preview: your effective power (with intel) against the target's defence.
+                        Label {
+                            property real eff: Game.armyPower * (1 + modelData.intelPct / 100)
+                            visible: modelData.ready && Game.totalUnits > 0
+                            width: parent.width
+                            truncationMode: TruncationMode.Fade
+                            font.pixelSize: Theme.fontSizeExtraSmall
+                            text: qsTr("your power") + " " + Game.fmt(eff) + "  ·  "
+                                  + (eff >= modelData.defense * 1.5 ? qsTr("crushing")
+                                     : eff >= modelData.defense ? qsTr("favourable")
+                                     : eff >= modelData.defense * 0.66 ? qsTr("risky")
+                                     : qsTr("suicidal"))
+                            color: eff >= modelData.defense ? "#7fae5a"
+                                   : eff >= modelData.defense * 0.66 ? "#c0a24a" : "#c0603a"
                         }
                     }
                     IconButton {

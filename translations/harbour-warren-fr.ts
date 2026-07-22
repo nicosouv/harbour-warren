@@ -234,6 +234,11 @@
     <message><source>home defence, foxes attack less</source><translation>défense du terrier, les renards attaquent moins</translation></message>
     <message><source>+10% to every yield</source><translation>+10 % sur toute la production</translation></message>
     <message><source>Burrows full. Build a burrow to house more badgers.</source><translation>Terriers pleins. Construisez un terrier pour loger plus de blaireaux.</translation></message>
+    <message><source>your power</source><translation>votre puissance</translation></message>
+    <message><source>crushing</source><translation>écrasant</translation></message>
+    <message><source>favourable</source><translation>favorable</translation></message>
+    <message><source>risky</source><translation>risqué</translation></message>
+    <message><source>suicidal</source><translation>suicidaire</translation></message>
 </context>
 <context>
     <name>VillageView</name>

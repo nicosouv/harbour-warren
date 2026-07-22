@@ -783,6 +783,18 @@ void WarrenController::build(int b)
     emit liveChanged();
 }
 
+void WarrenController::cancelBuild()
+{
+    flushNow();
+    if (m_state.siteBld < 0) return;
+    QJsonObject p;
+    p.insert(QLatin1String("at"), static_cast<double>(m_clock.nowMs()));
+    appendAndApply(QLatin1String("cancelbuild"),
+                   QString::fromUtf8(QJsonDocument(p).toJson(QJsonDocument::Compact)));
+    emit stateChanged();
+    emit liveChanged();
+}
+
 void WarrenController::buyEnergy()
 {
     flushNow();

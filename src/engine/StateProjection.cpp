@@ -473,6 +473,13 @@ void applyEvent(GameState& s, const Event& e, quint64 salt)
                 s.siteProgress = 0.0;
             }
         }
+    } else if (e.kind == QLatin1String("cancelbuild")) {
+        // Abandon the site and hand back half the materials; the rest is a lesson.
+        if (s.siteBld >= 0) {
+            s.res[Materials] += 0.5 * buildCost(s, s.siteBld, 1);
+            s.siteBld = -1;
+            s.siteProgress = 0.0;
+        }
     } else if (e.kind == QLatin1String("buyenergy")) {
         const double amount = p.value(QLatin1String("e")).toDouble();
         if (s.stage >= 2 && s.buildings[TradingPost] >= 1 && amount > 0.0) {

@@ -170,6 +170,7 @@ public:
     Q_INVOKABLE void tap();
     Q_INVOKABLE void assign(int job, int delta);
     Q_INVOKABLE void build(int b);
+    Q_INVOKABLE void cancelBuild();        // abandon the current site, refund half its cost
     Q_INVOKABLE void buyEnergy();          // fill to cap with available gold
     Q_INVOKABLE void train(int u, int n);
     Q_INVOKABLE void raid(int t);
