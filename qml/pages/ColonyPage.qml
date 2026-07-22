@@ -24,9 +24,17 @@ Page {
                 birthToast.delta = Game.population - page.lastPop
                 birthAnim.restart()
                 app.buzz()
+                app.quip(Game.population >= Game.housingCap ? "housing_full" : "grow")
             }
             page.lastPop = Game.population
         }
+    }
+
+    // Stage 0 nudge: idle badgers and a shiny button. The narrator connects the dots.
+    Timer {
+        interval: 30000; repeat: true
+        running: Game.stage === 0 && Game.idleWorkers > 0 && Game.arrived
+        onTriggered: app.quip("idle")
     }
 
     function stageName(s) {
@@ -356,7 +364,7 @@ Page {
             MouseArea {
                 id: digArea
                 anchors.fill: parent
-                onClicked: { Game.tap(); floatReward.wasMat = Game.lastTapMat; app.buzz(); digPulse.restart(); floatAnim.restart() }
+                onClicked: { Game.tap(); floatReward.wasMat = Game.lastTapMat; app.buzz(); digPulse.restart(); floatAnim.restart(); if (Math.random() < 0.2) app.quip("scavenge") }
             }
             SequentialAnimation {
                 id: digPulse
@@ -433,7 +441,7 @@ Page {
                         IconButton {
                             icon.source: "image://theme/icon-m-add"
                             enabled: Game.idleWorkers > 0
-                            onClicked: { Game.assign(modelData.index, 1); app.buzz() }
+                            onClicked: { Game.assign(modelData.index, 1); app.buzz(); if (Math.random() < 0.34) app.quip("assign") }
                         }
                     }
                 }
@@ -461,7 +469,7 @@ Page {
                     enabled: modelData.affordable || modelData.damaged
                     onClicked: {
                         if (modelData.damaged) Game.repairBuilding(modelData.index)
-                        else Game.build(modelData.index)
+                        else { Game.build(modelData.index); app.quip("build") }
                         app.buzz()
                     }
 
@@ -571,7 +579,7 @@ Page {
                 visible: Game.tradingUnlocked
                 width: parent.width
                 height: Theme.itemSizeMedium
-                onClicked: { Game.buyEnergy(); app.buzz() }
+                onClicked: { Game.buyEnergy(); app.buzz(); app.quip("buyenergy") }
 
                 Image {
                     id: enIcon
@@ -703,7 +711,7 @@ Page {
                             anchors.verticalCenter: parent.verticalCenter
                             icon.source: "image://theme/icon-m-add"
                             enabled: modelData.affordable
-                            onClicked: { Game.train(modelData.index, Game.trainBatch); app.buzz() }
+                            onClicked: { Game.train(modelData.index, Game.trainBatch); app.buzz(); app.quip("train") }
                         }
                     }
                 }

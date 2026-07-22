@@ -128,6 +128,24 @@
     <message><source>You paid for the peace. The word "protection money" is so vulgar.</source><translation>You paid for the peace. The word "protection money" is so vulgar.</translation></message>
     <message><source>Repelled. The gate held better than the badgers did. They will come back with friends.</source><translation>Repelled. The gate held better than the badgers did. They will come back with friends.</translation></message>
     <message><source>They left served. Your stores are lighter and your pride is a rumour.</source><translation>They left served. Your stores are lighter and your pride is a rumour.</translation></message>
+    <message><source>Another badger put to work. You are basically a manager now.</source><translation>Another badger put to work. You are basically a manager now.</translation></message>
+    <message><source>You reassigned a badger. It had dreams, probably.</source><translation>You reassigned a badger. It had dreams, probably.</translation></message>
+    <message><source>Micromanaging holes. A noble calling.</source><translation>Micromanaging holes. A noble calling.</translation></message>
+    <message><source>Another building. Napoleon thought that would be enough too.</source><translation>Another building. Napoleon thought that would be enough too.</translation></message>
+    <message><source>Construction begins. The badgers pretend to know how.</source><translation>Construction begins. The badgers pretend to know how.</translation></message>
+    <message><source>You armed another badger. What could possibly go wrong.</source><translation>You armed another badger. What could possibly go wrong.</translation></message>
+    <message><source>One more soldier. The forage rota will miss them.</source><translation>One more soldier. The forage rota will miss them.</translation></message>
+    <message><source>You bought electricity. It costs money, like everything you love.</source><translation>You bought electricity. It costs money, like everything you love.</translation></message>
+    <message><source>Power purchased. The lights thank you, briefly.</source><translation>Power purchased. The lights thank you, briefly.</translation></message>
+    <message><source>You scratch the dirt. It scratches back, metaphorically.</source><translation>You scratch the dirt. It scratches back, metaphorically.</translation></message>
+    <message><source>More rummaging. Dust, mostly.</source><translation>More rummaging. Dust, mostly.</translation></message>
+    <message><source>Digging with intent. The intent is unclear.</source><translation>Digging with intent. The intent is unclear.</translation></message>
+    <message><source>A new badger. More opinions to ignore.</source><translation>A new badger. More opinions to ignore.</translation></message>
+    <message><source>The colony grew. So did the food bill.</source><translation>The colony grew. So did the food bill.</translation></message>
+    <message><source>The lights went out. Just like your plans.</source><translation>The lights went out. Just like your plans.</translation></message>
+    <message><source>Power is back. Try to keep it that way.</source><translation>Power is back. Try to keep it that way.</translation></message>
+    <message><source>The burrows are full. Build another, or stop breeding.</source><translation>The burrows are full. Build another, or stop breeding.</translation></message>
+    <message><source>There are idle badgers and a shiny button. Coincidence?</source><translation>There are idle badgers and a shiny button. Coincidence?</translation></message>
 </context>
 <context>
     <name>ColonyPage</name>
@@ -284,6 +302,8 @@
     <message><source>Gameplay</source><translation>Gameplay</translation></message>
     <message><source>Fast battle animation</source><translation>Fast battle animation</translation></message>
     <message><source>Haptic feedback</source><translation>Haptic feedback</translation></message>
+    <message><source>Narrator remarks</source><translation>Narrator remarks</translation></message>
+    <message><source>The cynical voice that comments on your every move.</source><translation>The cynical voice that comments on your every move.</translation></message>
     <message><source>Notify when a raid is ready</source><translation>Notify when a raid is ready</translation></message>
     <message><source>Notify when the power runs out</source><translation>Notify when the power runs out</translation></message>
     <message><source>Language</source><translation>Language</translation></message>

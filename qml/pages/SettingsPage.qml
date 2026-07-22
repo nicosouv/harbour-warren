@@ -83,6 +83,13 @@ Page {
             }
 
             TextSwitch {
+                text: qsTr("Narrator remarks")
+                description: qsTr("The cynical voice that comments on your every move.")
+                checked: Game.narrator
+                onCheckedChanged: Game.narrator = checked
+            }
+
+            TextSwitch {
                 text: qsTr("Notify when a raid is ready")
                 checked: Game.notifyRaids
                 onCheckedChanged: Game.notifyRaids = checked

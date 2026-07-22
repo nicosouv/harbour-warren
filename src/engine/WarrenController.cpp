@@ -140,6 +140,17 @@ void WarrenController::setHaptics(bool on)
     emit prefsChanged();
 }
 
+bool WarrenController::narrator() const
+{
+    return m_settings.value(QStringLiteral("narrator"), true).toBool();
+}
+
+void WarrenController::setNarrator(bool on)
+{
+    m_settings.setValue(QStringLiteral("narrator"), on);
+    emit prefsChanged();
+}
+
 bool WarrenController::fastBattle() const
 {
     return m_settings.value(QStringLiteral("fastBattle"), false).toBool();

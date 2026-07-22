@@ -83,6 +83,48 @@ ApplicationWindow {
         if (key === "first_territory") return qsTr("Probably.")
         return qsTr("Onward.")
     }
+
+    // --- Narrator quips: short, recurring, non-blocking. One line picked at random per key. ------
+    function quipText(key) {
+        var pool = []
+        if (key === "assign") pool = [
+            qsTr("Another badger put to work. You are basically a manager now."),
+            qsTr("You reassigned a badger. It had dreams, probably."),
+            qsTr("Micromanaging holes. A noble calling.")]
+        else if (key === "build") pool = [
+            qsTr("Another building. Napoleon thought that would be enough too."),
+            qsTr("Construction begins. The badgers pretend to know how.")]
+        else if (key === "train") pool = [
+            qsTr("You armed another badger. What could possibly go wrong."),
+            qsTr("One more soldier. The forage rota will miss them.")]
+        else if (key === "buyenergy") pool = [
+            qsTr("You bought electricity. It costs money, like everything you love."),
+            qsTr("Power purchased. The lights thank you, briefly.")]
+        else if (key === "scavenge") pool = [
+            qsTr("You scratch the dirt. It scratches back, metaphorically."),
+            qsTr("More rummaging. Dust, mostly."),
+            qsTr("Digging with intent. The intent is unclear.")]
+        else if (key === "grow") pool = [
+            qsTr("A new badger. More opinions to ignore."),
+            qsTr("The colony grew. So did the food bill.")]
+        else if (key === "blackout") pool = [
+            qsTr("The lights went out. Just like your plans.")]
+        else if (key === "powered") pool = [
+            qsTr("Power is back. Try to keep it that way.")]
+        else if (key === "housing_full") pool = [
+            qsTr("The burrows are full. Build another, or stop breeding.")]
+        else if (key === "idle") pool = [
+            qsTr("There are idle badgers and a shiny button. Coincidence?")]
+        if (pool.length === 0) return ""
+        return pool[Math.floor(Math.random() * pool.length)]
+    }
+    // Enqueue a quip for the floating toast, honouring the Settings toggle.
+    function quip(key) {
+        if (!Game.narrator) return
+        var t = quipText(key)
+        if (t.length > 0) narratorToast.push(t)
+    }
+
     // --- Events -----------------------------------------------------------------------------
     property var eventKeys: ["storm", "rats", "wanderer", "rain", "merchant",
                              "transformer", "collapse", "tax", "scouts", "feast", "counterraid"]
@@ -227,6 +269,8 @@ ApplicationWindow {
 
             if (Game.blackout && !app.wasBlackout && !Qt.application.active && Game.notifyEnergy)
                 energyNotif.publish()
+            if (Game.blackout && !app.wasBlackout) app.quip("blackout")
+            else if (!Game.blackout && app.wasBlackout && Game.powered) app.quip("powered")
             app.wasBlackout = Game.blackout
         }
     }
@@ -553,6 +597,53 @@ ApplicationWindow {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: qsTr("Continue")
                 onClicked: { eventOverlay.reacting = false; app.maybeNarrate() }
+            }
+        }
+    }
+
+    // The narrator's quips: a brief, non-blocking toast. Never captures input, never gates play.
+    // Lines queue up (max 3) and each shows for a few seconds, so nothing floods the screen.
+    Item {
+        id: narratorToast
+        property var queue: []
+        property string current: ""
+        z: 7000
+        anchors { bottom: parent.bottom; horizontalCenter: parent.horizontalCenter; bottomMargin: Theme.itemSizeLarge }
+        width: Math.min(parent.width - 2 * Theme.horizontalPageMargin, Theme.buttonWidthLarge * 1.4)
+        height: toastLbl.height + 2 * Theme.paddingMedium
+        visible: current !== "" && !narrator.visible && !eventOverlay.visible
+                 && !battle.visible && !welcome.visible && !intro.visible
+
+        function push(text) {
+            if (queue.length < 3) queue.push(text)
+            if (current === "") next()
+        }
+        function next() {
+            if (queue.length === 0) { current = ""; return }
+            current = queue.shift()
+            life.restart()
+        }
+        SequentialAnimation {
+            id: life
+            NumberAnimation { target: card; property: "opacity"; from: 0; to: 1; duration: 220 }
+            PauseAnimation { duration: 3200 }
+            NumberAnimation { target: card; property: "opacity"; to: 0; duration: 320 }
+            ScriptAction { script: narratorToast.next() }
+        }
+        Rectangle {
+            id: card
+            anchors.fill: parent
+            radius: Theme.paddingMedium
+            color: Theme.rgba("#0e1016", 0.88)
+            border.color: Theme.rgba(Theme.highlightColor, 0.35); border.width: 1
+            opacity: 0
+            Label {
+                id: toastLbl
+                anchors { left: parent.left; right: parent.right; verticalCenter: parent.verticalCenter
+                          leftMargin: Theme.paddingLarge; rightMargin: Theme.paddingLarge }
+                text: narratorToast.current
+                wrapMode: Text.Wrap; horizontalAlignment: Text.AlignHCenter
+                font.pixelSize: Theme.fontSizeSmall; font.italic: true; color: Theme.primaryColor
             }
         }
     }

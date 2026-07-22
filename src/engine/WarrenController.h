@@ -24,6 +24,7 @@ class WarrenController : public QObject
     Q_PROPERTY(int notchMargin READ notchMargin WRITE setNotchMargin NOTIFY prefsChanged)
     Q_PROPERTY(bool notifyRaids READ notifyRaids WRITE setNotifyRaids NOTIFY prefsChanged)
     Q_PROPERTY(bool haptics READ haptics WRITE setHaptics NOTIFY prefsChanged)
+    Q_PROPERTY(bool narrator READ narrator WRITE setNarrator NOTIFY prefsChanged)
     Q_PROPERTY(bool fastBattle READ fastBattle WRITE setFastBattle NOTIFY prefsChanged)
     Q_PROPERTY(bool fullNumbers READ fullNumbers WRITE setFullNumbers NOTIFY prefsChanged)
     Q_PROPERTY(bool notifyEnergy READ notifyEnergy WRITE setNotifyEnergy NOTIFY prefsChanged)
@@ -94,6 +95,8 @@ public:
     void setNotifyRaids(bool on);
     bool haptics() const;
     void setHaptics(bool on);
+    bool narrator() const;
+    void setNarrator(bool on);
     bool fastBattle() const;
     void setFastBattle(bool on);
     bool fullNumbers() const;

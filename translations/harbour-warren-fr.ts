@@ -128,6 +128,24 @@
     <message><source>You paid for the peace. The word "protection money" is so vulgar.</source><translation>Vous avez payé la paix. Le mot « racket » est si vulgaire.</translation></message>
     <message><source>Repelled. The gate held better than the badgers did. They will come back with friends.</source><translation>Repoussés. Le portail a mieux tenu que les blaireaux. Ils reviendront avec des amis.</translation></message>
     <message><source>They left served. Your stores are lighter and your pride is a rumour.</source><translation>Ils sont repartis servis. Vos stocks sont plus légers et votre fierté n'est qu'une rumeur.</translation></message>
+    <message><source>Another badger put to work. You are basically a manager now.</source><translation>Encore un blaireau au travail. Vous vous prenez vraiment pour un chef.</translation></message>
+    <message><source>You reassigned a badger. It had dreams, probably.</source><translation>Vous avez réaffecté un blaireau. Il avait des rêves, sûrement.</translation></message>
+    <message><source>Micromanaging holes. A noble calling.</source><translation>Micro-gérer des trous. Une noble vocation.</translation></message>
+    <message><source>Another building. Napoleon thought that would be enough too.</source><translation>Encore un bâtiment. Napoléon aussi croyait que ça suffirait.</translation></message>
+    <message><source>Construction begins. The badgers pretend to know how.</source><translation>La construction commence. Les blaireaux font semblant de savoir faire.</translation></message>
+    <message><source>You armed another badger. What could possibly go wrong.</source><translation>Vous avez armé un autre blaireau. Qu'est-ce qui pourrait mal tourner.</translation></message>
+    <message><source>One more soldier. The forage rota will miss them.</source><translation>Un soldat de plus. Le tour de cueillette va le regretter.</translation></message>
+    <message><source>You bought electricity. It costs money, like everything you love.</source><translation>Vous avez acheté de l'électricité. Ça coûte, comme tout ce que vous aimez.</translation></message>
+    <message><source>Power purchased. The lights thank you, briefly.</source><translation>Courant acheté. Les lumières vous remercient, brièvement.</translation></message>
+    <message><source>You scratch the dirt. It scratches back, metaphorically.</source><translation>Vous grattez la terre. Elle gratte en retour, métaphoriquement.</translation></message>
+    <message><source>More rummaging. Dust, mostly.</source><translation>Encore à fouiller. De la poussière, surtout.</translation></message>
+    <message><source>Digging with intent. The intent is unclear.</source><translation>Creuser avec intention. L'intention reste floue.</translation></message>
+    <message><source>A new badger. More opinions to ignore.</source><translation>Un nouveau blaireau. Encore des avis à ignorer.</translation></message>
+    <message><source>The colony grew. So did the food bill.</source><translation>La colonie a grandi. La facture de nourriture aussi.</translation></message>
+    <message><source>The lights went out. Just like your plans.</source><translation>Les lumières se sont éteintes. Comme vos projets.</translation></message>
+    <message><source>Power is back. Try to keep it that way.</source><translation>Le courant est revenu. Essayez de le garder.</translation></message>
+    <message><source>The burrows are full. Build another, or stop breeding.</source><translation>Les terriers sont pleins. Construisez-en un autre, ou arrêtez de vous reproduire.</translation></message>
+    <message><source>There are idle badgers and a shiny button. Coincidence?</source><translation>Des blaireaux oisifs et un bouton qui brille. Coïncidence ?</translation></message>
 </context>
 <context>
     <name>ColonyPage</name>
@@ -284,6 +302,8 @@
     <message><source>Gameplay</source><translation>Jeu</translation></message>
     <message><source>Fast battle animation</source><translation>Animation de bataille rapide</translation></message>
     <message><source>Haptic feedback</source><translation>Retour haptique</translation></message>
+    <message><source>Narrator remarks</source><translation>Remarques du narrateur</translation></message>
+    <message><source>The cynical voice that comments on your every move.</source><translation>La voix cynique qui commente le moindre de vos gestes.</translation></message>
     <message><source>Notify when a raid is ready</source><translation>Me prévenir quand un raid est prêt</translation></message>
     <message><source>Notify when the power runs out</source><translation>Me prévenir en cas de panne de courant</translation></message>
     <message><source>Language</source><translation>Langue</translation></message>
