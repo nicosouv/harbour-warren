@@ -143,7 +143,8 @@ static const qint64 kWelcomeMs    = Q_INT64_C(1800000);   // recap shown past 30
 // --- Events: recurring, escalating, one at a time (the anti-"nothing left after 5 min"). ------
 enum EventId {
     EvStorm = 0, EvRats, EvWanderer, EvRain, EvMerchant,
-    EvTransformer, EvCollapse, EvTax, EvScouts, EvFeast, EvCounterRaid, EventCount
+    EvTransformer, EvCollapse, EvTax, EvScouts, EvFeast, EvCounterRaid,
+    EvExodus, EvWoundedVet, EvCult, EvWolves, EventCount
 };
 struct EventDef {
     const char* id;
@@ -162,6 +163,10 @@ static const EventDef kEvent[EventCount] = {
     { "scouts",      3, Q_INT64_C(3600000)  },
     { "feast",       4, Q_INT64_C(5400000)  },
     { "counterraid", 3, Q_INT64_C(3600000)  },  // the foxes return the favour
+    { "exodus",      4, Q_INT64_C(5400000)  },  // 90 min
+    { "woundedvet",  3, Q_INT64_C(3600000)  },  // 60 min
+    { "cult",        4, Q_INT64_C(5400000)  },
+    { "wolves",      4, Q_INT64_C(7200000)  },  // 2 h, ~seasonal
 };
 
 // Counter-raid: the foxes hit back once you start taking territory. A defensive battle resolved

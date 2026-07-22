@@ -146,6 +146,30 @@
     <message><source>Power is back. Try to keep it that way.</source><translation>Le courant est revenu. Essayez de le garder.</translation></message>
     <message><source>The burrows are full. Build another, or stop breeding.</source><translation>Les terriers sont pleins. Construisez-en un autre, ou arrêtez de vous reproduire.</translation></message>
     <message><source>There are idle badgers and a shiny button. Coincidence?</source><translation>Des blaireaux oisifs et un bouton qui brille. Coïncidence ?</translation></message>
+    <message><source>Rural exodus</source><translation>Exode rural</translation></message>
+    <message><source>The wounded veteran</source><translation>Le vétéran blessé</translation></message>
+    <message><source>The cult of the great burrow</source><translation>Le culte du grand terrier</translation></message>
+    <message><source>The winter of wolves</source><translation>L'hiver des loups</translation></message>
+    <message><source>Three families wait at the gate. They heard "it goes well here". Who told them that?</source><translation>Trois familles à l'entrée. Elles ont entendu que « ça se passe bien ici ». Qui a dit ça ?</translation></message>
+    <message><source>A veteran limps back with a paw in a sling and stories that grow with each telling.</source><translation>Un vétéran revient en boitant, une patte en écharpe et des histoires très embellies.</translation></message>
+    <message><source>Some badgers are digging a "spiritual" tunnel. They have candles. That is a bad sign.</source><translation>Des blaireaux creusent un tunnel « spirituel ». Ils ont des bougies. C'est mauvais signe.</translation></message>
+    <message><source>Wolves on the edge of the territory. Wolves do not negotiate. It is restful, really.</source><translation>Des loups en bordure du territoire. Les loups ne négocient pas. C'est reposant, au fond.</translation></message>
+    <message><source>Welcome them</source><translation>Les accueillir</translation></message>
+    <message><source>Nurse him back</source><translation>Le soigner</translation></message>
+    <message><source>Fund it</source><translation>Financer</translation></message>
+    <message><source>Hunt them</source><translation>Les chasser</translation></message>
+    <message><source>Close the gate</source><translation>Fermer le portail</translation></message>
+    <message><source>Retire him</source><translation>Le réformer</translation></message>
+    <message><source>Ban it</source><translation>Interdire</translation></message>
+    <message><source>Ration instead</source><translation>Rationner plutôt</translation></message>
+    <message><source>Welcome. The queue for the canteen starts at the back.</source><translation>Bienvenue. La file pour la cantine commence au fond.</translation></message>
+    <message><source>The word "selective" was kept for the brochure.</source><translation>Le mot « sélectif » a été retenu pour la brochure.</translation></message>
+    <message><source>Stitched up. The stories gained a chapter.</source><translation>Recousu. Les histoires ont gagné un chapitre.</translation></message>
+    <message><source>Reassigned to foraging. Berries rarely fight back.</source><translation>Reconverti à la cueillette. Les mûres ripostent rarement.</translation></message>
+    <message><source>Subsidising a cult. Every civilisation does it eventually. This is eventually.</source><translation>Subventionner un culte. Toutes les civilisations le font un jour. C'est le jour.</translation></message>
+    <message><source>Banned. They now dig "administratively".</source><translation>Interdit. Ils creusent maintenant « administrativement ».</translation></message>
+    <message><source>Chased off. Wolves respect force. It is their only administrative quality.</source><translation>Chassés. Les loups respectent la force. C'est leur seule qualité administrative.</translation></message>
+    <message><source>Everyone went a little hungry. Democratically.</source><translation>Tout le monde a eu un peu faim. Démocratiquement.</translation></message>
 </context>
 <context>
     <name>ColonyPage</name>

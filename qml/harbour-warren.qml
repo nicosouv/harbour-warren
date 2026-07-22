@@ -127,7 +127,8 @@ ApplicationWindow {
 
     // --- Events -----------------------------------------------------------------------------
     property var eventKeys: ["storm", "rats", "wanderer", "rain", "merchant",
-                             "transformer", "collapse", "tax", "scouts", "feast", "counterraid"]
+                             "transformer", "collapse", "tax", "scouts", "feast", "counterraid",
+                             "exodus", "woundedvet", "cult", "wolves"]
     function evName(k) {
         if (k === "storm") return qsTr("The storm")
         if (k === "rats") return qsTr("Rats in the granary")
@@ -140,6 +141,10 @@ ApplicationWindow {
         if (k === "scouts") return qsTr("Foxes on the prowl")
         if (k === "feast") return qsTr("A feast is demanded")
         if (k === "counterraid") return qsTr("The foxes strike back")
+        if (k === "exodus") return qsTr("Rural exodus")
+        if (k === "woundedvet") return qsTr("The wounded veteran")
+        if (k === "cult") return qsTr("The cult of the great burrow")
+        if (k === "wolves") return qsTr("The winter of wolves")
         return k
     }
     function evBody(k) {
@@ -154,6 +159,10 @@ ApplicationWindow {
         if (k === "scouts") return qsTr("Foxes prowl by the gate. They are counting your granaries. Out loud.")
         if (k === "feast") return qsTr("The colony demands a feast. Banners have been painted. With your paint.")
         if (k === "counterraid") return qsTr("The foxes came back with torches and a grudge. They remember the ground you took. So, apparently, do their cousins.")
+        if (k === "exodus") return qsTr("Three families wait at the gate. They heard \"it goes well here\". Who told them that?")
+        if (k === "woundedvet") return qsTr("A veteran limps back with a paw in a sling and stories that grow with each telling.")
+        if (k === "cult") return qsTr("Some badgers are digging a \"spiritual\" tunnel. They have candles. That is a bad sign.")
+        if (k === "wolves") return qsTr("Wolves on the edge of the territory. Wolves do not negotiate. It is restful, really.")
         return ""
     }
     function evA(k) {
@@ -168,6 +177,10 @@ ApplicationWindow {
         if (k === "scouts") return qsTr("Pay them off")
         if (k === "feast") return qsTr("Hold the feast")
         if (k === "counterraid") return qsTr("Defend the warren")
+        if (k === "exodus") return qsTr("Welcome them")
+        if (k === "woundedvet") return qsTr("Nurse him back")
+        if (k === "cult") return qsTr("Fund it")
+        if (k === "wolves") return qsTr("Hunt them")
         return qsTr("Yes")
     }
     function evB(k) {
@@ -182,6 +195,10 @@ ApplicationWindow {
         if (k === "scouts") return qsTr("Ignore them")
         if (k === "feast") return qsTr("Refuse")
         if (k === "counterraid") return qsTr("Pay the tribute")
+        if (k === "exodus") return qsTr("Close the gate")
+        if (k === "woundedvet") return qsTr("Retire him")
+        if (k === "cult") return qsTr("Ban it")
+        if (k === "wolves") return qsTr("Ration instead")
         return qsTr("No")
     }
     function evReact(k, opt) {
@@ -201,6 +218,10 @@ ApplicationWindow {
                 ? qsTr("Repelled. The gate held better than the badgers did. They will come back with friends.")
                 : qsTr("They left served. Your stores are lighter and your pride is a rumour.")
         }
+        if (k === "exodus") return opt === 0 ? qsTr("Welcome. The queue for the canteen starts at the back.") : qsTr("The word \"selective\" was kept for the brochure.")
+        if (k === "woundedvet") return opt === 0 ? qsTr("Stitched up. The stories gained a chapter.") : qsTr("Reassigned to foraging. Berries rarely fight back.")
+        if (k === "cult") return opt === 0 ? qsTr("Subsidising a cult. Every civilisation does it eventually. This is eventually.") : qsTr("Banned. They now dig \"administratively\".")
+        if (k === "wolves") return opt === 0 ? qsTr("Chased off. Wolves respect force. It is their only administrative quality.") : qsTr("Everyone went a little hungry. Democratically.")
         return qsTr("Onward.")
     }
 

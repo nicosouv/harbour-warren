@@ -166,6 +166,42 @@ void applyEventChoice(GameState& s, int ev, int opt, qint64 at, quint64 salt)
         }
         break;
     }
+    case EvExodus:
+        if (opt == 0) {                     // take the newcomers in, up to housing
+            int room = housingCap(s) - s.population;
+            if (room < 0) room = 0;
+            s.population += room < 3 ? room : 3;
+        }
+        break;
+    case EvWoundedVet:
+        if (opt == 0) {                     // patch him up
+            const double cost = 30.0 * scale;
+            if (s.res[Food] >= cost) s.res[Food] -= cost;
+        } else if (s.units[Veteran] > 0) {  // reform him back into the workforce
+            s.units[Veteran] -= 1;
+            s.population += 1;
+        }
+        break;
+    case EvCult:
+        if (opt == 0) {                     // fund the tunnel-diggers
+            const double cost = 60.0 * scale;
+            if (s.res[Gold] >= cost) {
+                s.res[Gold] -= cost;
+                s.modProdFactor = 1.15; s.modProdUntil = at + kModFeastMs;
+            }
+        } else {                            // ban it
+            s.modProdFactor = 0.9; s.modProdUntil = at + kModShortMs;
+        }
+        break;
+    case EvWolves:
+        if (opt == 0) {                     // send the army to chase them off
+            const double cost = 20.0 * scale;
+            if (s.res[Food] >= cost) s.res[Food] -= cost;
+        } else {                            // ration through the winter
+            s.res[Food] *= 0.7;
+            s.modProdFactor = 0.8; s.modProdUntil = at + kModFeastMs;
+        }
+        break;
     default: break;
     }
 }
@@ -343,6 +379,10 @@ bool eventEligible(const GameState& s, int ev, qint64 nowMs)
     case EvTax:         return s.goldEarned > 500.0;
     case EvScouts:      return s.raidsWon >= 1;
     case EvCounterRaid: return s.territory >= 1;   // provoked by taking their ground
+    case EvExodus:      return s.population < housingCap(s);   // needs room to welcome them
+    case EvWoundedVet:  return s.units[Veteran] >= 1;
+    case EvCult:        return s.population >= 15;
+    case EvWolves:      return true;
     case EvFeast:       return s.population >= 12 && s.res[Food] > foodCap(s) * 0.5;
     default:            return false;
     }

@@ -146,6 +146,30 @@
     <message><source>Power is back. Try to keep it that way.</source><translation>Power is back. Try to keep it that way.</translation></message>
     <message><source>The burrows are full. Build another, or stop breeding.</source><translation>The burrows are full. Build another, or stop breeding.</translation></message>
     <message><source>There are idle badgers and a shiny button. Coincidence?</source><translation>There are idle badgers and a shiny button. Coincidence?</translation></message>
+    <message><source>Rural exodus</source><translation>Rural exodus</translation></message>
+    <message><source>The wounded veteran</source><translation>The wounded veteran</translation></message>
+    <message><source>The cult of the great burrow</source><translation>The cult of the great burrow</translation></message>
+    <message><source>The winter of wolves</source><translation>The winter of wolves</translation></message>
+    <message><source>Three families wait at the gate. They heard "it goes well here". Who told them that?</source><translation>Three families wait at the gate. They heard "it goes well here". Who told them that?</translation></message>
+    <message><source>A veteran limps back with a paw in a sling and stories that grow with each telling.</source><translation>A veteran limps back with a paw in a sling and stories that grow with each telling.</translation></message>
+    <message><source>Some badgers are digging a "spiritual" tunnel. They have candles. That is a bad sign.</source><translation>Some badgers are digging a "spiritual" tunnel. They have candles. That is a bad sign.</translation></message>
+    <message><source>Wolves on the edge of the territory. Wolves do not negotiate. It is restful, really.</source><translation>Wolves on the edge of the territory. Wolves do not negotiate. It is restful, really.</translation></message>
+    <message><source>Welcome them</source><translation>Welcome them</translation></message>
+    <message><source>Nurse him back</source><translation>Nurse him back</translation></message>
+    <message><source>Fund it</source><translation>Fund it</translation></message>
+    <message><source>Hunt them</source><translation>Hunt them</translation></message>
+    <message><source>Close the gate</source><translation>Close the gate</translation></message>
+    <message><source>Retire him</source><translation>Retire him</translation></message>
+    <message><source>Ban it</source><translation>Ban it</translation></message>
+    <message><source>Ration instead</source><translation>Ration instead</translation></message>
+    <message><source>Welcome. The queue for the canteen starts at the back.</source><translation>Welcome. The queue for the canteen starts at the back.</translation></message>
+    <message><source>The word "selective" was kept for the brochure.</source><translation>The word "selective" was kept for the brochure.</translation></message>
+    <message><source>Stitched up. The stories gained a chapter.</source><translation>Stitched up. The stories gained a chapter.</translation></message>
+    <message><source>Reassigned to foraging. Berries rarely fight back.</source><translation>Reassigned to foraging. Berries rarely fight back.</translation></message>
+    <message><source>Subsidising a cult. Every civilisation does it eventually. This is eventually.</source><translation>Subsidising a cult. Every civilisation does it eventually. This is eventually.</translation></message>
+    <message><source>Banned. They now dig "administratively".</source><translation>Banned. They now dig "administratively".</translation></message>
+    <message><source>Chased off. Wolves respect force. It is their only administrative quality.</source><translation>Chased off. Wolves respect force. It is their only administrative quality.</translation></message>
+    <message><source>Everyone went a little hungry. Democratically.</source><translation>Everyone went a little hungry. Democratically.</translation></message>
 </context>
 <context>
     <name>ColonyPage</name>
