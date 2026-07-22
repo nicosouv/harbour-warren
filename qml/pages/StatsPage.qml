@@ -5,6 +5,7 @@ import Sailfish.Silica 1.0
 // from the timestamped event log.
 Page {
     id: page
+    allowedOrientations: Orientation.All
 
     property var recs: Game.records()
     property var silly: Game.sillyStats()

@@ -4,6 +4,10 @@ import "../components"
 
 Page {
     id: page
+    allowedOrientations: Orientation.All
+
+    // Landscape splits the screen: the village pins to a left pane, the lists scroll on the right.
+    readonly property bool twoCol: isLandscape
 
     // Swipe left for the stats page, the Silica way.
     onStatusChanged: {
@@ -232,8 +236,145 @@ Page {
         }
     }
 
+    // Village + Scavenge: pinned. Left pane in landscape, a top block in portrait.
+    Item {
+        id: visualPane
+        anchors {
+            top: header.bottom; topMargin: Theme.paddingLarge
+            left: parent.left
+            bottom: page.twoCol ? parent.bottom : undefined
+        }
+        width: page.twoCol ? page.width * 0.42 : page.width
+        height: page.twoCol ? undefined : village.height + Theme.paddingMedium + digBtn.height
+
+        // The warren, front and centre.
+        Rectangle {
+            id: village
+            anchors { top: parent.top; left: parent.left; right: parent.right
+                      leftMargin: Theme.horizontalPageMargin; rightMargin: Theme.horizontalPageMargin }
+            height: page.twoCol ? visualPane.height - digBtn.height - Theme.paddingMedium
+                                : Theme.itemSizeHuge * 2.2
+            radius: Theme.paddingMedium
+            color: "#20242e"
+            clip: true
+            VillageView {
+                anchors.fill: parent
+                population: Game.population
+                stage: Game.stage
+                counts: buildingCounts()
+                blackout: Game.blackout
+                starving: Game.starving
+                siteBld: Game.buildSite
+                siteProgress: Game.buildProgress
+                ambiance: Game.ambiance
+                reduceFx: Game.reduceFx
+            }
+
+            // A birth is announced right on the village: a new badger, unmistakably.
+            Row {
+                id: birthToast
+                property int delta: 1
+                anchors.horizontalCenter: parent.horizontalCenter
+                y: parent.height * 0.5
+                spacing: Theme.paddingSmall
+                opacity: 0
+                Label { anchors.verticalCenter: parent.verticalCenter; text: "+" + birthToast.delta; color: "#9fd06a"; font.pixelSize: Theme.fontSizeMedium; font.bold: true }
+                Image {
+                    anchors.verticalCenter: parent.verticalCenter
+                    source: Qt.resolvedUrl("../images/badger-front.png")
+                    smooth: false; width: Theme.iconSizeSmall; height: width
+                    fillMode: Image.PreserveAspectFit
+                }
+                Label { anchors.verticalCenter: parent.verticalCenter; text: qsTr("a new badger"); color: Theme.primaryColor; font.pixelSize: Theme.fontSizeSmall }
+            }
+            ParallelAnimation {
+                id: birthAnim
+                NumberAnimation { target: birthToast; property: "y"; from: birthToast.parent.height * 0.5; to: birthToast.parent.height * 0.24; duration: 1400; easing.type: Easing.OutQuad }
+                SequentialAnimation {
+                    NumberAnimation { target: birthToast; property: "opacity"; to: 1; duration: 220 }
+                    PauseAnimation { duration: 800 }
+                    NumberAnimation { target: birthToast; property: "opacity"; to: 0; duration: 380 }
+                }
+            }
+        }
+
+        // Scavenge: rummage the ground for food, the icon says exactly what you get.
+        Rectangle {
+            id: digBtn
+            anchors { horizontalCenter: parent.horizontalCenter; top: village.bottom; topMargin: Theme.paddingMedium }
+            width: page.twoCol ? parent.width * 0.7 : parent.width * 0.5
+            height: Theme.itemSizeMedium
+            radius: Theme.paddingMedium
+            color: Theme.rgba("#4a3d30", digArea.pressed ? 1.0 : 0.75)
+            border.color: "#6a5a40"
+            border.width: 2
+
+            Row {
+                anchors.centerIn: parent
+                spacing: Theme.paddingMedium
+                Image {
+                    anchors.verticalCenter: parent.verticalCenter
+                    source: Qt.resolvedUrl("../images/dig.png")
+                    smooth: false
+                    width: Theme.iconSizeSmall; height: width
+                    fillMode: Image.PreserveAspectFit
+                    rotation: digArea.pressed ? -18 : 0
+                    Behavior on rotation { NumberAnimation { duration: 90 } }
+                }
+                Label {
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: qsTr("Scavenge")
+                    font.pixelSize: Theme.fontSizeLarge
+                }
+            }
+
+            // The reward floats up showing exactly what turned up: an apple, or a log of wood.
+            Row {
+                id: floatReward
+                property bool wasMat: false
+                anchors.horizontalCenter: parent.horizontalCenter
+                spacing: 4
+                opacity: 0
+                Label { text: "+1"; color: Theme.highlightColor; font.pixelSize: Theme.fontSizeMedium }
+                Image {
+                    anchors.verticalCenter: parent.verticalCenter
+                    source: Qt.resolvedUrl(floatReward.wasMat ? "../images/res-materials.png" : "../images/res-food.png")
+                    smooth: false
+                    width: Theme.iconSizeExtraSmall; height: width
+                    fillMode: Image.PreserveAspectFit
+                }
+            }
+            ParallelAnimation {
+                id: floatAnim
+                NumberAnimation { target: floatReward; property: "y"; from: 0; to: -Theme.itemSizeSmall; duration: 500 }
+                SequentialAnimation {
+                    NumberAnimation { target: floatReward; property: "opacity"; to: 1; duration: 80 }
+                    NumberAnimation { target: floatReward; property: "opacity"; to: 0; duration: 400 }
+                }
+            }
+
+            MouseArea {
+                id: digArea
+                anchors.fill: parent
+                onClicked: { Game.tap(); floatReward.wasMat = Game.lastTapMat; app.buzz(); digPulse.restart(); floatAnim.restart() }
+            }
+            SequentialAnimation {
+                id: digPulse
+                NumberAnimation { target: digBtn; property: "scale"; to: 0.96; duration: 40 }
+                NumberAnimation { target: digBtn; property: "scale"; to: 1.0; duration: 90 }
+            }
+        }
+    }
+
     SilicaFlickable {
-        anchors { top: header.bottom; left: parent.left; right: parent.right; bottom: parent.bottom; topMargin: Theme.paddingLarge }
+        id: listFlick
+        anchors {
+            top: page.twoCol ? header.bottom : visualPane.bottom
+            topMargin: Theme.paddingLarge
+            left: page.twoCol ? visualPane.right : parent.left
+            right: parent.right
+            bottom: parent.bottom
+        }
         clip: true
         contentHeight: col.height
 
@@ -248,125 +389,7 @@ Page {
 
         Column {
             id: col
-            width: page.width
-
-            // The warren, front and centre.
-            Rectangle {
-                x: Theme.horizontalPageMargin
-                width: parent.width - 2 * Theme.horizontalPageMargin
-                height: Theme.itemSizeHuge * 2.2
-                radius: Theme.paddingMedium
-                color: "#20242e"
-                clip: true
-                VillageView {
-                    anchors.fill: parent
-                    population: Game.population
-                    stage: Game.stage
-                    counts: buildingCounts()
-                    blackout: Game.blackout
-                    starving: Game.starving
-                    siteBld: Game.buildSite
-                    siteProgress: Game.buildProgress
-                    ambiance: Game.ambiance
-                    reduceFx: Game.reduceFx
-                }
-
-                // A birth is announced right on the village: a new badger, unmistakably.
-                Row {
-                    id: birthToast
-                    property int delta: 1
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    y: parent.height * 0.5
-                    spacing: Theme.paddingSmall
-                    opacity: 0
-                    Label { anchors.verticalCenter: parent.verticalCenter; text: "+" + birthToast.delta; color: "#9fd06a"; font.pixelSize: Theme.fontSizeMedium; font.bold: true }
-                    Image {
-                        anchors.verticalCenter: parent.verticalCenter
-                        source: Qt.resolvedUrl("../images/badger-front.png")
-                        smooth: false; width: Theme.iconSizeSmall; height: width
-                        fillMode: Image.PreserveAspectFit
-                    }
-                    Label { anchors.verticalCenter: parent.verticalCenter; text: qsTr("a new badger"); color: Theme.primaryColor; font.pixelSize: Theme.fontSizeSmall }
-                }
-                ParallelAnimation {
-                    id: birthAnim
-                    NumberAnimation { target: birthToast; property: "y"; from: birthToast.parent.height * 0.5; to: birthToast.parent.height * 0.24; duration: 1400; easing.type: Easing.OutQuad }
-                    SequentialAnimation {
-                        NumberAnimation { target: birthToast; property: "opacity"; to: 1; duration: 220 }
-                        PauseAnimation { duration: 800 }
-                        NumberAnimation { target: birthToast; property: "opacity"; to: 0; duration: 380 }
-                    }
-                }
-            }
-
-            Item { width: 1; height: Theme.paddingMedium }
-
-            // Scavenge: rummage the ground for food — the icon says exactly what you get.
-            Rectangle {
-                id: digBtn
-                anchors.horizontalCenter: parent.horizontalCenter
-                width: parent.width * 0.5
-                height: Theme.itemSizeMedium
-                radius: Theme.paddingMedium
-                color: Theme.rgba("#4a3d30", digArea.pressed ? 1.0 : 0.75)
-                border.color: "#6a5a40"
-                border.width: 2
-
-                Row {
-                    anchors.centerIn: parent
-                    spacing: Theme.paddingMedium
-                    Image {
-                        anchors.verticalCenter: parent.verticalCenter
-                        source: Qt.resolvedUrl("../images/dig.png")
-                        smooth: false
-                        width: Theme.iconSizeSmall; height: width
-                        fillMode: Image.PreserveAspectFit
-                        rotation: digArea.pressed ? -18 : 0
-                        Behavior on rotation { NumberAnimation { duration: 90 } }
-                    }
-                    Label {
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: qsTr("Scavenge")
-                        font.pixelSize: Theme.fontSizeLarge
-                    }
-                }
-
-                // The reward floats up showing exactly what turned up: an apple, or a log of wood.
-                Row {
-                    id: floatReward
-                    property bool wasMat: false
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    spacing: 4
-                    opacity: 0
-                    Label { text: "+1"; color: Theme.highlightColor; font.pixelSize: Theme.fontSizeMedium }
-                    Image {
-                        anchors.verticalCenter: parent.verticalCenter
-                        source: Qt.resolvedUrl(floatReward.wasMat ? "../images/res-materials.png" : "../images/res-food.png")
-                        smooth: false
-                        width: Theme.iconSizeExtraSmall; height: width
-                        fillMode: Image.PreserveAspectFit
-                    }
-                }
-                ParallelAnimation {
-                    id: floatAnim
-                    NumberAnimation { target: floatReward; property: "y"; from: 0; to: -Theme.itemSizeSmall; duration: 500 }
-                    SequentialAnimation {
-                        NumberAnimation { target: floatReward; property: "opacity"; to: 1; duration: 80 }
-                        NumberAnimation { target: floatReward; property: "opacity"; to: 0; duration: 400 }
-                    }
-                }
-
-                MouseArea {
-                    id: digArea
-                    anchors.fill: parent
-                    onClicked: { Game.tap(); floatReward.wasMat = Game.lastTapMat; app.buzz(); digPulse.restart(); floatAnim.restart() }
-                }
-                SequentialAnimation {
-                    id: digPulse
-                    NumberAnimation { target: digBtn; property: "scale"; to: 0.96; duration: 40 }
-                    NumberAnimation { target: digBtn; property: "scale"; to: 1.0; duration: 90 }
-                }
-            }
+            width: listFlick.width
 
             // Workers ----------------------------------------------------------------
             SectionHeader { text: qsTr("Badgers") + " · " + Game.idleWorkers + "/" + Game.population + " " + qsTr("idle") }
