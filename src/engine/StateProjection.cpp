@@ -157,7 +157,9 @@ void applyEventChoice(GameState& s, int ev, int opt, qint64 at, quint64 salt)
                 const int take = losses < s.units[u] ? losses : s.units[u];
                 s.units[u] -= take; losses -= take;
             }
-            if (!won) {
+            if (won) {
+                s.counterWins += 1;
+            } else {
                 s.res[Gold] *= (1.0 - kCounterPillageFrac);
                 s.res[Materials] *= (1.0 - kCounterPillageFrac);
             }
@@ -247,6 +249,55 @@ void applyEventChoice(GameState& s, int ev, int opt, qint64 at, quint64 salt)
             else s.res[Gold] *= 0.9;
         } else                              // sell it sealed, mystery included
             { s.res[Gold] += 90.0 * scale; s.goldEarned += 90.0 * scale; }
+        break;
+    // --- Arcs: once-per-game set pieces with distinctive payoffs. ------------------------------
+    case EvArcFoxWar:
+        s.arcDone[0] = true;
+        if (opt == 0) {                     // the battle of the hill
+            const double force = kCounterBaseForce * (1.0 + kCounterForcePerTerr * s.territory) * 2.5;
+            const double roll = rollUnit(salt, static_cast<int>(at) ^ 0x7a11);
+            const double score = (garrisonDefense(s) / force)
+                               * (1.0 - kLuckBand + 2.0 * kLuckBand * roll);
+            if (score >= kWinScore) {       // the fox tribute: territory and intel
+                s.territory += 2;
+                for (int tt = 0; tt < kTargetCount; ++tt)
+                    if (targetUnlocked(s, tt)) s.intel[tt] = clampd(s.intel[tt] + 0.2, 0.0, kIntelCap);
+                s.lastEventResult = 1;
+            } else {
+                s.res[Gold] *= 0.75; s.res[Materials] *= 0.75;
+                s.lastEventResult = 2;
+            }
+        } else {                            // pay them off
+            s.res[Gold] *= 0.8;
+            s.lastEventResult = 0;
+        }
+        break;
+    case EvArcRiver:
+        s.arcDone[1] = true;
+        if (opt == 0) {                     // drain it: safe, sure
+            const double cost = 120.0;
+            if (s.res[Materials] >= cost) s.res[Materials] -= cost;
+        } else {                            // channel it: the watermill, or a lost gallery
+            const double cost = 260.0;
+            if (s.res[Materials] >= cost) {
+                s.res[Materials] -= cost;
+                const double roll = rollUnit(salt, static_cast<int>(at) ^ 0x21f5);
+                if (roll < 0.6) { s.buildings[Watermill] += 1; s.buildingsBuilt += 1; }
+                else if (s.buildings[MineShaft] > 0) s.buildings[MineShaft] -= 1;
+            }
+        }
+        break;
+    case EvArcElder:
+        s.arcDone[2] = true;
+        if (opt == 0) {                     // follow the clues to the founder's cache
+            const double cost = 60.0;
+            if (s.res[Gold] >= cost) {
+                s.res[Gold] -= cost;
+                s.res[Gold] += 500.0; s.goldEarned += 500.0;
+                s.res[Materials] += 300.0;
+                s.territory += 1;
+            }
+        }
         break;
     default: break;
     }
@@ -435,6 +486,9 @@ bool eventEligible(const GameState& s, int ev, qint64 nowMs)
     case EvDeserter:    return s.raidsWon >= 1;
     case EvPrisoners:   return s.raidsWon >= 1;
     case EvCrate:       return s.raidsWon >= 1;
+    case EvArcFoxWar:   return !s.arcDone[0] && s.counterWins >= 3;
+    case EvArcRiver:    return !s.arcDone[1] && s.buildings[MineShaft] >= 5;
+    case EvArcElder:    return !s.arcDone[2] && s.raidsWon >= 2;
     case EvFeast:       return s.population >= 12 && s.res[Food] > foodCap(s) * 0.5;
     default:            return false;
     }

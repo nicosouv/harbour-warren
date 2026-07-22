@@ -146,7 +146,8 @@ enum EventId {
     EvStorm = 0, EvRats, EvWanderer, EvRain, EvMerchant,
     EvTransformer, EvCollapse, EvTax, EvScouts, EvFeast, EvCounterRaid,
     EvExodus, EvWoundedVet, EvCult, EvWolves,
-    EvMinerStrike, EvCaveIn, EvVein, EvDeserter, EvPrisoners, EvCrate, EventCount
+    EvMinerStrike, EvCaveIn, EvVein, EvDeserter, EvPrisoners, EvCrate,
+    EvArcFoxWar, EvArcRiver, EvArcElder, EventCount
 };
 struct EventDef {
     const char* id;
@@ -175,6 +176,9 @@ static const EventDef kEvent[EventCount] = {
     { "deserter",    3, Q_INT64_C(3600000)  },
     { "prisoners",   3, Q_INT64_C(3600000)  },
     { "crate",       3, Q_INT64_C(3600000)  },
+    { "arcfoxwar",   3, Q_INT64_C(3600000)  },  // once-per-game arcs (gated by arcDone)
+    { "arcriver",    2, Q_INT64_C(3600000)  },
+    { "arcelder",    3, Q_INT64_C(3600000)  },
 };
 
 // Counter-raid: the foxes hit back once you start taking territory. A defensive battle resolved

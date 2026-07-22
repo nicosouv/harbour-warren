@@ -51,6 +51,8 @@ struct GameState {
 
     int    territory = 0;           // permanent yield bonus source
     int    raidsWon = 0;
+    int    counterWins = 0;         // counter-raids repelled (arc trigger)
+    bool   arcDone[3] = { false, false, false };   // fox war / underground river / the old badger
     int    raidCount = 0;           // seeds the deterministic roll
     double intel[Balance::kTargetCount] = { 0, 0, 0, 0, 0, 0 };
     qint64 lastRaidMs = 0;

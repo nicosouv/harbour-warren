@@ -210,6 +210,25 @@
     <message><source>Released. One left a fort door open. Out of gratitude, or absent-mindedness.</source><translation>Released. One left a fort door open. Out of gratitude, or absent-mindedness.</translation></message>
     <message><source>The locks gave way. What was inside was a matter of luck, and you know yours.</source><translation>The locks gave way. What was inside was a matter of luck, and you know yours.</translation></message>
     <message><source>Sold, mystery included. The mystery was optional.</source><translation>Sold, mystery included. The mystery was optional.</translation></message>
+    <message><source>The fox war</source><translation>The fox war</translation></message>
+    <message><source>The underground river</source><translation>The underground river</translation></message>
+    <message><source>The old badger</source><translation>The old badger</translation></message>
+    <message><source>An ultimatum nailed to the gate. The spelling is correct, which is what worries me. They are all coming. The battle of the hill.</source><translation>An ultimatum nailed to the gate. The spelling is correct, which is what worries me. They are all coming. The battle of the hill.</translation></message>
+    <message><source>Water at the bottom of the mine. It is rising. It did not ask permission.</source><translation>Water at the bottom of the mine. It is rising. It did not ask permission.</translation></message>
+    <message><source>An elder sits by the gate. He says he knew the hill "before". Before what stays a mystery.</source><translation>An elder sits by the gate. He says he knew the hill "before". Before what stays a mystery.</translation></message>
+    <message><source>Meet them on the hill</source><translation>Meet them on the hill</translation></message>
+    <message><source>Drain it</source><translation>Drain it</translation></message>
+    <message><source>Follow the clues</source><translation>Follow the clues</translation></message>
+    <message><source>Pay the fox tribute</source><translation>Pay the fox tribute</translation></message>
+    <message><source>Channel it</source><translation>Channel it</translation></message>
+    <message><source>Let it lie</source><translation>Let it lie</translation></message>
+    <message><source>You paid for peace. Tedious and profitable, as promised.</source><translation>You paid for peace. Tedious and profitable, as promised.</translation></message>
+    <message><source>The fox tribute, paid in gold and their dignity. New ground is yours.</source><translation>The fox tribute, paid in gold and their dignity. New ground is yours.</translation></message>
+    <message><source>We will speak of the hill again. Lower, and less loudly.</source><translation>We will speak of the hill again. Lower, and less loudly.</translation></message>
+    <message><source>Drained. The mine survives, no more. The water remembers.</source><translation>Drained. The mine survives, no more. The water remembers.</translation></message>
+    <message><source>You bent the river to a wheel. Or it bent a gallery. The water decides these things.</source><translation>You bent the river to a wheel. Or it bent a gallery. The water decides these things.</translation></message>
+    <message><source>The founder's cache. He smiled as he left. Let us never speak of it again.</source><translation>The founder's cache. He smiled as he left. Let us never speak of it again.</translation></message>
+    <message><source>You let it lie. Some mysteries prefer it. So, apparently, do you.</source><translation>You let it lie. Some mysteries prefer it. So, apparently, do you.</translation></message>
 </context>
 <context>
     <name>ColonyPage</name>

@@ -129,7 +129,8 @@ ApplicationWindow {
     property var eventKeys: ["storm", "rats", "wanderer", "rain", "merchant",
                              "transformer", "collapse", "tax", "scouts", "feast", "counterraid",
                              "exodus", "woundedvet", "cult", "wolves",
-                             "minerstrike", "cavein", "vein", "deserter", "prisoners", "crate"]
+                             "minerstrike", "cavein", "vein", "deserter", "prisoners", "crate",
+                             "arcfoxwar", "arcriver", "arcelder"]
     function evName(k) {
         if (k === "storm") return qsTr("The storm")
         if (k === "rats") return qsTr("Rats in the granary")
@@ -152,6 +153,9 @@ ApplicationWindow {
         if (k === "deserter") return qsTr("The fox deserter")
         if (k === "prisoners") return qsTr("The prisoners")
         if (k === "crate") return qsTr("The sealed crate")
+        if (k === "arcfoxwar") return qsTr("The fox war")
+        if (k === "arcriver") return qsTr("The underground river")
+        if (k === "arcelder") return qsTr("The old badger")
         return k
     }
     function evBody(k) {
@@ -176,6 +180,9 @@ ApplicationWindow {
         if (k === "deserter") return qsTr("A fox turns up, tail low. He says he knows the codes. He says.")
         if (k === "prisoners") return qsTr("Victory left prisoners. They eat. A lot.")
         if (k === "crate") return qsTr("In the loot, a crate with three locks. Somebody cared about this.")
+        if (k === "arcfoxwar") return qsTr("An ultimatum nailed to the gate. The spelling is correct, which is what worries me. They are all coming. The battle of the hill.")
+        if (k === "arcriver") return qsTr("Water at the bottom of the mine. It is rising. It did not ask permission.")
+        if (k === "arcelder") return qsTr("An elder sits by the gate. He says he knew the hill \"before\". Before what stays a mystery.")
         return ""
     }
     function evA(k) {
@@ -200,6 +207,9 @@ ApplicationWindow {
         if (k === "deserter") return qsTr("Hear him out")
         if (k === "prisoners") return qsTr("Ransom them")
         if (k === "crate") return qsTr("Pry it open")
+        if (k === "arcfoxwar") return qsTr("Meet them on the hill")
+        if (k === "arcriver") return qsTr("Drain it")
+        if (k === "arcelder") return qsTr("Follow the clues")
         return qsTr("Yes")
     }
     function evB(k) {
@@ -224,6 +234,9 @@ ApplicationWindow {
         if (k === "deserter") return qsTr("Send him away")
         if (k === "prisoners") return qsTr("Release them")
         if (k === "crate") return qsTr("Sell it sealed")
+        if (k === "arcfoxwar") return qsTr("Pay the fox tribute")
+        if (k === "arcriver") return qsTr("Channel it")
+        if (k === "arcelder") return qsTr("Let it lie")
         return qsTr("No")
     }
     function evReact(k, opt) {
@@ -253,6 +266,14 @@ ApplicationWindow {
         if (k === "deserter") return opt === 0 ? qsTr("His information was good. Beware of good information.") : qsTr("He left. At least your secrets stay between you and me. Mostly me.")
         if (k === "prisoners") return opt === 0 ? qsTr("Paid in full. Fox families have a sense of family.") : qsTr("Released. One left a fort door open. Out of gratitude, or absent-mindedness.")
         if (k === "crate") return opt === 0 ? qsTr("The locks gave way. What was inside was a matter of luck, and you know yours.") : qsTr("Sold, mystery included. The mystery was optional.")
+        if (k === "arcfoxwar") {
+            if (opt !== 0) return qsTr("You paid for peace. Tedious and profitable, as promised.")
+            return Game.lastEventResult === 1
+                ? qsTr("The fox tribute, paid in gold and their dignity. New ground is yours.")
+                : qsTr("We will speak of the hill again. Lower, and less loudly.")
+        }
+        if (k === "arcriver") return opt === 0 ? qsTr("Drained. The mine survives, no more. The water remembers.") : qsTr("You bent the river to a wheel. Or it bent a gallery. The water decides these things.")
+        if (k === "arcelder") return opt === 0 ? qsTr("The founder's cache. He smiled as he left. Let us never speak of it again.") : qsTr("You let it lie. Some mysteries prefer it. So, apparently, do you.")
         return qsTr("Onward.")
     }
 
@@ -681,8 +702,9 @@ ApplicationWindow {
             // Defensive battles earn a banner: the counter-raid is the one event you can lose outright.
             Label {
                 anchors.horizontalCenter: parent.horizontalCenter
-                visible: eventOverlay.curEv >= 0 && app.eventKeys[eventOverlay.curEv] === "counterraid"
-                         && eventOverlay.chosenOpt === 0
+                visible: eventOverlay.curEv >= 0 && eventOverlay.chosenOpt === 0
+                         && (app.eventKeys[eventOverlay.curEv] === "counterraid"
+                             || app.eventKeys[eventOverlay.curEv] === "arcfoxwar")
                 text: Game.lastEventResult === 1 ? qsTr("REPELLED") : qsTr("OVERRUN")
                 font.pixelSize: Theme.fontSizeHuge; font.bold: true
                 color: Game.lastEventResult === 1 ? "#7fae5a" : "#c0603a"

@@ -210,6 +210,25 @@
     <message><source>Released. One left a fort door open. Out of gratitude, or absent-mindedness.</source><translation>Relâchés. L'un a laissé la porte d'un fort ouverte. Par gratitude, ou par étourderie.</translation></message>
     <message><source>The locks gave way. What was inside was a matter of luck, and you know yours.</source><translation>Les cadenas ont cédé. Ce qu'il y avait dedans était affaire de chance, et vous connaissez la vôtre.</translation></message>
     <message><source>Sold, mystery included. The mystery was optional.</source><translation>Vendue mystère compris. Le mystère était en option.</translation></message>
+    <message><source>The fox war</source><translation>La guerre des renards</translation></message>
+    <message><source>The underground river</source><translation>La rivière souterraine</translation></message>
+    <message><source>The old badger</source><translation>Le vieux blaireau</translation></message>
+    <message><source>An ultimatum nailed to the gate. The spelling is correct, which is what worries me. They are all coming. The battle of the hill.</source><translation>Un ultimatum cloué au portail. L'orthographe est correcte, c'est ce qui inquiète. Ils arrivent tous. La bataille de la colline.</translation></message>
+    <message><source>Water at the bottom of the mine. It is rising. It did not ask permission.</source><translation>De l'eau au fond de la mine. Elle monte. Elle n'a pas demandé la permission.</translation></message>
+    <message><source>An elder sits by the gate. He says he knew the hill "before". Before what stays a mystery.</source><translation>Un ancien s'assoit près du portail. Il dit qu'il a connu la colline « avant ». Avant quoi, mystère.</translation></message>
+    <message><source>Meet them on the hill</source><translation>Les affronter sur la colline</translation></message>
+    <message><source>Drain it</source><translation>Drainer</translation></message>
+    <message><source>Follow the clues</source><translation>Suivre les indices</translation></message>
+    <message><source>Pay the fox tribute</source><translation>Payer le tribut aux renards</translation></message>
+    <message><source>Channel it</source><translation>Canaliser</translation></message>
+    <message><source>Let it lie</source><translation>Laisser tomber</translation></message>
+    <message><source>You paid for peace. Tedious and profitable, as promised.</source><translation>Vous avez payé la paix. Ennuyeuse et rentable, comme prévu.</translation></message>
+    <message><source>The fox tribute, paid in gold and their dignity. New ground is yours.</source><translation>Le tribut des renards, payé en or et en dignité. La leur. De nouvelles terres sont à vous.</translation></message>
+    <message><source>We will speak of the hill again. Lower, and less loudly.</source><translation>On reparlera de la colline. Plus bas, et moins fort.</translation></message>
+    <message><source>Drained. The mine survives, no more. The water remembers.</source><translation>Drainé. La mine survit, sans plus. L'eau se souvient.</translation></message>
+    <message><source>You bent the river to a wheel. Or it bent a gallery. The water decides these things.</source><translation>Vous avez plié la rivière en roue. Ou elle a plié une galerie. C'est l'eau qui décide.</translation></message>
+    <message><source>The founder's cache. He smiled as he left. Let us never speak of it again.</source><translation>La cache du fondateur. Il souriait en repartant. N'en parlons plus jamais.</translation></message>
+    <message><source>You let it lie. Some mysteries prefer it. So, apparently, do you.</source><translation>Vous avez laissé courir. Certains mystères préfèrent ça. Vous aussi, apparemment.</translation></message>
 </context>
 <context>
     <name>ColonyPage</name>
