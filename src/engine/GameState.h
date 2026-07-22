@@ -40,6 +40,9 @@ struct GameState {
     // Temporary modifiers, expired lazily at each event's instant.
     double modProdFactor = 1.0;   qint64 modProdUntil = 0;
     double modDrainFactor = 1.0;  qint64 modDrainUntil = 0;
+    // Per-job production modifiers (a strike halts the mine, rain slows foraging, a vein doubles it).
+    double modJob[Balance::JobCount]      = { 1.0, 1.0, 1.0, 1.0 };
+    qint64 modJobUntil[Balance::JobCount] = { 0, 0, 0, 0 };
 
     int    units[Balance::UnitCount] = { 0, 0 };
     int    unitsTrained = 0;        // lifetime (stage gate)

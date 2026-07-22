@@ -57,6 +57,8 @@ void expireModifiers(GameState& s, qint64 at)
 {
     if (s.modProdUntil > 0 && at >= s.modProdUntil) { s.modProdFactor = 1.0; s.modProdUntil = 0; }
     if (s.modDrainUntil > 0 && at >= s.modDrainUntil) { s.modDrainFactor = 1.0; s.modDrainUntil = 0; }
+    for (int j = 0; j < JobCount; ++j)
+        if (s.modJobUntil[j] > 0 && at >= s.modJobUntil[j]) { s.modJob[j] = 1.0; s.modJobUntil[j] = 0; }
 }
 
 // Resolve the player's choice for an event. opt 0 = first button, 1 = second. Magnitudes rise
@@ -202,6 +204,50 @@ void applyEventChoice(GameState& s, int ev, int opt, qint64 at, quint64 salt)
             s.modProdFactor = 0.8; s.modProdUntil = at + kModFeastMs;
         }
         break;
+    case EvMinerStrike:
+        if (opt == 0) {                     // pay the bonus
+            const double cost = 50.0 * scale;
+            if (s.res[Gold] >= cost) s.res[Gold] -= cost;
+        } else {                            // hold firm: the mine stops for two hours
+            s.modJob[MineJob] = 0.0; s.modJobUntil[MineJob] = at + kModFeastMs;
+        }
+        break;
+    case EvCaveIn:
+        if (opt == 0) {                     // clear the entrance
+            const double cost = 30.0 * scale;
+            if (s.res[Materials] >= cost) s.res[Materials] -= cost;
+        } else {                            // take the other hole: foraging slows for an hour
+            s.modJob[Forage] = 0.75; s.modJobUntil[Forage] = at + kModShortMs;
+        }
+        break;
+    case EvVein:
+        if (opt == 0)                       // dig greedily: the mine doubles for half an hour
+            { s.modJob[MineJob] = 2.0; s.modJobUntil[MineJob] = at + Q_INT64_C(1800000); }
+        else                                // shore it up first: a safe modest payout
+            { s.res[Gold] += 40.0 * scale; s.goldEarned += 40.0 * scale; }
+        break;
+    case EvDeserter:
+        if (opt == 0) {                     // listen: intel on the toughest target you can reach
+            int best = -1;
+            for (int tt = 0; tt < kTargetCount; ++tt) if (targetUnlocked(s, tt)) best = tt;
+            if (best >= 0) s.intel[best] = clampd(s.intel[best] + kIntelPerDefeat, 0.0, kIntelCap);
+        }
+        break;
+    case EvPrisoners:
+        if (opt == 0)                       // ransom them
+            { s.res[Gold] += 120.0 * scale; s.goldEarned += 120.0 * scale; }
+        else                                // release them: a little intel on every known target
+            for (int tt = 0; tt < kTargetCount; ++tt)
+                if (targetUnlocked(s, tt)) s.intel[tt] = clampd(s.intel[tt] + 0.08, 0.0, kIntelCap);
+        break;
+    case EvCrate:
+        if (opt == 0) {                     // pry it open: fortune or regret
+            const double roll = rollUnit(salt, static_cast<int>(at) ^ 0x3c7);
+            if (roll < 0.5) { s.res[Gold] += 300.0 * scale; s.goldEarned += 300.0 * scale; }
+            else s.res[Gold] *= 0.9;
+        } else                              // sell it sealed, mystery included
+            { s.res[Gold] += 90.0 * scale; s.goldEarned += 90.0 * scale; }
+        break;
     default: break;
     }
 }
@@ -285,7 +331,7 @@ double perWorker(const GameState& s, int job)
 {
     if (job < 0 || job >= JobCount) return 0.0;
     return kJobBase[job] * bldMult(s, job) * territoryMult(s) * watermillMult(s)
-         * energyMult(s) * s.modProdFactor;
+         * energyMult(s) * s.modProdFactor * s.modJob[job];
 }
 
 double production(const GameState& s, int job)
@@ -383,6 +429,12 @@ bool eventEligible(const GameState& s, int ev, qint64 nowMs)
     case EvWoundedVet:  return s.units[Veteran] >= 1;
     case EvCult:        return s.population >= 15;
     case EvWolves:      return true;
+    case EvMinerStrike: return s.buildings[MineShaft] >= 1;
+    case EvCaveIn:      return totalBuildings(s) >= 2;
+    case EvVein:        return s.buildings[MineShaft] >= 1;
+    case EvDeserter:    return s.raidsWon >= 1;
+    case EvPrisoners:   return s.raidsWon >= 1;
+    case EvCrate:       return s.raidsWon >= 1;
     case EvFeast:       return s.population >= 12 && s.res[Food] > foodCap(s) * 0.5;
     default:            return false;
     }

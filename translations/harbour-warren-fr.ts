@@ -174,6 +174,42 @@
     <message><source>Nothing to report. Impressive, in its way.</source><translation>Rien à signaler. Impressionnant, dans son genre.</translation></message>
     <message><source>REPELLED</source><translation>REPOUSSÉS</translation></message>
     <message><source>OVERRUN</source><translation>SUBMERGÉS</translation></message>
+    <message><source>The miners' strike</source><translation>La grève des mineurs</translation></message>
+    <message><source>Cave-in at the entrance</source><translation>Éboulement à l'entrée</translation></message>
+    <message><source>A vein is struck</source><translation>Un filon découvert</translation></message>
+    <message><source>The fox deserter</source><translation>Le déserteur renard</translation></message>
+    <message><source>The prisoners</source><translation>Les prisonniers</translation></message>
+    <message><source>The sealed crate</source><translation>La caisse scellée</translation></message>
+    <message><source>The miners have demands. And shovels. The order of those two things matters.</source><translation>Les mineurs ont des revendications. Et des pelles. L'ordre de ces deux éléments compte.</translation></message>
+    <message><source>The main entrance caved in. Nobody underneath, sadly for the story.</source><translation>L'entrée principale s'est effondrée. Personne dessous, hélas pour le récit.</translation></message>
+    <message><source>A miner comes up with a nugget and a theory: there are more.</source><translation>Un mineur remonte avec une pépite et une théorie : il y en a d'autres.</translation></message>
+    <message><source>A fox turns up, tail low. He says he knows the codes. He says.</source><translation>Un renard se présente, queue basse. Il dit qu'il connaît les codes. Il dit.</translation></message>
+    <message><source>Victory left prisoners. They eat. A lot.</source><translation>La victoire a laissé des prisonniers. Ils mangent. Beaucoup.</translation></message>
+    <message><source>In the loot, a crate with three locks. Somebody cared about this.</source><translation>Dans le butin, une caisse à trois cadenas. Quelqu'un y tenait.</translation></message>
+    <message><source>Pay the bonus</source><translation>Payer la prime</translation></message>
+    <message><source>Clear it</source><translation>Déblayer</translation></message>
+    <message><source>Dig now</source><translation>Creuser tout de suite</translation></message>
+    <message><source>Hear him out</source><translation>L'écouter</translation></message>
+    <message><source>Ransom them</source><translation>Les rançonner</translation></message>
+    <message><source>Pry it open</source><translation>L'ouvrir</translation></message>
+    <message><source>Hold firm</source><translation>Tenir bon</translation></message>
+    <message><source>Take the detour</source><translation>Prendre l'autre trou</translation></message>
+    <message><source>Shore it up</source><translation>Étayer d'abord</translation></message>
+    <message><source>Send him away</source><translation>Le renvoyer</translation></message>
+    <message><source>Release them</source><translation>Les libérer</translation></message>
+    <message><source>Sell it sealed</source><translation>La revendre fermée</translation></message>
+    <message><source>Calm restored. It has been invoiced.</source><translation>Le calme est revenu. Il est facturé.</translation></message>
+    <message><source>You won the standoff. Nobody mined during it.</source><translation>Vous avez gagné le bras de fer. Personne n'a miné pendant.</translation></message>
+    <message><source>Cleared. The builders want a commemorative plaque.</source><translation>Dégagé. Les bâtisseurs veulent une plaque commémorative.</translation></message>
+    <message><source>The detour adds charm. And time.</source><translation>Le détour ajoute du charme. Et du temps.</translation></message>
+    <message><source>Greed has an excellent short-term yield. It is the only term it knows.</source><translation>L'avidité a un excellent rendement à court terme. C'est le seul terme qu'elle connaisse.</translation></message>
+    <message><source>Prudence. Your badger ancestors would applaud, if they applauded.</source><translation>La prudence. Vos ancêtres blaireaux applaudiraient, s'ils applaudissaient.</translation></message>
+    <message><source>His information was good. Beware of good information.</source><translation>Ses informations étaient bonnes. Méfiez-vous des informations bonnes.</translation></message>
+    <message><source>He left. At least your secrets stay between you and me. Mostly me.</source><translation>Il est reparti. Au moins vos secrets restent entre vous et moi. Surtout moi.</translation></message>
+    <message><source>Paid in full. Fox families have a sense of family.</source><translation>Payés rubis sur l'ongle. Les familles renardes ont le sens de la famille.</translation></message>
+    <message><source>Released. One left a fort door open. Out of gratitude, or absent-mindedness.</source><translation>Relâchés. L'un a laissé la porte d'un fort ouverte. Par gratitude, ou par étourderie.</translation></message>
+    <message><source>The locks gave way. What was inside was a matter of luck, and you know yours.</source><translation>Les cadenas ont cédé. Ce qu'il y avait dedans était affaire de chance, et vous connaissez la vôtre.</translation></message>
+    <message><source>Sold, mystery included. The mystery was optional.</source><translation>Vendue mystère compris. Le mystère était en option.</translation></message>
 </context>
 <context>
     <name>ColonyPage</name>

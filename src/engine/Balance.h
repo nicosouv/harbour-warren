@@ -145,7 +145,8 @@ static const qint64 kWelcomeMs    = Q_INT64_C(1800000);   // recap shown past 30
 enum EventId {
     EvStorm = 0, EvRats, EvWanderer, EvRain, EvMerchant,
     EvTransformer, EvCollapse, EvTax, EvScouts, EvFeast, EvCounterRaid,
-    EvExodus, EvWoundedVet, EvCult, EvWolves, EventCount
+    EvExodus, EvWoundedVet, EvCult, EvWolves,
+    EvMinerStrike, EvCaveIn, EvVein, EvDeserter, EvPrisoners, EvCrate, EventCount
 };
 struct EventDef {
     const char* id;
@@ -168,6 +169,12 @@ static const EventDef kEvent[EventCount] = {
     { "woundedvet",  3, Q_INT64_C(3600000)  },  // 60 min
     { "cult",        4, Q_INT64_C(5400000)  },
     { "wolves",      4, Q_INT64_C(7200000)  },  // 2 h, ~seasonal
+    { "minerstrike", 2, Q_INT64_C(5400000)  },
+    { "cavein",      1, Q_INT64_C(3600000)  },
+    { "vein",        2, Q_INT64_C(3600000)  },
+    { "deserter",    3, Q_INT64_C(3600000)  },
+    { "prisoners",   3, Q_INT64_C(3600000)  },
+    { "crate",       3, Q_INT64_C(3600000)  },
 };
 
 // Counter-raid: the foxes hit back once you start taking territory. A defensive battle resolved

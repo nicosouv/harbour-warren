@@ -128,7 +128,8 @@ ApplicationWindow {
     // --- Events -----------------------------------------------------------------------------
     property var eventKeys: ["storm", "rats", "wanderer", "rain", "merchant",
                              "transformer", "collapse", "tax", "scouts", "feast", "counterraid",
-                             "exodus", "woundedvet", "cult", "wolves"]
+                             "exodus", "woundedvet", "cult", "wolves",
+                             "minerstrike", "cavein", "vein", "deserter", "prisoners", "crate"]
     function evName(k) {
         if (k === "storm") return qsTr("The storm")
         if (k === "rats") return qsTr("Rats in the granary")
@@ -145,6 +146,12 @@ ApplicationWindow {
         if (k === "woundedvet") return qsTr("The wounded veteran")
         if (k === "cult") return qsTr("The cult of the great burrow")
         if (k === "wolves") return qsTr("The winter of wolves")
+        if (k === "minerstrike") return qsTr("The miners' strike")
+        if (k === "cavein") return qsTr("Cave-in at the entrance")
+        if (k === "vein") return qsTr("A vein is struck")
+        if (k === "deserter") return qsTr("The fox deserter")
+        if (k === "prisoners") return qsTr("The prisoners")
+        if (k === "crate") return qsTr("The sealed crate")
         return k
     }
     function evBody(k) {
@@ -163,6 +170,12 @@ ApplicationWindow {
         if (k === "woundedvet") return qsTr("A veteran limps back with a paw in a sling and stories that grow with each telling.")
         if (k === "cult") return qsTr("Some badgers are digging a \"spiritual\" tunnel. They have candles. That is a bad sign.")
         if (k === "wolves") return qsTr("Wolves on the edge of the territory. Wolves do not negotiate. It is restful, really.")
+        if (k === "minerstrike") return qsTr("The miners have demands. And shovels. The order of those two things matters.")
+        if (k === "cavein") return qsTr("The main entrance caved in. Nobody underneath, sadly for the story.")
+        if (k === "vein") return qsTr("A miner comes up with a nugget and a theory: there are more.")
+        if (k === "deserter") return qsTr("A fox turns up, tail low. He says he knows the codes. He says.")
+        if (k === "prisoners") return qsTr("Victory left prisoners. They eat. A lot.")
+        if (k === "crate") return qsTr("In the loot, a crate with three locks. Somebody cared about this.")
         return ""
     }
     function evA(k) {
@@ -181,6 +194,12 @@ ApplicationWindow {
         if (k === "woundedvet") return qsTr("Nurse him back")
         if (k === "cult") return qsTr("Fund it")
         if (k === "wolves") return qsTr("Hunt them")
+        if (k === "minerstrike") return qsTr("Pay the bonus")
+        if (k === "cavein") return qsTr("Clear it")
+        if (k === "vein") return qsTr("Dig now")
+        if (k === "deserter") return qsTr("Hear him out")
+        if (k === "prisoners") return qsTr("Ransom them")
+        if (k === "crate") return qsTr("Pry it open")
         return qsTr("Yes")
     }
     function evB(k) {
@@ -199,6 +218,12 @@ ApplicationWindow {
         if (k === "woundedvet") return qsTr("Retire him")
         if (k === "cult") return qsTr("Ban it")
         if (k === "wolves") return qsTr("Ration instead")
+        if (k === "minerstrike") return qsTr("Hold firm")
+        if (k === "cavein") return qsTr("Take the detour")
+        if (k === "vein") return qsTr("Shore it up")
+        if (k === "deserter") return qsTr("Send him away")
+        if (k === "prisoners") return qsTr("Release them")
+        if (k === "crate") return qsTr("Sell it sealed")
         return qsTr("No")
     }
     function evReact(k, opt) {
@@ -222,6 +247,12 @@ ApplicationWindow {
         if (k === "woundedvet") return opt === 0 ? qsTr("Stitched up. The stories gained a chapter.") : qsTr("Reassigned to foraging. Berries rarely fight back.")
         if (k === "cult") return opt === 0 ? qsTr("Subsidising a cult. Every civilisation does it eventually. This is eventually.") : qsTr("Banned. They now dig \"administratively\".")
         if (k === "wolves") return opt === 0 ? qsTr("Chased off. Wolves respect force. It is their only administrative quality.") : qsTr("Everyone went a little hungry. Democratically.")
+        if (k === "minerstrike") return opt === 0 ? qsTr("Calm restored. It has been invoiced.") : qsTr("You won the standoff. Nobody mined during it.")
+        if (k === "cavein") return opt === 0 ? qsTr("Cleared. The builders want a commemorative plaque.") : qsTr("The detour adds charm. And time.")
+        if (k === "vein") return opt === 0 ? qsTr("Greed has an excellent short-term yield. It is the only term it knows.") : qsTr("Prudence. Your badger ancestors would applaud, if they applauded.")
+        if (k === "deserter") return opt === 0 ? qsTr("His information was good. Beware of good information.") : qsTr("He left. At least your secrets stay between you and me. Mostly me.")
+        if (k === "prisoners") return opt === 0 ? qsTr("Paid in full. Fox families have a sense of family.") : qsTr("Released. One left a fort door open. Out of gratitude, or absent-mindedness.")
+        if (k === "crate") return opt === 0 ? qsTr("The locks gave way. What was inside was a matter of luck, and you know yours.") : qsTr("Sold, mystery included. The mystery was optional.")
         return qsTr("Onward.")
     }
 

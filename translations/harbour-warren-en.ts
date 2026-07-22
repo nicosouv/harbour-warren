@@ -174,6 +174,42 @@
     <message><source>Nothing to report. Impressive, in its way.</source><translation>Nothing to report. Impressive, in its way.</translation></message>
     <message><source>REPELLED</source><translation>REPELLED</translation></message>
     <message><source>OVERRUN</source><translation>OVERRUN</translation></message>
+    <message><source>The miners' strike</source><translation>The miners' strike</translation></message>
+    <message><source>Cave-in at the entrance</source><translation>Cave-in at the entrance</translation></message>
+    <message><source>A vein is struck</source><translation>A vein is struck</translation></message>
+    <message><source>The fox deserter</source><translation>The fox deserter</translation></message>
+    <message><source>The prisoners</source><translation>The prisoners</translation></message>
+    <message><source>The sealed crate</source><translation>The sealed crate</translation></message>
+    <message><source>The miners have demands. And shovels. The order of those two things matters.</source><translation>The miners have demands. And shovels. The order of those two things matters.</translation></message>
+    <message><source>The main entrance caved in. Nobody underneath, sadly for the story.</source><translation>The main entrance caved in. Nobody underneath, sadly for the story.</translation></message>
+    <message><source>A miner comes up with a nugget and a theory: there are more.</source><translation>A miner comes up with a nugget and a theory: there are more.</translation></message>
+    <message><source>A fox turns up, tail low. He says he knows the codes. He says.</source><translation>A fox turns up, tail low. He says he knows the codes. He says.</translation></message>
+    <message><source>Victory left prisoners. They eat. A lot.</source><translation>Victory left prisoners. They eat. A lot.</translation></message>
+    <message><source>In the loot, a crate with three locks. Somebody cared about this.</source><translation>In the loot, a crate with three locks. Somebody cared about this.</translation></message>
+    <message><source>Pay the bonus</source><translation>Pay the bonus</translation></message>
+    <message><source>Clear it</source><translation>Clear it</translation></message>
+    <message><source>Dig now</source><translation>Dig now</translation></message>
+    <message><source>Hear him out</source><translation>Hear him out</translation></message>
+    <message><source>Ransom them</source><translation>Ransom them</translation></message>
+    <message><source>Pry it open</source><translation>Pry it open</translation></message>
+    <message><source>Hold firm</source><translation>Hold firm</translation></message>
+    <message><source>Take the detour</source><translation>Take the detour</translation></message>
+    <message><source>Shore it up</source><translation>Shore it up</translation></message>
+    <message><source>Send him away</source><translation>Send him away</translation></message>
+    <message><source>Release them</source><translation>Release them</translation></message>
+    <message><source>Sell it sealed</source><translation>Sell it sealed</translation></message>
+    <message><source>Calm restored. It has been invoiced.</source><translation>Calm restored. It has been invoiced.</translation></message>
+    <message><source>You won the standoff. Nobody mined during it.</source><translation>You won the standoff. Nobody mined during it.</translation></message>
+    <message><source>Cleared. The builders want a commemorative plaque.</source><translation>Cleared. The builders want a commemorative plaque.</translation></message>
+    <message><source>The detour adds charm. And time.</source><translation>The detour adds charm. And time.</translation></message>
+    <message><source>Greed has an excellent short-term yield. It is the only term it knows.</source><translation>Greed has an excellent short-term yield. It is the only term it knows.</translation></message>
+    <message><source>Prudence. Your badger ancestors would applaud, if they applauded.</source><translation>Prudence. Your badger ancestors would applaud, if they applauded.</translation></message>
+    <message><source>His information was good. Beware of good information.</source><translation>His information was good. Beware of good information.</translation></message>
+    <message><source>He left. At least your secrets stay between you and me. Mostly me.</source><translation>He left. At least your secrets stay between you and me. Mostly me.</translation></message>
+    <message><source>Paid in full. Fox families have a sense of family.</source><translation>Paid in full. Fox families have a sense of family.</translation></message>
+    <message><source>Released. One left a fort door open. Out of gratitude, or absent-mindedness.</source><translation>Released. One left a fort door open. Out of gratitude, or absent-mindedness.</translation></message>
+    <message><source>The locks gave way. What was inside was a matter of luck, and you know yours.</source><translation>The locks gave way. What was inside was a matter of luck, and you know yours.</translation></message>
+    <message><source>Sold, mystery included. The mystery was optional.</source><translation>Sold, mystery included. The mystery was optional.</translation></message>
 </context>
 <context>
     <name>ColonyPage</name>
