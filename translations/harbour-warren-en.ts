@@ -119,6 +119,15 @@
     <message><source>They came. You were warned. By me. Just now.</source><translation>They came. You were warned. By me. Just now.</translation></message>
     <message><source>They ate very well. They are already talking about the next one.</source><translation>They ate very well. They are already talking about the next one.</translation></message>
     <message><source>The word "tyrant" was used. Twice. Well enunciated.</source><translation>The word "tyrant" was used. Twice. Well enunciated.</translation></message>
+    <message><source>Watchtower</source><translation>Watchtower</translation></message>
+    <message><source>Watermill</source><translation>Watermill</translation></message>
+    <message><source>The foxes strike back</source><translation>The foxes strike back</translation></message>
+    <message><source>The foxes came back with torches and a grudge. They remember the ground you took. So, apparently, do their cousins.</source><translation>The foxes came back with torches and a grudge. They remember the ground you took. So, apparently, do their cousins.</translation></message>
+    <message><source>Defend the warren</source><translation>Defend the warren</translation></message>
+    <message><source>Pay the tribute</source><translation>Pay the tribute</translation></message>
+    <message><source>You paid for the peace. The word "protection money" is so vulgar.</source><translation>You paid for the peace. The word "protection money" is so vulgar.</translation></message>
+    <message><source>Repelled. The gate held better than the badgers did. They will come back with friends.</source><translation>Repelled. The gate held better than the badgers did. They will come back with friends.</translation></message>
+    <message><source>They left served. Your stores are lighter and your pride is a rumour.</source><translation>They left served. Your stores are lighter and your pride is a rumour.</translation></message>
 </context>
 <context>
     <name>ColonyPage</name>
@@ -177,6 +186,12 @@
     <message><source>Powered: +25% production and building</source><translation>Powered: +25% production and building</translation></message>
     <message><source>Blackout: −30% production and building</source><translation>Blackout: −30% production and building</translation></message>
     <message><source>Keep it powered: +25% production and building</source><translation>Keep it powered: +25% production and building</translation></message>
+    <message><source>Cheap, fragile, best power per gold.</source><translation>Cheap, fragile, best power per gold.</translation></message>
+    <message><source>Hits hard, spares your population.</source><translation>Hits hard, spares your population.</translation></message>
+    <message><source>train soldiers, more per barracks</source><translation>train soldiers, more per barracks</translation></message>
+    <message><source>home defence, foxes attack less</source><translation>home defence, foxes attack less</translation></message>
+    <message><source>+10% to every yield</source><translation>+10% to every yield</translation></message>
+    <message><source>Burrows full. Build a burrow to house more badgers.</source><translation>Burrows full. Build a burrow to house more badgers.</translation></message>
 </context>
 <context>
     <name>VillageView</name>

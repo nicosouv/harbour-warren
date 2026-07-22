@@ -70,8 +70,8 @@ Page {
         return "../images/dig.png"   // builders carry the shovel
     }
     function unitDesc(key) {
-        if (key === "militia") return qsTr("Cheap and fragile — the most power per gold.")
-        return qsTr("Five times the punch per badger — saves your population.")
+        if (key === "militia") return qsTr("Cheap, fragile, best power per gold.")
+        return qsTr("Hits hard, spares your population.")
     }
     function bldEffect(key) {
         if (key === "burrow") return qsTr("+3 housing")
@@ -79,7 +79,9 @@ Page {
         if (key === "workshop") return qsTr("better gathering")
         if (key === "mineshaft") return qsTr("better mining")
         if (key === "tradingpost") return qsTr("buy energy; powers the colony")
-        if (key === "barracks") return qsTr("train soldiers")
+        if (key === "barracks") return qsTr("train soldiers, more per barracks")
+        if (key === "watchtower") return qsTr("home defence, foxes attack less")
+        if (key === "watermill") return qsTr("+10% to every yield")
         return ""
     }
 
@@ -102,6 +104,35 @@ Page {
             text: qsTr("Stage") + " " + Game.stage + " · " + stageName(Game.stage)
             font.pixelSize: Theme.fontSizeExtraSmall
             color: Theme.secondaryColor
+        }
+        // Housing: population against the cap the burrows allow, so growth never stalls in mystery.
+        Row {
+            anchors.horizontalCenter: parent.horizontalCenter
+            spacing: Theme.paddingSmall
+            Image {
+                anchors.verticalCenter: parent.verticalCenter
+                source: Qt.resolvedUrl("../images/badger-front.png")
+                smooth: false; width: Theme.iconSizeExtraSmall * 0.7; height: width
+                fillMode: Image.PreserveAspectFit
+            }
+            Label {
+                anchors.verticalCenter: parent.verticalCenter
+                text: Game.population + " / " + Game.housingCap
+                font.pixelSize: Theme.fontSizeExtraSmall
+                font.family: "Monospace"
+                color: Game.population >= Game.housingCap ? "#c0a24a" : Theme.secondaryColor
+            }
+        }
+        // At the cap: say plainly which building lifts it.
+        Label {
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: parent.width - 2 * Theme.horizontalPageMargin
+            horizontalAlignment: Text.AlignHCenter
+            wrapMode: Text.WordWrap
+            visible: Game.stage >= 1 && Game.population >= Game.housingCap
+            text: qsTr("Burrows full. Build a burrow to house more badgers.")
+            font.pixelSize: Theme.fontSizeExtraSmall
+            color: "#c0a24a"
         }
         Label {
             anchors.horizontalCenter: parent.horizontalCenter
@@ -561,11 +592,32 @@ Page {
                         }
                     }
                 }
-                Label {
+                Column {
                     id: fillLbl
                     anchors { right: parent.right; rightMargin: Theme.horizontalPageMargin; verticalCenter: parent.verticalCenter }
-                    text: qsTr("Fill up")
-                    color: Theme.highlightColor
+                    Label {
+                        anchors.right: parent.right
+                        text: qsTr("Fill up")
+                        color: Theme.highlightColor
+                    }
+                    Row {
+                        anchors.right: parent.right
+                        spacing: 3
+                        visible: Game.energyFillCost > 0
+                        Image {
+                            anchors.verticalCenter: parent.verticalCenter
+                            source: Qt.resolvedUrl("../images/res-gold.png")
+                            smooth: false; width: Theme.iconSizeExtraSmall * 0.7; height: width
+                            fillMode: Image.PreserveAspectFit
+                        }
+                        Label {
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: Game.fmt(Game.energyFillCost)
+                            font.pixelSize: Theme.fontSizeExtraSmall
+                            font.family: "Monospace"
+                            color: Theme.secondaryColor
+                        }
+                    }
                 }
             }
 
@@ -611,12 +663,25 @@ Page {
                             Label { anchors.verticalCenter: parent.verticalCenter; text: "" + modelData.costPop; font.pixelSize: Theme.fontSizeExtraSmall; color: Theme.secondaryColor }
                         }
                     }
-                    IconButton {
+                    Row {
                         id: trainBtn
                         anchors { right: parent.right; rightMargin: Theme.horizontalPageMargin; verticalCenter: parent.verticalCenter }
-                        icon.source: "image://theme/icon-m-add"
-                        enabled: modelData.affordable
-                        onClicked: { Game.train(modelData.index, 1); app.buzz() }
+                        spacing: Theme.paddingSmall
+                        // Each extra barracks trains a whole batch at once.
+                        Label {
+                            anchors.verticalCenter: parent.verticalCenter
+                            visible: Game.trainBatch > 1
+                            text: "×" + Game.trainBatch
+                            font.pixelSize: Theme.fontSizeSmall
+                            font.family: "Monospace"
+                            color: modelData.affordable ? Theme.highlightColor : Theme.secondaryColor
+                        }
+                        IconButton {
+                            anchors.verticalCenter: parent.verticalCenter
+                            icon.source: "image://theme/icon-m-add"
+                            enabled: modelData.affordable
+                            onClicked: { Game.train(modelData.index, Game.trainBatch); app.buzz() }
+                        }
                     }
                 }
             }

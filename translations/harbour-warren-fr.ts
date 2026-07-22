@@ -119,6 +119,15 @@
     <message><source>They came. You were warned. By me. Just now.</source><translation>Ils sont venus. Vous étiez prévenu. Par moi. À l'instant même.</translation></message>
     <message><source>They ate very well. They are already talking about the next one.</source><translation>Ils ont très bien mangé. Ils parlent déjà du prochain.</translation></message>
     <message><source>The word "tyrant" was used. Twice. Well enunciated.</source><translation>Le mot « tyran » a été prononcé. Deux fois. Bien articulé.</translation></message>
+    <message><source>Watchtower</source><translation>Tour de guet</translation></message>
+    <message><source>Watermill</source><translation>Moulin à eau</translation></message>
+    <message><source>The foxes strike back</source><translation>Les renards ripostent</translation></message>
+    <message><source>The foxes came back with torches and a grudge. They remember the ground you took. So, apparently, do their cousins.</source><translation>Les renards sont revenus avec des torches et une rancune. Ils se souviennent du terrain que vous avez pris. Leurs cousins aussi, apparemment.</translation></message>
+    <message><source>Defend the warren</source><translation>Défendre la garenne</translation></message>
+    <message><source>Pay the tribute</source><translation>Payer le tribut</translation></message>
+    <message><source>You paid for the peace. The word "protection money" is so vulgar.</source><translation>Vous avez payé la paix. Le mot « racket » est si vulgaire.</translation></message>
+    <message><source>Repelled. The gate held better than the badgers did. They will come back with friends.</source><translation>Repoussés. Le portail a mieux tenu que les blaireaux. Ils reviendront avec des amis.</translation></message>
+    <message><source>They left served. Your stores are lighter and your pride is a rumour.</source><translation>Ils sont repartis servis. Vos stocks sont plus légers et votre fierté n'est qu'une rumeur.</translation></message>
 </context>
 <context>
     <name>ColonyPage</name>
@@ -177,6 +186,12 @@
     <message><source>Powered: +25% production and building</source><translation>Alimenté : +25% production et construction</translation></message>
     <message><source>Blackout: −30% production and building</source><translation>Panne : −30% production et construction</translation></message>
     <message><source>Keep it powered: +25% production and building</source><translation>Gardez le courant : +25% production et construction</translation></message>
+    <message><source>Cheap, fragile, best power per gold.</source><translation>Peu chère, fragile, meilleur rapport puissance/or.</translation></message>
+    <message><source>Hits hard, spares your population.</source><translation>Frappe fort, épargne votre population.</translation></message>
+    <message><source>train soldiers, more per barracks</source><translation>former des soldats, plus par caserne</translation></message>
+    <message><source>home defence, foxes attack less</source><translation>défense du terrier, les renards attaquent moins</translation></message>
+    <message><source>+10% to every yield</source><translation>+10 % sur toute la production</translation></message>
+    <message><source>Burrows full. Build a burrow to house more badgers.</source><translation>Terriers pleins. Construisez un terrier pour loger plus de blaireaux.</translation></message>
 </context>
 <context>
     <name>VillageView</name>

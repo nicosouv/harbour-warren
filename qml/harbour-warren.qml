@@ -38,6 +38,8 @@ ApplicationWindow {
         if (key === "mineshaft") return qsTr("Mine shaft")
         if (key === "tradingpost") return qsTr("Trading post")
         if (key === "barracks") return qsTr("Barracks")
+        if (key === "watchtower") return qsTr("Watchtower")
+        if (key === "watermill") return qsTr("Watermill")
         return key
     }
     function unitName(key) {
@@ -83,7 +85,7 @@ ApplicationWindow {
     }
     // --- Events -----------------------------------------------------------------------------
     property var eventKeys: ["storm", "rats", "wanderer", "rain", "merchant",
-                             "transformer", "collapse", "tax", "scouts", "feast"]
+                             "transformer", "collapse", "tax", "scouts", "feast", "counterraid"]
     function evName(k) {
         if (k === "storm") return qsTr("The storm")
         if (k === "rats") return qsTr("Rats in the granary")
@@ -95,6 +97,7 @@ ApplicationWindow {
         if (k === "tax") return qsTr("The tax collector")
         if (k === "scouts") return qsTr("Foxes on the prowl")
         if (k === "feast") return qsTr("A feast is demanded")
+        if (k === "counterraid") return qsTr("The foxes strike back")
         return k
     }
     function evBody(k) {
@@ -108,6 +111,7 @@ ApplicationWindow {
         if (k === "tax") return qsTr("A badger in a suit is counting your granaries. He has a stamp. You have a problem.")
         if (k === "scouts") return qsTr("Foxes prowl by the gate. They are counting your granaries. Out loud.")
         if (k === "feast") return qsTr("The colony demands a feast. Banners have been painted. With your paint.")
+        if (k === "counterraid") return qsTr("The foxes came back with torches and a grudge. They remember the ground you took. So, apparently, do their cousins.")
         return ""
     }
     function evA(k) {
@@ -121,6 +125,7 @@ ApplicationWindow {
         if (k === "tax") return qsTr("Pay up")
         if (k === "scouts") return qsTr("Pay them off")
         if (k === "feast") return qsTr("Hold the feast")
+        if (k === "counterraid") return qsTr("Defend the warren")
         return qsTr("Yes")
     }
     function evB(k) {
@@ -134,6 +139,7 @@ ApplicationWindow {
         if (k === "tax") return qsTr("Lose the records")
         if (k === "scouts") return qsTr("Ignore them")
         if (k === "feast") return qsTr("Refuse")
+        if (k === "counterraid") return qsTr("Pay the tribute")
         return qsTr("No")
     }
     function evReact(k, opt) {
@@ -147,6 +153,12 @@ ApplicationWindow {
         if (k === "tax") return opt === 0 ? qsTr("Stamped receipt. You now officially fund something, somewhere.") : qsTr("The records are \"at a cousin's\". The collector has cousins too.")
         if (k === "scouts") return opt === 0 ? qsTr("They took the coin and left. Cheaper than a fight, worse for the pride.") : qsTr("They came. You were warned. By me. Just now.")
         if (k === "feast") return opt === 0 ? qsTr("They ate very well. They are already talking about the next one.") : qsTr("The word \"tyrant\" was used. Twice. Well enunciated.")
+        if (k === "counterraid") {
+            if (opt !== 0) return qsTr("You paid for the peace. The word \"protection money\" is so vulgar.")
+            return Game.lastEventResult === 1
+                ? qsTr("Repelled. The gate held better than the badgers did. They will come back with friends.")
+                : qsTr("They left served. Your stores are lighter and your pride is a rumour.")
+        }
         return qsTr("Onward.")
     }
 

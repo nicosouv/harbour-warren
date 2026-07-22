@@ -17,7 +17,7 @@ struct GameState {
     int    assigned[Balance::JobCount] = { 0, 0, 0 };
     double brood = 0.0;             // population growth accumulator
 
-    int    buildings[Balance::BldCount] = { 0, 0, 0, 0, 0, 0 };
+    int    buildings[Balance::BldCount] = { 0, 0, 0, 0, 0, 0, 0, 0 };
     int    buildingsBuilt = 0;      // lifetime count (stage gate)
 
     int    siteBld = -1;            // the single construction site (-1: none)
@@ -29,6 +29,7 @@ struct GameState {
 
     // Events -----------------------------------------------------------------------------------
     int    eventActive = -1;        // the event currently offered (-1: none)
+    int    lastEventResult = 0;     // transient: last counter-raid verdict (0 none, 1 won, 2 lost)
     int    eventsSeen = 0;          // total events fired (seeds the roll)
     qint64 lastEventMs = 0;         // global cooldown anchor
     int    eventLevel[Balance::EventCount] = {};   // escalation level per event

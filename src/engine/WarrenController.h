@@ -52,6 +52,7 @@ class WarrenController : public QObject
 
     Q_PROPERTY(bool energyActive READ energyActive NOTIFY stateChanged)
     Q_PROPERTY(bool tradingUnlocked READ tradingUnlocked NOTIFY stateChanged)
+    Q_PROPERTY(double energyFillCost READ energyFillCost NOTIFY liveChanged)
     Q_PROPERTY(bool blackout READ blackout NOTIFY liveChanged)
     Q_PROPERTY(bool powered READ powered NOTIFY liveChanged)
     Q_PROPERTY(bool starving READ starving NOTIFY liveChanged)
@@ -59,6 +60,8 @@ class WarrenController : public QObject
     Q_PROPERTY(double broodProgress READ broodProgress NOTIFY liveChanged)
 
     Q_PROPERTY(bool barracksUnlocked READ barracksUnlocked NOTIFY stateChanged)
+    Q_PROPERTY(int trainBatch READ trainBatch NOTIFY stateChanged)
+    Q_PROPERTY(int lastEventResult READ lastEventResultQ NOTIFY stateChanged)
     Q_PROPERTY(bool raidsUnlocked READ raidsUnlocked NOTIFY stateChanged)
     Q_PROPERTY(QVariantList units READ unitsList NOTIFY liveChanged)
     Q_PROPERTY(QVariantList targets READ targets NOTIFY liveChanged)
@@ -122,6 +125,7 @@ public:
 
     bool energyActive() const;
     bool tradingUnlocked() const;
+    double energyFillCost() const;
     bool blackout() const;
     bool powered() const;
     bool starving() const;
@@ -129,6 +133,8 @@ public:
     double broodProgress() const;
 
     bool barracksUnlocked() const;
+    int trainBatch() const;
+    int lastEventResultQ() const;
     bool raidsUnlocked() const;
     QVariantList unitsList() const;
     QVariantList targets() const;

@@ -140,6 +140,32 @@ void applyEventChoice(GameState& s, int ev, int opt, qint64 at, quint64 salt)
             s.modProdFactor = kFeastRefusePenalty; s.modProdUntil = at + kModShortMs;
         }
         break;
+    case EvCounterRaid: {
+        // The foxes strike back. Their force grows with the territory you have taken from them.
+        const double force = kCounterBaseForce * (1.0 + kCounterForcePerTerr * s.territory) * scale;
+        if (opt == 0) {                     // stand and defend
+            const double defense = garrisonDefense(s);
+            const double roll = rollUnit(salt, static_cast<int>(at) ^ 0x1d3f);
+            const double score = (defense / force) * (1.0 - kLuckBand + 2.0 * kLuckBand * roll);
+            const bool won = score >= kWinScore;
+            const double frac = won ? kCounterCasualtyWin : kCounterCasualtyLoss;
+            int losses = static_cast<int>(std::ceil(totalUnits(s) * frac));
+            if (losses > totalUnits(s)) losses = totalUnits(s);
+            for (int u = 0; u < UnitCount && losses > 0; ++u) {   // militia fall first
+                const int take = losses < s.units[u] ? losses : s.units[u];
+                s.units[u] -= take; losses -= take;
+            }
+            if (!won) {
+                s.res[Gold] *= (1.0 - kCounterPillageFrac);
+                s.res[Materials] *= (1.0 - kCounterPillageFrac);
+            }
+            s.lastEventResult = won ? 1 : 2;
+        } else {                            // pay them off
+            s.res[Gold] *= (1.0 - kCounterTributeFrac * scale);
+            s.lastEventResult = 0;
+        }
+        break;
+    }
     default: break;
     }
 }
@@ -192,6 +218,17 @@ double territoryMult(const GameState& s)
     return 1.0 + kTerritoryBonus * s.territory;
 }
 
+double watermillMult(const GameState& s)
+{
+    return 1.0 + kWatermillProdBonus * (bldDamaged(s, Watermill) ? 0 : s.buildings[Watermill]);
+}
+
+double garrisonDefense(const GameState& s)
+{
+    return armyPower(s)
+         + kWatchtowerDefense * (bldDamaged(s, Watchtower) ? 0 : s.buildings[Watchtower]);
+}
+
 double energyMult(const GameState& s)
 {
     // No energy concern until you build a trading post; then it boosts while powered, penalises
@@ -211,7 +248,8 @@ static double bldMult(const GameState& s, int job)
 double perWorker(const GameState& s, int job)
 {
     if (job < 0 || job >= JobCount) return 0.0;
-    return kJobBase[job] * bldMult(s, job) * territoryMult(s) * energyMult(s) * s.modProdFactor;
+    return kJobBase[job] * bldMult(s, job) * territoryMult(s) * watermillMult(s)
+         * energyMult(s) * s.modProdFactor;
 }
 
 double production(const GameState& s, int job)
@@ -289,7 +327,11 @@ bool eventEligible(const GameState& s, int ev, qint64 nowMs)
     if (d.tier == 2 && s.stage < 2) return false;
     if (d.tier == 3 && s.stage < 4) return false;
     if (d.tier == 4 && s.stage < 5) return false;
-    if (s.eventLastMs[ev] > 0 && nowMs - s.eventLastMs[ev] < d.cooldownMs) return false;
+    // Watchtowers keep the foxes at bay: each one stretches the counter-raid cooldown.
+    qint64 cd = d.cooldownMs;
+    if (ev == EvCounterRaid)
+        cd = static_cast<qint64>(cd * (1.0 + kWatchtowerCdBonus * s.buildings[Watchtower]));
+    if (s.eventLastMs[ev] > 0 && nowMs - s.eventLastMs[ev] < cd) return false;
     switch (ev) {
     case EvStorm:       return totalBuildings(s) >= 4 && s.damaged == 0;
     case EvRats:        return s.res[Food] > 20.0;
@@ -300,6 +342,7 @@ bool eventEligible(const GameState& s, int ev, qint64 nowMs)
     case EvCollapse:    return s.buildings[MineShaft] >= 1;
     case EvTax:         return s.goldEarned > 500.0;
     case EvScouts:      return s.raidsWon >= 1;
+    case EvCounterRaid: return s.territory >= 1;   // provoked by taking their ground
     case EvFeast:       return s.population >= 12 && s.res[Food] > foodCap(s) * 0.5;
     default:            return false;
     }

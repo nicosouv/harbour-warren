@@ -82,7 +82,8 @@ Item {
         var out = []
         var defs = [
             { key: "burrow", cap: 4 }, { key: "granary", cap: 3 }, { key: "workshop", cap: 3 },
-            { key: "mineshaft", cap: 2 }, { key: "tradingpost", cap: 2 }, { key: "barracks", cap: 2 }
+            { key: "mineshaft", cap: 2 }, { key: "tradingpost", cap: 2 }, { key: "barracks", cap: 2 },
+            { key: "watchtower", cap: 2 }, { key: "watermill", cap: 1 }
         ]
         var slot = 0
         for (var d = 0; d < defs.length; d++) {
@@ -94,7 +95,8 @@ Item {
     function slotX(slot) { return 0.03 + (slot % 9) * 0.107 + jitter(slot * 3 + 1, 0.02) }
     function slotY(slot) { return slot % 9 < 5 ? 0.52 : 0.74 }
 
-    property var siteKeys: ["burrow", "granary", "workshop", "mineshaft", "tradingpost", "barracks"]
+    property var siteKeys: ["burrow", "granary", "workshop", "mineshaft", "tradingpost", "barracks",
+                            "watchtower", "watermill"]
 
     // Chatter pools. Non-deterministic on purpose — pure cosmetics, never touches game state.
     readonly property var darkLines: [
@@ -357,15 +359,16 @@ Item {
                 ctx.fillStyle = "rgba(150,140,128,0.22)"
                 ctx.beginPath(); ctx.arc(x, y, s, 0, 6.283); ctx.fill()
             }
-            // A thick carpet of grass tufts across the whole field. Painted once, so density is free.
-            for (i = 0; i < 240; i++) {
-                x = rnd() * width; y = g + rnd() * (height - g); var h = 2 + rnd() * 5
+            // A dense, short carpet of grass across the whole field. Painted once, so a big count is
+            // free: many tufts, each only a few pixels tall, for a lush ground without long blades.
+            for (i = 0; i < 900; i++) {
+                x = rnd() * width; y = g + rnd() * (height - g); var h = 1 + rnd() * 2.5
                 ctx.strokeStyle = rnd() < 0.5 ? "rgba(78,96,54,0.55)" : "rgba(96,116,66,0.5)"
                 ctx.lineWidth = 1
                 var blades = 2 + Math.floor(rnd() * 3)
                 for (var bld = 0; bld < blades; bld++) {
                     ctx.beginPath(); ctx.moveTo(x + (rnd() - 0.5) * 3, y)
-                    ctx.lineTo(x + (rnd() - 0.5) * 5, y - h * (0.6 + rnd() * 0.7)); ctx.stroke()
+                    ctx.lineTo(x + (rnd() - 0.5) * 3, y - h * (0.7 + rnd() * 0.5)); ctx.stroke()
                 }
             }
         }
@@ -403,17 +406,17 @@ Item {
             }
         }
     }
-    // Animated blades on top of the carpet — these are the ones that sway in the breeze.
+    // Animated blades on top of the carpet — short and many, swaying in the breeze.
     Repeater {
-        model: 44
+        model: 120
         Rectangle {
-            width: 2; height: view.height * (0.028 + 0.026 * view.jitter(index * 17 + 2, 1))
+            width: 2; height: view.height * (0.012 + 0.016 * view.jitter(index * 17 + 2, 1))
             antialiasing: false
             color: index % 2 === 0 ? "#4e6036" : "#5f7444"
-            x: view.width * (0.015 + 0.97 * view.jitter(index * 29 + 4, 1))
-            y: view.height * (0.5 + 0.42 * view.jitter(index * 13 + 6, 1))
+            x: view.width * (0.01 + 0.98 * view.jitter(index * 29 + 4, 1))
+            y: view.height * (0.5 + 0.44 * view.jitter(index * 13 + 6, 1))
             transformOrigin: Item.Bottom
-            rotation: view.wind * (8 + (index % 3) * 3)
+            rotation: view.wind * (6 + (index % 3) * 3)
         }
     }
 
@@ -480,16 +483,28 @@ Item {
                 NumberAnimation { target: wander; property: "x"; to: 0; duration: 1300; easing.type: Easing.InOutSine }
             }
 
-            Image {
+            // Blocky pixel badger, built from flat rectangles to match the rest of the scene
+            // (trees, clouds) instead of a smooth sprite: a white striped face over a grey body.
+            Item {
                 id: spr
                 anchors.fill: parent
-                source: Qt.resolvedUrl("../images/badger-front.png")
-                smooth: false
-                opacity: 0.7
+                opacity: 0.85
+                property color furC: "#7f8590"
+                property color darkC: "#2b2e36"
+                property color faceC: "#d9dade"
                 transform: [
                     Translate { id: dig },
                     Rotation { id: lean; origin.x: spr.width / 2; origin.y: spr.height }
                 ]
+                Rectangle { x: parent.width*0.10; y: parent.height*0.08; width: parent.width*0.20; height: parent.height*0.16; color: spr.darkC; antialiasing: false }
+                Rectangle { x: parent.width*0.70; y: parent.height*0.08; width: parent.width*0.20; height: parent.height*0.16; color: spr.darkC; antialiasing: false }
+                Rectangle { x: parent.width*0.18; y: parent.height*0.16; width: parent.width*0.64; height: parent.height*0.40; color: spr.faceC; antialiasing: false }
+                Rectangle { x: parent.width*0.28; y: parent.height*0.16; width: parent.width*0.12; height: parent.height*0.40; color: spr.darkC; antialiasing: false }
+                Rectangle { x: parent.width*0.60; y: parent.height*0.16; width: parent.width*0.12; height: parent.height*0.40; color: spr.darkC; antialiasing: false }
+                Rectangle { x: parent.width*0.44; y: parent.height*0.44; width: parent.width*0.12; height: parent.height*0.10; color: spr.darkC; antialiasing: false }
+                Rectangle { x: parent.width*0.14; y: parent.height*0.54; width: parent.width*0.72; height: parent.height*0.34; color: spr.furC; antialiasing: false }
+                Rectangle { x: parent.width*0.20; y: parent.height*0.86; width: parent.width*0.18; height: parent.height*0.12; color: spr.darkC; antialiasing: false }
+                Rectangle { x: parent.width*0.62; y: parent.height*0.86; width: parent.width*0.18; height: parent.height*0.12; color: spr.darkC; antialiasing: false }
             }
 
             // A newborn pops in with a little bounce so the arrival is unmistakable in the village.

@@ -18,7 +18,8 @@ static const int kJobResource[JobCount] = { Food, Materials, Gold, -1 };
 static const double kJobBase[JobCount]  = { 0.55, 0.32, 0.22, 1.0 };  // per worker per second
 
 // --- Buildings -------------------------------------------------------------------------------
-enum Bld { Burrow = 0, Granary, Workshop, MineShaft, TradingPost, Barracks, BldCount };
+enum Bld { Burrow = 0, Granary, Workshop, MineShaft, TradingPost, Barracks,
+           Watchtower, Watermill, BldCount };
 
 struct BldDef {
     const char* id;
@@ -28,13 +29,17 @@ struct BldDef {
     int    unlockStage;  // building becomes buyable at this stage
     double work;         // construction work points (builders deliver kJobBase[Build]/s each)
 };
+// Cost growth is steep on purpose: materials must never just pile up unspent. Each extra copy of a
+// building costs markedly more than the last, so a full granary is always a few builds from empty.
 static const BldDef kBld[BldCount] = {
-    { "burrow",      Materials,   20.0, 1.15, 1,   90.0 },
-    { "granary",     Materials,   45.0, 1.16, 1,  150.0 },
-    { "workshop",    Materials,   70.0, 1.16, 1,  210.0 },
-    { "mineshaft",   Materials,  120.0, 1.17, 2,  320.0 },
-    { "tradingpost", Materials,  180.0, 1.18, 2,  420.0 },
-    { "barracks",    Materials,  450.0, 1.20, 3,  900.0 },
+    { "burrow",      Materials,   20.0, 1.27, 1,   90.0 },
+    { "granary",     Materials,   45.0, 1.27, 1,  150.0 },
+    { "workshop",    Materials,   70.0, 1.28, 1,  210.0 },
+    { "mineshaft",   Materials,  120.0, 1.30, 2,  320.0 },
+    { "tradingpost", Materials,  180.0, 1.28, 2,  420.0 },
+    { "barracks",    Materials,  450.0, 1.32, 3,  900.0 },
+    { "watchtower",  Materials,  300.0, 1.26, 4,  600.0 },  // home defence vs counter-raids
+    { "watermill",   Materials,  800.0, 1.28, 5, 1200.0 },  // +production to the whole colony
 };
 
 // Building effects (per owned unit).
@@ -47,6 +52,9 @@ static const double kGatherBonusPerWorkshop  = 0.12;
 static const double kMineBonusPerShaft       = 0.12;
 static const double kEnergyCapBase     = 100.0;
 static const double kEnergyCapPerPost  = 120.0;
+static const double kWatermillProdBonus  = 0.10;   // +10% to every yield per watermill
+static const double kWatchtowerDefense   = 45.0;   // flat defensive power per watchtower
+static const double kWatchtowerCdBonus   = 0.15;   // each tower lengthens counter-raid cooldown
 
 // --- Consumption & energy --------------------------------------------------------------------
 static const double kFoodPerPop  = 0.06;    // every colonist eats
@@ -57,7 +65,7 @@ static const double kEnergyPerBld = 0.020;
 // production; let it run dry and the lights go out (below baseline). No forced cliff at stage 2.
 static const double kEnergyBonus  = 1.25;   // production factor while energy > 0 (with a post)
 static const double kBlackout     = 0.70;   // production factor when the post has no energy
-static const double kEnergyPrice  = 0.5;    // gold per energy (trading post)
+static const double kEnergyPrice  = 1.5;    // gold per energy (trading post)
 
 // --- Population growth ------------------------------------------------------------------------
 // Slowed hard: at 0.02 the colony hit 12 badgers in ~5 min, outrunning the whole event catalogue.
@@ -135,7 +143,7 @@ static const qint64 kWelcomeMs    = Q_INT64_C(1800000);   // recap shown past 30
 // --- Events: recurring, escalating, one at a time (the anti-"nothing left after 5 min"). ------
 enum EventId {
     EvStorm = 0, EvRats, EvWanderer, EvRain, EvMerchant,
-    EvTransformer, EvCollapse, EvTax, EvScouts, EvFeast, EventCount
+    EvTransformer, EvCollapse, EvTax, EvScouts, EvFeast, EvCounterRaid, EventCount
 };
 struct EventDef {
     const char* id;
@@ -153,7 +161,17 @@ static const EventDef kEvent[EventCount] = {
     { "tax",         2, Q_INT64_C(5400000)  },
     { "scouts",      3, Q_INT64_C(3600000)  },
     { "feast",       4, Q_INT64_C(5400000)  },
+    { "counterraid", 3, Q_INT64_C(3600000)  },  // the foxes return the favour
 };
+
+// Counter-raid: the foxes hit back once you start taking territory. A defensive battle resolved
+// like a raid, but you are the one being scored. Enemy force grows with the territory you hold.
+static const double kCounterBaseForce    = 35.0;
+static const double kCounterForcePerTerr = 0.40;
+static const double kCounterPillageFrac  = 0.20;   // gold & materials lost on a failed defence
+static const double kCounterCasualtyWin  = 0.10;   // army fraction lost even when repelled
+static const double kCounterCasualtyLoss = 0.35;   // army fraction lost when overrun
+static const double kCounterTributeFrac  = 0.15;   // gold paid to buy the peace (option B)
 static const qint64 kEventGlobalCd = Q_INT64_C(1200000);  // 20 min between any two events
 static const double kEventChance    = 0.5;                // roll per eligible window
 static const qint64 kModStormBonusMs = Q_INT64_C(0);     // storm damage lasts until repaired

@@ -290,7 +290,17 @@ int WarrenController::goalTarget() const
 
 bool WarrenController::energyActive() const { return m_state.stage >= 2; }
 bool WarrenController::tradingUnlocked() const { return m_state.buildings[TradingPost] >= 1; }
+double WarrenController::energyFillCost() const
+{
+    // Gold it would take to top the store off right now — what the Fill up button spends.
+    const double room = energyCap(m_state) - liveRes(Energy);
+    const double affordable = liveRes(Gold) / kEnergyPrice;
+    const double amount = room < affordable ? room : affordable;
+    return amount > 0.0 ? amount * kEnergyPrice : 0.0;
+}
 bool WarrenController::barracksUnlocked() const { return m_state.buildings[Barracks] >= 1; }
+int WarrenController::trainBatch() const { const int b = m_state.buildings[Barracks]; return b > 1 ? b : 1; }
+int WarrenController::lastEventResultQ() const { return m_state.lastEventResult; }
 bool WarrenController::raidsUnlocked() const { return m_state.stage >= 4; }
 double WarrenController::armyPowerQ() const { return warren::armyPower(m_state); }
 int WarrenController::totalUnitsQ() const { return warren::totalUnits(m_state); }
