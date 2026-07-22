@@ -43,6 +43,8 @@ WarrenController::WarrenController(QObject* parent)
         qint64 ms = now - m_state.lastSeenMs;
         if (ms > kOfflineCapMs) ms = kOfflineCapMs;
         const double goldBefore = m_state.res[Gold];
+        const double materialsBefore = m_state.res[Materials];
+        const double foodBefore = m_state.res[Food];
         const int popBefore = m_state.population;
         QJsonObject p;
         p.insert(QLatin1String("ms"), static_cast<double>(ms));
@@ -51,6 +53,8 @@ WarrenController::WarrenController(QObject* parent)
         appendAndApply(QLatin1String("tick"),
                        QString::fromUtf8(QJsonDocument(p).toJson(QJsonDocument::Compact)));
         m_welcomeGold = m_state.res[Gold] - goldBefore;
+        m_welcomeMaterials = m_state.res[Materials] - materialsBefore;
+        m_welcomeFood = m_state.res[Food] - foodBefore;
         m_welcomePop = m_state.population - popBefore;
         m_welcomeMs = static_cast<double>(ms);
         m_welcomePending = ms > kWelcomeMs;
@@ -344,6 +348,8 @@ int WarrenController::buildingsTotal() const { return warren::totalBuildings(m_s
 bool WarrenController::welcomePending() const { return m_welcomePending; }
 double WarrenController::welcomeMs() const { return m_welcomeMs; }
 double WarrenController::welcomeGold() const { return m_welcomeGold; }
+double WarrenController::welcomeMaterials() const { return m_welcomeMaterials; }
+double WarrenController::welcomeFood() const { return m_welcomeFood; }
 int WarrenController::welcomePop() const { return m_welcomePop; }
 
 double WarrenController::capOf(int res) const

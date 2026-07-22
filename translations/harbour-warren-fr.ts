@@ -170,6 +170,10 @@
     <message><source>Banned. They now dig "administratively".</source><translation>Interdit. Ils creusent maintenant « administrativement ».</translation></message>
     <message><source>Chased off. Wolves respect force. It is their only administrative quality.</source><translation>Chassés. Les loups respectent la force. C'est leur seule qualité administrative.</translation></message>
     <message><source>Everyone went a little hungry. Democratically.</source><translation>Tout le monde a eu un peu faim. Démocratiquement.</translation></message>
+    <message><source>Away for</source><translation>Parti pendant</translation></message>
+    <message><source>Nothing to report. Impressive, in its way.</source><translation>Rien à signaler. Impressionnant, dans son genre.</translation></message>
+    <message><source>REPELLED</source><translation>REPOUSSÉS</translation></message>
+    <message><source>OVERRUN</source><translation>SUBMERGÉS</translation></message>
 </context>
 <context>
     <name>ColonyPage</name>

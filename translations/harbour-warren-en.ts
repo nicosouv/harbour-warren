@@ -170,6 +170,10 @@
     <message><source>Banned. They now dig "administratively".</source><translation>Banned. They now dig "administratively".</translation></message>
     <message><source>Chased off. Wolves respect force. It is their only administrative quality.</source><translation>Chased off. Wolves respect force. It is their only administrative quality.</translation></message>
     <message><source>Everyone went a little hungry. Democratically.</source><translation>Everyone went a little hungry. Democratically.</translation></message>
+    <message><source>Away for</source><translation>Away for</translation></message>
+    <message><source>Nothing to report. Impressive, in its way.</source><translation>Nothing to report. Impressive, in its way.</translation></message>
+    <message><source>REPELLED</source><translation>REPELLED</translation></message>
+    <message><source>OVERRUN</source><translation>OVERRUN</translation></message>
 </context>
 <context>
     <name>ColonyPage</name>

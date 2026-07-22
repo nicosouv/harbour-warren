@@ -81,6 +81,8 @@ class WarrenController : public QObject
     Q_PROPERTY(bool welcomePending READ welcomePending NOTIFY stateChanged)
     Q_PROPERTY(double welcomeMs READ welcomeMs NOTIFY stateChanged)
     Q_PROPERTY(double welcomeGold READ welcomeGold NOTIFY stateChanged)
+    Q_PROPERTY(double welcomeMaterials READ welcomeMaterials NOTIFY stateChanged)
+    Q_PROPERTY(double welcomeFood READ welcomeFood NOTIFY stateChanged)
     Q_PROPERTY(int welcomePop READ welcomePop NOTIFY stateChanged)
 
 public:
@@ -157,6 +159,8 @@ public:
     bool welcomePending() const;
     double welcomeMs() const;
     double welcomeGold() const;
+    double welcomeMaterials() const;
+    double welcomeFood() const;
     int welcomePop() const;
 
     // Formatting helper for QML.
@@ -223,6 +227,8 @@ private:
     bool   m_welcomePending = false;
     double m_welcomeMs = 0.0;
     double m_welcomeGold = 0.0;
+    double m_welcomeMaterials = 0.0;
+    double m_welcomeFood = 0.0;
     int    m_welcomePop = 0;
 
     QVector<Sample> m_hist;

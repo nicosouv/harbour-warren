@@ -411,8 +411,41 @@ ApplicationWindow {
             }
             Label {
                 anchors.horizontalCenter: parent.horizontalCenter
-                text: welcome.dur(Game.welcomeMs) + (Game.welcomeGold > 0 ? "   ·   +" + Game.fmt(Game.welcomeGold) + " " + qsTr("Gold") : "")
-                      + (Game.welcomePop > 0 ? "   ·   +" + Game.welcomePop + " " + qsTr("badgers") : "")
+                text: qsTr("Away for") + " " + welcome.dur(Game.welcomeMs)
+                font.pixelSize: Theme.fontSizeSmall; color: Theme.secondaryColor
+            }
+            // What actually accrued while you were gone, spelled out resource by resource.
+            Flow {
+                width: parent.width; spacing: Theme.paddingLarge
+                Repeater {
+                    model: [
+                        { key: "food",      img: "images/res-food.png",      val: Game.welcomeFood,      show: Game.welcomeFood > 0.5 },
+                        { key: "materials", img: "images/res-materials.png", val: Game.welcomeMaterials, show: Game.welcomeMaterials > 0.5 },
+                        { key: "gold",      img: "images/res-gold.png",      val: Game.welcomeGold,      show: Game.welcomeGold > 0.5 },
+                        { key: "badgers",   img: "images/badger-front.png",  val: Game.welcomePop,       show: Game.welcomePop > 0 }
+                    ]
+                    Row {
+                        visible: modelData.show
+                        spacing: Theme.paddingSmall
+                        Image {
+                            anchors.verticalCenter: parent.verticalCenter
+                            source: Qt.resolvedUrl(modelData.img)
+                            smooth: false; width: Theme.iconSizeSmall; height: width
+                            fillMode: Image.PreserveAspectFit
+                        }
+                        Label {
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: "+" + Game.fmt(modelData.val)
+                            font.pixelSize: Theme.fontSizeMedium; font.family: "Monospace"
+                            color: "#9fd06a"
+                        }
+                    }
+                }
+            }
+            Label {
+                width: parent.width; wrapMode: Text.Wrap; horizontalAlignment: Text.AlignHCenter
+                visible: Game.welcomeFood <= 0.5 && Game.welcomeMaterials <= 0.5 && Game.welcomeGold <= 0.5 && Game.welcomePop <= 0
+                text: qsTr("Nothing to report. Impressive, in its way.")
                 font.pixelSize: Theme.fontSizeSmall; color: Theme.secondaryColor
             }
             Button { anchors.horizontalCenter: parent.horizontalCenter; text: qsTr("Back to it."); onClicked: Game.ackWelcome() }
@@ -614,6 +647,17 @@ ApplicationWindow {
             width: parent.width - 3 * Theme.horizontalPageMargin
             spacing: Theme.paddingLarge
             visible: eventOverlay.reacting
+            // Defensive battles earn a banner: the counter-raid is the one event you can lose outright.
+            Label {
+                anchors.horizontalCenter: parent.horizontalCenter
+                visible: eventOverlay.curEv >= 0 && app.eventKeys[eventOverlay.curEv] === "counterraid"
+                         && eventOverlay.chosenOpt === 0
+                text: Game.lastEventResult === 1 ? qsTr("REPELLED") : qsTr("OVERRUN")
+                font.pixelSize: Theme.fontSizeHuge; font.bold: true
+                color: Game.lastEventResult === 1 ? "#7fae5a" : "#c0603a"
+                scale: eventOverlay.reacting ? 1 : 0.4
+                Behavior on scale { NumberAnimation { duration: 320; easing.type: Easing.OutBack } }
+            }
             Label {
                 width: parent.width; wrapMode: Text.Wrap; horizontalAlignment: Text.AlignHCenter
                 text: eventOverlay.curEv >= 0 ? app.evReact(app.eventKeys[eventOverlay.curEv], eventOverlay.chosenOpt) : ""
