@@ -253,15 +253,14 @@ Page {
             bottom: page.twoCol ? parent.bottom : undefined
         }
         width: page.twoCol ? page.width * 0.42 : page.width
-        height: page.twoCol ? undefined : village.height + Theme.paddingMedium + digBtn.height
+        height: page.twoCol ? undefined : village.height
 
         // The warren, front and centre.
         Rectangle {
             id: village
             anchors { top: parent.top; left: parent.left; right: parent.right
                       leftMargin: Theme.horizontalPageMargin; rightMargin: Theme.horizontalPageMargin }
-            height: page.twoCol ? visualPane.height - digBtn.height - Theme.paddingMedium
-                                : Theme.itemSizeHuge * 2.2
+            height: page.twoCol ? visualPane.height : Theme.itemSizeHuge * 1.7
             radius: Theme.paddingMedium
             color: "#20242e"
             clip: true
@@ -304,43 +303,13 @@ Page {
                     NumberAnimation { target: birthToast; property: "opacity"; to: 0; duration: 380 }
                 }
             }
-        }
-
-        // Scavenge: rummage the ground for food, the icon says exactly what you get.
-        Rectangle {
-            id: digBtn
-            anchors { horizontalCenter: parent.horizontalCenter; top: village.bottom; topMargin: Theme.paddingMedium }
-            width: page.twoCol ? parent.width * 0.7 : parent.width * 0.5
-            height: Theme.itemSizeMedium
-            radius: Theme.paddingMedium
-            color: Theme.rgba("#4a3d30", digArea.pressed ? 1.0 : 0.75)
-            border.color: "#6a5a40"
-            border.width: 2
-
-            Row {
-                anchors.centerIn: parent
-                spacing: Theme.paddingMedium
-                Image {
-                    anchors.verticalCenter: parent.verticalCenter
-                    source: Qt.resolvedUrl("../images/dig.png")
-                    smooth: false
-                    width: Theme.iconSizeSmall; height: width
-                    fillMode: Image.PreserveAspectFit
-                    rotation: digArea.pressed ? -18 : 0
-                    Behavior on rotation { NumberAnimation { duration: 90 } }
-                }
-                Label {
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: qsTr("Scavenge")
-                    font.pixelSize: Theme.fontSizeLarge
-                }
-            }
 
             // The reward floats up showing exactly what turned up: an apple, or a log of wood.
             Row {
                 id: floatReward
                 property bool wasMat: false
                 anchors.horizontalCenter: parent.horizontalCenter
+                y: village.height * 0.6
                 spacing: 4
                 opacity: 0
                 Label { text: "+1"; color: Theme.highlightColor; font.pixelSize: Theme.fontSizeMedium }
@@ -354,10 +323,39 @@ Page {
             }
             ParallelAnimation {
                 id: floatAnim
-                NumberAnimation { target: floatReward; property: "y"; from: 0; to: -Theme.itemSizeSmall; duration: 500 }
+                NumberAnimation { target: floatReward; property: "y"; from: village.height * 0.6; to: village.height * 0.38; duration: 500 }
                 SequentialAnimation {
                     NumberAnimation { target: floatReward; property: "opacity"; to: 1; duration: 80 }
                     NumberAnimation { target: floatReward; property: "opacity"; to: 0; duration: 400 }
+                }
+            }
+
+            // Affordance pill at the foot of the map: the warren itself is the Scavenge button.
+            Rectangle {
+                anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom; bottomMargin: Theme.paddingMedium }
+                width: digRow.width + Theme.paddingLarge
+                height: digRow.height + Theme.paddingSmall
+                radius: height / 2
+                color: Theme.rgba("#4a3d30", digArea.pressed ? 0.95 : 0.66)
+                border.color: "#6a5a40"; border.width: 1
+                Row {
+                    id: digRow
+                    anchors.centerIn: parent
+                    spacing: Theme.paddingSmall
+                    Image {
+                        anchors.verticalCenter: parent.verticalCenter
+                        source: Qt.resolvedUrl("../images/dig.png")
+                        smooth: false
+                        width: Theme.iconSizeExtraSmall; height: width
+                        fillMode: Image.PreserveAspectFit
+                        rotation: digArea.pressed ? -18 : 0
+                        Behavior on rotation { NumberAnimation { duration: 90 } }
+                    }
+                    Label {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: qsTr("Scavenge")
+                        font.pixelSize: Theme.fontSizeSmall
+                    }
                 }
             }
 
@@ -368,8 +366,8 @@ Page {
             }
             SequentialAnimation {
                 id: digPulse
-                NumberAnimation { target: digBtn; property: "scale"; to: 0.96; duration: 40 }
-                NumberAnimation { target: digBtn; property: "scale"; to: 1.0; duration: 90 }
+                NumberAnimation { target: village; property: "scale"; to: 0.98; duration: 40 }
+                NumberAnimation { target: village; property: "scale"; to: 1.0; duration: 90 }
             }
         }
     }
@@ -433,19 +431,6 @@ Page {
                     Row {
                         anchors { right: parent.right; rightMargin: Theme.horizontalPageMargin; verticalCenter: parent.verticalCenter }
                         spacing: Theme.paddingMedium
-                        // Bulk buttons appear once the colony is big enough to warrant them.
-                        Label {
-                            anchors.verticalCenter: parent.verticalCenter
-                            visible: Game.population > 4
-                            text: "-5"
-                            font.pixelSize: Theme.fontSizeSmall; font.family: "Monospace"
-                            color: modelData.assigned > 0 ? Theme.primaryColor : Theme.secondaryColor
-                            MouseArea {
-                                anchors.fill: parent; anchors.margins: -Theme.paddingSmall
-                                enabled: modelData.assigned > 0
-                                onClicked: { Game.assign(modelData.index, -5); app.buzz() }
-                            }
-                        }
                         IconButton {
                             icon.source: "image://theme/icon-m-remove"
                             enabled: modelData.assigned > 0
@@ -455,18 +440,6 @@ Page {
                             icon.source: "image://theme/icon-m-add"
                             enabled: Game.idleWorkers > 0
                             onClicked: { Game.assign(modelData.index, 1); app.buzz(); if (Math.random() < 0.34) app.quip("assign") }
-                        }
-                        Label {
-                            anchors.verticalCenter: parent.verticalCenter
-                            visible: Game.population > 4
-                            text: "+5"
-                            font.pixelSize: Theme.fontSizeSmall; font.family: "Monospace"
-                            color: Game.idleWorkers > 0 ? Theme.primaryColor : Theme.secondaryColor
-                            MouseArea {
-                                anchors.fill: parent; anchors.margins: -Theme.paddingSmall
-                                enabled: Game.idleWorkers > 0
-                                onClicked: { Game.assign(modelData.index, 5); app.buzz(); if (Math.random() < 0.34) app.quip("assign") }
-                            }
                         }
                     }
                 }
@@ -627,8 +600,9 @@ Page {
                     anchors { left: enIcon.right; leftMargin: Theme.paddingMedium; right: fillLbl.left; rightMargin: Theme.paddingMedium; verticalCenter: parent.verticalCenter }
                     spacing: Theme.paddingSmall
                     Label {
-                        text: (Game.blackout ? qsTr("The lights are out.") : qsTr("Buy energy with gold"))
-                              + (Game.energyEtaSec > 0 ? "  ·  " + page.fmtEta(Game.energyEtaSec) + " " + qsTr("left") : "")
+                        visible: text.length > 0
+                        text: Game.blackout ? qsTr("The lights are out.")
+                              : (Game.energyEtaSec > 0 ? page.fmtEta(Game.energyEtaSec) + " " + qsTr("left") : "")
                         color: Game.blackout ? "#c0603a" : Theme.primaryColor
                         font.pixelSize: Theme.fontSizeSmall
                     }
@@ -694,14 +668,11 @@ Page {
                     visible: Game.barracksUnlocked
                     width: col.width
                     height: Game.barracksUnlocked ? Theme.itemSizeMedium : 0
-                    Image {
+                    PixelBadger {
                         id: unitIcon
                         x: Theme.horizontalPageMargin
                         anchors.verticalCenter: parent.verticalCenter
-                        source: Qt.resolvedUrl("../images/badger-front.png")
-                        smooth: false
                         width: Theme.iconSizeMedium; height: width
-                        fillMode: Image.PreserveAspectFit
                     }
                     Column {
                         anchors { left: unitIcon.right; leftMargin: Theme.paddingMedium; right: trainBtn.left; rightMargin: Theme.paddingMedium; verticalCenter: parent.verticalCenter }
@@ -724,7 +695,7 @@ Page {
                             Label { anchors.verticalCenter: parent.verticalCenter; text: Game.fmt(modelData.costGold); font.pixelSize: Theme.fontSizeExtraSmall; color: Theme.secondaryColor }
                             Image { anchors.verticalCenter: parent.verticalCenter; source: Qt.resolvedUrl("../images/res-materials.png"); smooth: false; width: Theme.iconSizeExtraSmall * 0.7; height: width; fillMode: Image.PreserveAspectFit }
                             Label { anchors.verticalCenter: parent.verticalCenter; text: Game.fmt(modelData.costMaterials); font.pixelSize: Theme.fontSizeExtraSmall; color: Theme.secondaryColor }
-                            Image { anchors.verticalCenter: parent.verticalCenter; source: Qt.resolvedUrl("../images/badger-front.png"); smooth: false; width: Theme.iconSizeExtraSmall * 0.7; height: width; fillMode: Image.PreserveAspectFit }
+                            PixelBadger { anchors.verticalCenter: parent.verticalCenter; width: Theme.iconSizeExtraSmall * 0.7; height: width }
                             Label { anchors.verticalCenter: parent.verticalCenter; text: "" + modelData.costPop; font.pixelSize: Theme.fontSizeExtraSmall; color: Theme.secondaryColor }
                         }
                     }
