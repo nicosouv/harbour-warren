@@ -294,13 +294,21 @@ void TstWarren::simulationProgression()
         else gatherers = rest;
         rebalance(foragers, gatherers, miners, s.stage >= 1 ? builders : 0);
 
-        // open a site when free, cheapest useful first
+        // open a site when free. A competent player beelines the gate-critical building (trading
+        // post to earn, barracks to muster) and saves for it; otherwise builds cheapest useful first.
         if (s.siteBld < 0) {
-            for (int b = 0; b < BldCount; ++b) {
-                if (s.stage < kBld[b].unlockStage) continue;
-                if (s.res[Materials] >= buildCost(s, b, 1) * 1.2) {
-                    push(build(b, t));
-                    break;
+            int want = -1;
+            if (s.stage >= 3 && s.buildings[Barracks] == 0) want = Barracks;
+            else if (s.stage >= 2 && s.buildings[TradingPost] == 0) want = TradingPost;
+            if (want >= 0) {
+                if (s.res[Materials] >= buildCost(s, want, 1)) push(build(want, t));
+            } else {
+                for (int b = 0; b < BldCount; ++b) {
+                    if (s.stage < kBld[b].unlockStage) continue;
+                    if (s.res[Materials] >= buildCost(s, b, 1) * 1.2) {
+                        push(build(b, t));
+                        break;
+                    }
                 }
             }
         }
