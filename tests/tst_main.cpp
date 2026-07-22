@@ -61,6 +61,7 @@ private slots:
     void foldRaidGradient();
     void foldReplayDeterministic();
     void simulationProgression();
+    void energySustainability();
 };
 
 void TstWarren::rngDeterminism()
@@ -276,6 +277,8 @@ void TstWarren::simulationProgression()
 
     const qint64 step = Q_INT64_C(60000);           // one simulated minute
     int lastStage = -1;
+    qint64 stageAtMin[kStageCount];
+    for (int k = 0; k < kStageCount; ++k) stageAtMin[k] = -1;
     for (int i = 0; i < 4000 && s.stage < 5; ++i) {
         t += step;
         push(tick(step, t));
@@ -316,9 +319,11 @@ void TstWarren::simulationProgression()
             push(raidEv(0, t));
 
         if (s.stage != lastStage) {
+            const qint64 minute = (t - 1000) / 60000;
+            if (s.stage >= 0 && s.stage < kStageCount) stageAtMin[s.stage] = minute;
             lastStage = s.stage;
             qInfo("sim: reached stage %d at minute %lld (pop %d, gold %.0f, units %d, events %d)",
-                  s.stage, static_cast<long long>((t - 1000) / 60000), s.population,
+                  s.stage, static_cast<long long>(minute), s.population,
                   s.res[Gold], totalUnits(s), log.size());
         }
     }
@@ -326,14 +331,49 @@ void TstWarren::simulationProgression()
     qInfo("sim: final stage %d, pop %d, buildings %d, units trained %d, raids won %d, events %d",
           s.stage, s.population, totalBuildings(s), s.unitsTrained, s.raidsWon, log.size());
 
-    QVERIFY2(s.stage >= 4, "the greedy bot should reach the raids (stage 4) in the horizon");
+    // The greedy bot must walk the whole staged reveal, not just reach the raids: a full run to
+    // stage 5 proves no gate soft-locks under the current balance.
+    QVERIFY2(s.stage >= 5, "the greedy bot should reach the endgame (stage 5) within the horizon");
     QVERIFY(s.population <= housingCap(s));
+
+    // No single stage should be a marathon: each transition lands within a generous budget of the
+    // previous one. Catches a gate that technically clears but takes implausibly long.
+    for (int k = 1; k <= 5; ++k) {
+        QVERIFY2(stageAtMin[k] >= 0, "every stage up to 5 must be reached");
+        const qint64 prev = stageAtMin[k - 1] < 0 ? 0 : stageAtMin[k - 1];
+        QVERIFY2(stageAtMin[k] - prev <= 600, "no stage should take longer than 10 simulated hours");
+    }
 
     // Determinism: replaying the whole log lands on the same state.
     GameState again = fold(log, kSalt);
     QCOMPARE(again.stage, s.stage);
     QCOMPARE(again.population, s.population);
     QCOMPARE(again.raidsWon, s.raidsWon);
+}
+
+void TstWarren::energySustainability()
+{
+    // A representative stage-2 colony: a trading post and a handful of miners. Keeping the lights
+    // on must be payable from mining alone, so an active player is never stuck in the dark.
+    GameState s;
+    s.stage = 2;
+    s.population = 10;
+    s.buildings[TradingPost] = 1;
+    s.buildings[Granary] = 1;
+    s.buildings[Workshop] = 1;
+    s.buildings[MineShaft] = 1;
+    s.assigned[MineJob] = 3;
+    s.res[Energy] = energyCap(s);
+
+    // Gold minted per second must cover the gold spent per second on energy drain.
+    const double goldPerSec = production(s, MineJob);
+    const double energyCostPerSec = energyDrain(s) * kEnergyPrice;
+    QVERIFY2(goldPerSec >= energyCostPerSec,
+             "mining income must outpace the cost of sustaining energy at stage 2");
+
+    // A full tank should last long enough that topping up is not a chore.
+    const double tankSeconds = energyCap(s) / energyDrain(s);
+    QVERIFY2(tankSeconds >= 300.0, "a full energy tank should last at least five minutes");
 }
 
 QTEST_GUILESS_MAIN(TstWarren)
