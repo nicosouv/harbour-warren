@@ -309,6 +309,30 @@ double WarrenController::energyFillCost() const
     const double amount = room < affordable ? room : affordable;
     return amount > 0.0 ? amount * kEnergyPrice : 0.0;
 }
+
+double WarrenController::energyEtaSec() const
+{
+    // Seconds until the store runs dry at the current drain (-1 when not draining).
+    const double drain = energyDrain(m_state);
+    if (drain <= 0.0 || liveRes(Energy) <= 0.0) return -1.0;
+    return liveRes(Energy) / drain;
+}
+
+bool WarrenController::energyLow() const
+{
+    return tradingUnlocked() && liveRes(Energy) < energyCap(m_state) * 0.25;
+}
+
+bool WarrenController::autoBuyEnergy() const
+{
+    return m_settings.value(QStringLiteral("autoBuyEnergy"), false).toBool();
+}
+
+void WarrenController::setAutoBuyEnergy(bool on)
+{
+    m_settings.setValue(QStringLiteral("autoBuyEnergy"), on);
+    emit prefsChanged();
+}
 bool WarrenController::barracksUnlocked() const { return m_state.buildings[Barracks] >= 1; }
 int WarrenController::trainBatch() const { const int b = m_state.buildings[Barracks]; return b > 1 ? b : 1; }
 int WarrenController::lastEventResultQ() const { return m_state.lastEventResult; }

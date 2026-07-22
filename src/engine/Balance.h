@@ -66,6 +66,7 @@ static const double kEnergyPerBld = 0.020;
 static const double kEnergyBonus  = 1.25;   // production factor while energy > 0 (with a post)
 static const double kBlackout     = 0.70;   // production factor when the post has no energy
 static const double kEnergyPrice  = 1.5;    // gold per energy (trading post)
+static const double kEnergyGift    = 20.0;  // one-time free charge when the first post is built
 
 // --- Population growth ------------------------------------------------------------------------
 // Slowed hard: at 0.02 the colony hit 12 badgers in ~5 min, outrunning the whole event catalogue.

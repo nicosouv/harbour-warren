@@ -239,6 +239,7 @@
     <message><source>favourable</source><translation>favorable</translation></message>
     <message><source>risky</source><translation>risqué</translation></message>
     <message><source>suicidal</source><translation>suicidaire</translation></message>
+    <message><source>left</source><translation>restant</translation></message>
 </context>
 <context>
     <name>VillageView</name>
@@ -333,6 +334,8 @@
     <message><source>Haptic feedback</source><translation>Retour haptique</translation></message>
     <message><source>Narrator remarks</source><translation>Remarques du narrateur</translation></message>
     <message><source>The cynical voice that comments on your every move.</source><translation>La voix cynique qui commente le moindre de vos gestes.</translation></message>
+    <message><source>Auto-buy energy when low</source><translation>Acheter l'énergie automatiquement</translation></message>
+    <message><source>Refills from gold whenever the charge drops below a quarter.</source><translation>Recharge avec de l'or dès que la charge passe sous un quart.</translation></message>
     <message><source>Notify when a raid is ready</source><translation>Me prévenir quand un raid est prêt</translation></message>
     <message><source>Notify when the power runs out</source><translation>Me prévenir en cas de panne de courant</translation></message>
     <message><source>Language</source><translation>Langue</translation></message>

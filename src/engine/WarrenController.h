@@ -54,6 +54,9 @@ class WarrenController : public QObject
     Q_PROPERTY(bool energyActive READ energyActive NOTIFY stateChanged)
     Q_PROPERTY(bool tradingUnlocked READ tradingUnlocked NOTIFY stateChanged)
     Q_PROPERTY(double energyFillCost READ energyFillCost NOTIFY liveChanged)
+    Q_PROPERTY(double energyEtaSec READ energyEtaSec NOTIFY liveChanged)
+    Q_PROPERTY(bool energyLow READ energyLow NOTIFY liveChanged)
+    Q_PROPERTY(bool autoBuyEnergy READ autoBuyEnergy WRITE setAutoBuyEnergy NOTIFY prefsChanged)
     Q_PROPERTY(bool blackout READ blackout NOTIFY liveChanged)
     Q_PROPERTY(bool powered READ powered NOTIFY liveChanged)
     Q_PROPERTY(bool starving READ starving NOTIFY liveChanged)
@@ -129,6 +132,10 @@ public:
     bool energyActive() const;
     bool tradingUnlocked() const;
     double energyFillCost() const;
+    double energyEtaSec() const;
+    bool energyLow() const;
+    bool autoBuyEnergy() const;
+    void setAutoBuyEnergy(bool on);
     bool blackout() const;
     bool powered() const;
     bool starving() const;

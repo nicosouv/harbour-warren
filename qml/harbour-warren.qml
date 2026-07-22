@@ -293,6 +293,11 @@ ApplicationWindow {
             if (Game.blackout && !app.wasBlackout) app.quip("blackout")
             else if (!Game.blackout && app.wasBlackout && Game.powered) app.quip("powered")
             app.wasBlackout = Game.blackout
+
+            // Auto-buy: top the store off from gold once it dips below a quarter. Filling to cap
+            // clears the low flag, so this fires at most once per drain cycle.
+            if (Game.autoBuyEnergy && Game.energyLow && Game.energyFillCost > 0)
+                Game.buyEnergy()
         }
     }
 

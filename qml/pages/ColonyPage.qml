@@ -627,7 +627,8 @@ Page {
                     anchors { left: enIcon.right; leftMargin: Theme.paddingMedium; right: fillLbl.left; rightMargin: Theme.paddingMedium; verticalCenter: parent.verticalCenter }
                     spacing: Theme.paddingSmall
                     Label {
-                        text: Game.blackout ? qsTr("The lights are out.") : qsTr("Buy energy with gold")
+                        text: (Game.blackout ? qsTr("The lights are out.") : qsTr("Buy energy with gold"))
+                              + (Game.energyEtaSec > 0 ? "  ·  " + page.fmtEta(Game.energyEtaSec) + " " + qsTr("left") : "")
                         color: Game.blackout ? "#c0603a" : Theme.primaryColor
                         font.pixelSize: Theme.fontSizeSmall
                     }

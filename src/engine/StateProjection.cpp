@@ -583,6 +583,8 @@ void applyEvent(GameState& s, const Event& e, quint64 salt)
             if (s.siteProgress >= kBld[s.siteBld].work) {
                 s.buildings[s.siteBld] += 1;
                 s.buildingsBuilt += 1;
+                if (s.siteBld == TradingPost && s.buildings[TradingPost] == 1)
+                    s.res[Energy] = clampd(s.res[Energy] + kEnergyGift, 0.0, energyCap(s));
                 s.siteBld = -1;
                 s.siteProgress = 0.0;
             }

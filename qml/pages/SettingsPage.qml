@@ -101,6 +101,13 @@ Page {
                 onCheckedChanged: Game.notifyEnergy = checked
             }
 
+            TextSwitch {
+                text: qsTr("Auto-buy energy when low")
+                description: qsTr("Refills from gold whenever the charge drops below a quarter.")
+                checked: Game.autoBuyEnergy
+                onCheckedChanged: Game.autoBuyEnergy = checked
+            }
+
             SectionHeader { text: qsTr("Data") }
 
             ListItem {
