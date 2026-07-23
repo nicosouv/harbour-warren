@@ -233,6 +233,13 @@
 <context>
     <name>ColonyPage</name>
     <message><source>Founding</source><translation>Fondation</translation></message>
+    <message><source>The roost</source><translation>Le perchoir</translation></message>
+    <message><source>First blood</source><translation>Premier sang</translation></message>
+    <message><source>The hoard</source><translation>Le trésor</translation></message>
+    <message><source>Conquest</source><translation>Conquête</translation></message>
+    <message><source>The murder</source><translation>La nuée</translation></message>
+    <message><source>Empire</source><translation>Empire</translation></message>
+    <message><source>a new recruit</source><translation>une nouvelle recrue</translation></message>
     <message><source>Shelter</source><translation>Abri</translation></message>
     <message><source>Depths</source><translation>Profondeurs</translation></message>
     <message><source>Muster</source><translation>Mobilisation</translation></message>

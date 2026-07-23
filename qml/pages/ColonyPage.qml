@@ -9,6 +9,10 @@ Page {
     // Landscape splits the screen: the village pins to a left pane, the lists scroll on the right.
     readonly property bool twoCol: isLandscape
 
+    // The colony's species, for the small critter icons dotted around the UI.
+    Component { id: badgerCritter; PixelBadger {} }
+    Component { id: magpieCritter; PixelMagpie {} }
+
     // Swipe left for the stats page, the Silica way.
     onStatusChanged: {
         if (status === PageStatus.Active)
@@ -38,6 +42,14 @@ Page {
     }
 
     function stageName(s) {
+        if (Game.faction === 1) {          // magpie: a raid-driven reveal
+            if (s === 0) return qsTr("The roost")
+            if (s === 1) return qsTr("First blood")
+            if (s === 2) return qsTr("The hoard")
+            if (s === 3) return qsTr("Conquest")
+            if (s === 4) return qsTr("The murder")
+            return qsTr("Empire")
+        }
         if (s === 0) return qsTr("Founding")
         if (s === 1) return qsTr("Shelter")
         if (s === 2) return qsTr("Depths")
@@ -122,11 +134,10 @@ Page {
         Row {
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: Theme.paddingSmall
-            Image {
+            Loader {
                 anchors.verticalCenter: parent.verticalCenter
-                source: Qt.resolvedUrl("../images/badger-front.png")
-                smooth: false; width: Theme.iconSizeExtraSmall * 0.7; height: width
-                fillMode: Image.PreserveAspectFit
+                width: Theme.iconSizeExtraSmall * 0.7; height: width
+                sourceComponent: Game.faction === 1 ? magpieCritter : badgerCritter
             }
             Label {
                 anchors.verticalCenter: parent.verticalCenter
@@ -288,13 +299,12 @@ Page {
                 spacing: Theme.paddingSmall
                 opacity: 0
                 Label { anchors.verticalCenter: parent.verticalCenter; text: "+" + birthToast.delta; color: "#9fd06a"; font.pixelSize: Theme.fontSizeMedium; font.bold: true }
-                Image {
+                Loader {
                     anchors.verticalCenter: parent.verticalCenter
-                    source: Qt.resolvedUrl("../images/badger-front.png")
-                    smooth: false; width: Theme.iconSizeSmall; height: width
-                    fillMode: Image.PreserveAspectFit
+                    width: Theme.iconSizeSmall; height: width
+                    sourceComponent: Game.faction === 1 ? magpieCritter : badgerCritter
                 }
-                Label { anchors.verticalCenter: parent.verticalCenter; text: qsTr("a new badger"); color: Theme.primaryColor; font.pixelSize: Theme.fontSizeSmall }
+                Label { anchors.verticalCenter: parent.verticalCenter; text: Game.faction === 1 ? qsTr("a new recruit") : qsTr("a new badger"); color: Theme.primaryColor; font.pixelSize: Theme.fontSizeSmall }
             }
             ParallelAnimation {
                 id: birthAnim
