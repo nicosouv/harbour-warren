@@ -271,6 +271,16 @@ int WarrenController::idleWorkersQ() const { return warren::idleWorkers(m_state)
 int WarrenController::housingCapQ() const { return warren::housingCap(m_state); }
 QString WarrenController::goalKind() const
 {
+    if (!warren::worksLand(m_state)) {          // magpie: a raid-driven reveal
+        switch (m_state.stage) {
+        case 0: return QStringLiteral("population");
+        case 1: return QStringLiteral("raids");
+        case 2: return QStringLiteral("gold");
+        case 3: return QStringLiteral("territory");
+        case 4: return QStringLiteral("raids");
+        default: return QString();
+        }
+    }
     switch (m_state.stage) {
     case 0: return QStringLiteral("population");
     case 1: return QStringLiteral("buildings");
@@ -283,6 +293,16 @@ QString WarrenController::goalKind() const
 
 int WarrenController::goalCurrent() const
 {
+    if (!warren::worksLand(m_state)) {
+        switch (m_state.stage) {
+        case 0: return m_state.population;
+        case 1: return m_state.raidsWon;
+        case 2: return static_cast<int>(m_state.goldEarned);
+        case 3: return m_state.territory;
+        case 4: return m_state.raidsWon;
+        default: return 0;
+        }
+    }
     switch (m_state.stage) {
     case 0: return m_state.population;
     case 1: return m_state.buildingsBuilt;
@@ -295,6 +315,16 @@ int WarrenController::goalCurrent() const
 
 int WarrenController::goalTarget() const
 {
+    if (!warren::worksLand(m_state)) {
+        switch (m_state.stage) {
+        case 0: return kStartPopulation;
+        case 1: return 1;
+        case 2: return static_cast<int>(kGateGoldEarned);
+        case 3: return 1;
+        case 4: return 3;
+        default: return 0;
+        }
+    }
     switch (m_state.stage) {
     case 0: return kGatePopulation;
     case 1: return kGateBuildings;
@@ -342,7 +372,12 @@ void WarrenController::setAutoBuyEnergy(bool on)
 bool WarrenController::barracksUnlocked() const { return m_state.buildings[Barracks] >= 1; }
 int WarrenController::trainBatch() const { const int b = m_state.buildings[Barracks]; return b > 1 ? b : 1; }
 int WarrenController::lastEventResultQ() const { return m_state.lastEventResult; }
-bool WarrenController::raidsUnlocked() const { return m_state.stage >= 4; }
+bool WarrenController::raidsUnlocked() const
+{
+    // Raiding is the magpie's core loop from the start, not a late-game unlock.
+    return warren::worksLand(m_state) ? m_state.stage >= 4 : m_state.stage >= 1;
+}
+bool WarrenController::canBuildQ() const { return warren::canBuild(m_state); }
 double WarrenController::armyPowerQ() const { return warren::armyPower(m_state); }
 int WarrenController::totalUnitsQ() const { return warren::totalUnits(m_state); }
 int WarrenController::raidForceQ() const { return warren::raidForce(m_state); }
@@ -468,8 +503,9 @@ QVariantList WarrenController::jobs() const
     QVariantList out;
     for (int j = 0; j < JobCount; ++j) {
         bool visible = true;
-        if (j == Gather || j == Build) visible = m_state.stage >= 1;
-        else if (j == MineJob) visible = m_state.stage >= 2;
+        // A faction that loots instead of working the land has no gatherers, miners, or builders.
+        if (j == Gather || j == MineJob) visible = warren::worksLand(m_state) && m_state.stage >= (j == MineJob ? 2 : 1);
+        else if (j == Build) visible = warren::canBuild(m_state) && m_state.stage >= 1;
         QVariantMap m;
         m.insert(QStringLiteral("index"), j);
         m.insert(QStringLiteral("key"), QLatin1String(keys[j]));
@@ -484,6 +520,7 @@ QVariantList WarrenController::jobs() const
 QVariantList WarrenController::buildings() const
 {
     QVariantList out;
+    if (!warren::canBuild(m_state)) return out;   // factions that cannot build have no building list
     for (int b = 0; b < BldCount; ++b) {
         if (m_state.stage < kBld[b].unlockStage) continue;
         const double cost = buildCost(m_state, b, 1);

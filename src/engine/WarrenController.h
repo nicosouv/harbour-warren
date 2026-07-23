@@ -39,6 +39,7 @@ class WarrenController : public QObject
 
     Q_PROPERTY(bool arrived READ arrived NOTIFY stateChanged)
     Q_PROPERTY(int faction READ factionQ NOTIFY stateChanged)
+    Q_PROPERTY(bool canBuild READ canBuildQ NOTIFY stateChanged)
     Q_PROPERTY(int stage READ stage NOTIFY stateChanged)
     // The next milestone that lifts the current stage — shown so the player is never guessing.
     Q_PROPERTY(QString goalKind READ goalKind NOTIFY stateChanged)
@@ -122,6 +123,7 @@ public:
 
     bool arrived() const;
     int factionQ() const;
+    bool canBuildQ() const;
     int stage() const;
     QString goalKind() const;
     int goalCurrent() const;

@@ -278,6 +278,10 @@
     <message><source>Earn %1 gold</source><translation>Earn %1 gold</translation></message>
     <message><source>Train %1 soldiers</source><translation>Train %1 soldiers</translation></message>
     <message><source>Win a raid</source><translation>Win a raid</translation></message>
+    <message><source>New game: Badgers</source><translation>New game: Badgers</translation></message>
+    <message><source>New game: Magpies</source><translation>New game: Magpies</translation></message>
+    <message><source>Win %1 raids</source><translation>Win %1 raids</translation></message>
+    <message><source>Take %1 territory</source><translation>Take %1 territory</translation></message>
     <message><source>breeding</source><translation>breeding</translation></message>
     <message><source>Assign badgers to forage: well fed, the colony breeds on its own.</source><translation>Assign badgers to forage: well fed, the colony breeds on its own.</translation></message>
     <message><source>a new badger</source><translation>a new badger</translation></message>

@@ -14,6 +14,7 @@ int    housingCap(const GameState& s);
 double foodCap(const GameState& s);
 double energyCap(const GameState& s);
 bool   canBuild(const GameState& s);             // faction capability: may it construct at all
+bool   worksLand(const GameState& s);            // faction capability: gather/mine produce goods
 int    totalBuildings(const GameState& s);
 int    totalUnits(const GameState& s);
 int    idleWorkers(const GameState& s);

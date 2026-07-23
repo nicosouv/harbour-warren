@@ -65,7 +65,8 @@ Page {
         if (k === "buildings") return qsTr("Raise %1 buildings").arg(t) + tail
         if (k === "gold") return qsTr("Earn %1 gold").arg(t) + tail
         if (k === "units") return qsTr("Train %1 soldiers").arg(t) + tail
-        if (k === "raids") return qsTr("Win a raid") + tail
+        if (k === "raids") return (t > 1 ? qsTr("Win %1 raids").arg(t) : qsTr("Win a raid")) + tail
+        if (k === "territory") return qsTr("Take %1 territory").arg(t) + tail
         return ""
     }
     function buildingCounts() {
@@ -387,8 +388,12 @@ Page {
         PullDownMenu {
             MenuItem { text: qsTr("Settings"); onClicked: pageStack.push(Qt.resolvedUrl("SettingsPage.qml")) }
             MenuItem {
-                text: qsTr("New game")
-                onClicked: newGameRemorse.execute(qsTr("Starting over"), function() { Game.newGame() })
+                text: qsTr("New game: Badgers")
+                onClicked: newGameRemorse.execute(qsTr("Starting over"), function() { Game.newGame(0) })
+            }
+            MenuItem {
+                text: qsTr("New game: Magpies")
+                onClicked: newGameRemorse.execute(qsTr("Starting over"), function() { Game.newGame(1) })
             }
         }
         RemorsePopup { id: newGameRemorse }
@@ -446,7 +451,7 @@ Page {
             }
 
             // Buildings: sprite, cost with icon, and what it actually does. -----------
-            SectionHeader { visible: Game.stage >= 1; text: qsTr("Buildings") }
+            SectionHeader { visible: Game.canBuild && Game.stage >= 1; text: qsTr("Buildings") }
 
             // A site with no builders never finishes — say so, right under the header.
             Label {
@@ -556,10 +561,10 @@ Page {
             }
 
             // Energy: the bar drains toward the dark. ---------------------------------
-            SectionHeader { visible: Game.energyActive; text: qsTr("Energy") }
+            SectionHeader { visible: Game.energyActive && Game.canBuild; text: qsTr("Energy") }
             // No trading post yet: energy matters now, but you can't buy any until you build one.
             BackgroundItem {
-                visible: Game.energyActive && !Game.tradingUnlocked
+                visible: Game.energyActive && Game.canBuild && !Game.tradingUnlocked
                 width: parent.width
                 height: Theme.itemSizeMedium
                 enabled: false

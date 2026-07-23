@@ -278,6 +278,10 @@
     <message><source>Earn %1 gold</source><translation>Gagnez %1 pièces d'or</translation></message>
     <message><source>Train %1 soldiers</source><translation>Formez %1 soldats</translation></message>
     <message><source>Win a raid</source><translation>Remportez un raid</translation></message>
+    <message><source>New game: Badgers</source><translation>Nouvelle partie : Blaireaux</translation></message>
+    <message><source>New game: Magpies</source><translation>Nouvelle partie : Pies</translation></message>
+    <message><source>Win %1 raids</source><translation>Remportez %1 raids</translation></message>
+    <message><source>Take %1 territory</source><translation>Prenez %1 territoire</translation></message>
     <message><source>breeding</source><translation>reproduction</translation></message>
     <message><source>Assign badgers to forage: well fed, the colony breeds on its own.</source><translation>Assignez des blaireaux à la cueillette : bien nourrie, la colonie se reproduit toute seule.</translation></message>
     <message><source>a new badger</source><translation>un nouveau blaireau</translation></message>

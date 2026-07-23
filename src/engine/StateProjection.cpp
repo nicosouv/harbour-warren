@@ -346,6 +346,7 @@ double energyCap(const GameState& s)
 }
 
 bool canBuild(const GameState& s) { return fac(s).canBuild; }
+bool worksLand(const GameState& s) { return fac(s).worksLand; }
 
 int totalBuildings(const GameState& s)
 {
