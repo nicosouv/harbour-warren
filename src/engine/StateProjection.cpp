@@ -522,6 +522,8 @@ void applyEvent(GameState& s, const Event& e, quint64 salt)
 
     if (e.kind == QLatin1String("arrive")) {
         s.arrived = true;
+        const int f = p.value(QLatin1String("faction")).toInt(0);
+        if (f >= 0 && f < kFactionCount) s.faction = f;
     } else if (e.kind == QLatin1String("event")) {
         const int ev = p.value(QLatin1String("ev")).toInt(-1);
         if (ev >= 0 && ev < EventCount && s.eventActive < 0) {

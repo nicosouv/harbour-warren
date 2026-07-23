@@ -38,6 +38,7 @@ class WarrenController : public QObject
     Q_PROPERTY(double buildEtaSec READ buildEtaSec NOTIFY liveChanged)
 
     Q_PROPERTY(bool arrived READ arrived NOTIFY stateChanged)
+    Q_PROPERTY(int faction READ factionQ NOTIFY stateChanged)
     Q_PROPERTY(int stage READ stage NOTIFY stateChanged)
     // The next milestone that lifts the current stage — shown so the player is never guessing.
     Q_PROPERTY(QString goalKind READ goalKind NOTIFY stateChanged)
@@ -119,6 +120,7 @@ public:
     double buildEtaSec() const;
 
     bool arrived() const;
+    int factionQ() const;
     int stage() const;
     QString goalKind() const;
     int goalCurrent() const;
@@ -172,7 +174,7 @@ public:
     Q_INVOKABLE QVariantList records() const;                     // [{ key, value, at }]
     Q_INVOKABLE QVariantList sillyStats() const;                  // [{ key, value }] — the absurd ones
     Q_INVOKABLE QVariantList globalStats() const;                 // all-time accumulators across runs
-    Q_INVOKABLE void newGame();                                   // fresh run; keeps records & globals
+    Q_INVOKABLE void newGame(int faction = 0);                    // fresh run; keeps records & globals
     Q_INVOKABLE double playtimeMs() const;
     Q_INVOKABLE int eventCount() const;
 
@@ -233,6 +235,7 @@ private:
 
     QVector<Sample> m_hist;
     qint64 m_firstTs = 0;
+    int    m_faction = 0;
 };
 
 } // namespace warren

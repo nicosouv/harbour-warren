@@ -29,6 +29,7 @@ WarrenController::WarrenController(QObject* parent)
     m_store.bootstrap(entropy != 0 ? entropy : Q_UINT64_C(0xC0FFEE));
     m_salt = m_store.installSalt();
 
+    m_faction = m_settings.value(QStringLiteral("faction"), 0).toInt();
     m_state = GameState();
     const QVector<Event> events = m_store.events();
     if (!events.isEmpty()) m_firstTs = events.first().tsMs;
@@ -263,6 +264,7 @@ void WarrenController::setFullNumbers(bool on)
 }
 
 bool WarrenController::arrived() const { return m_state.arrived; }
+int WarrenController::factionQ() const { return m_state.faction; }
 int WarrenController::stage() const { return m_state.stage; }
 int WarrenController::population() const { return m_state.population; }
 int WarrenController::idleWorkersQ() const { return warren::idleWorkers(m_state); }
@@ -756,7 +758,11 @@ void WarrenController::onUiTick()
 void WarrenController::arrive()
 {
     if (m_state.arrived) return;
-    appendSimple(QLatin1String("arrive"), m_clock.nowMs());
+    QJsonObject p;
+    p.insert(QLatin1String("at"), static_cast<double>(m_clock.nowMs()));
+    p.insert(QLatin1String("faction"), m_faction);   // fixed for the life of this game
+    appendAndApply(QLatin1String("arrive"),
+                   QString::fromUtf8(QJsonDocument(p).toJson(QJsonDocument::Compact)));
     emit stateChanged();
     emit liveChanged();
 }
@@ -940,9 +946,12 @@ QVariantList WarrenController::globalStats() const
     return out;
 }
 
-void WarrenController::newGame()
+void WarrenController::newGame(int faction)
 {
     flushNow();
+    if (faction < 0 || faction >= kFactionCount) faction = 0;
+    m_faction = faction;
+    m_settings.setValue(QStringLiteral("faction"), faction);
     // Bank this run into the all-time ledger, then start clean. Records (rec/*) survive.
     auto bump = [&](const char* k, double v) {
         const QString key = QStringLiteral("glob/") + QLatin1String(k);
