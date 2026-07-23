@@ -125,6 +125,22 @@ QVariantList WarrenController::saveSlots() const
     return out;
 }
 
+QVariantList WarrenController::factionDefs() const
+{
+    // Onboarding C: the badger is available from the start; the rest unlock once the core loop
+    // (winning a raid) has been learnt in any game.
+    const bool core = m_settings.value(QStringLiteral("glob/coreLoopLearnt"), false).toBool();
+    QVariantList out;
+    for (int f = 0; f < kFactionCount; ++f) {
+        QVariantMap m;
+        m.insert(QStringLiteral("index"), f);
+        m.insert(QStringLiteral("id"), QLatin1String(kFaction[f].id));
+        m.insert(QStringLiteral("unlocked"), kFaction[f].unlockAfter == FUStart || core);
+        out.append(m);
+    }
+    return out;
+}
+
 void WarrenController::switchSlot(int slot)
 {
     if (slot < 0 || slot >= kSlotCount || slot == m_slot) return;
@@ -749,6 +765,9 @@ void WarrenController::updateRecords(qint64 now)
             if (!m_settings.contains(sk)) m_settings.setValue(sk, static_cast<double>(now));
         }
     }
+    // The core loop is "learnt" once a raid is won; that unlocks the other factions (onboarding C).
+    if (m_state.raidsWon >= 1 && !m_settings.value(QStringLiteral("glob/coreLoopLearnt"), false).toBool())
+        m_settings.setValue(QStringLiteral("glob/coreLoopLearnt"), true);
 }
 
 QVariantList WarrenController::series(const QString& key) const

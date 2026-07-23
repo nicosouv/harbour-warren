@@ -21,6 +21,13 @@ Page {
           tag: qsTr("Breeds fastest of all, but fragile. Post lookouts or predators cull the warren.") }
     ]
 
+    // Onboarding C: only the badger is available until the core loop (a raid win) is learnt.
+    property var defs: Game.factionDefs()
+    function isUnlocked(idx) {
+        for (var i = 0; i < defs.length; i++) if (defs[i].index === idx) return defs[i].unlocked
+        return true
+    }
+
     RemorsePopup { id: rem }
 
     SilicaFlickable {
@@ -38,6 +45,8 @@ Page {
                 BackgroundItem {
                     width: col.width
                     height: Theme.itemSizeLarge
+                    property bool unlocked: page.isUnlocked(modelData.idx)
+                    enabled: unlocked
                     onClicked: rem.execute(qsTr("Starting a new game"), function() {
                         Game.createSlot(page.slot, modelData.idx)
                         if (page.home) pageStack.pop(page.home)
@@ -49,6 +58,7 @@ Page {
                         x: Theme.horizontalPageMargin
                         anchors.verticalCenter: parent.verticalCenter
                         width: Theme.iconSizeMedium; height: width
+                        opacity: parent.unlocked ? 1.0 : 0.35
                         sourceComponent: modelData.key === "magpie" ? magpieC
                                          : modelData.key === "ant" ? antC
                                          : modelData.key === "rabbit" ? rabbitC : badgerC
@@ -57,10 +67,16 @@ Page {
                         anchors { left: critter.right; leftMargin: Theme.paddingLarge
                                   right: parent.right; rightMargin: Theme.horizontalPageMargin
                                   verticalCenter: parent.verticalCenter }
-                        Label { text: modelData.name; font.pixelSize: Theme.fontSizeLarge; color: Theme.primaryColor }
                         Label {
-                            text: modelData.tag; width: parent.width; wrapMode: Text.WordWrap
-                            font.pixelSize: Theme.fontSizeExtraSmall; color: Theme.secondaryColor
+                            text: modelData.name; font.pixelSize: Theme.fontSizeLarge
+                            color: parent.parent.unlocked ? Theme.primaryColor : Theme.secondaryColor
+                        }
+                        Label {
+                            text: parent.parent.unlocked ? modelData.tag
+                                  : qsTr("Locked. Win a raid as the badgers to unlock.")
+                            width: parent.width; wrapMode: Text.WordWrap
+                            font.pixelSize: Theme.fontSizeExtraSmall
+                            color: parent.parent.unlocked ? Theme.secondaryColor : "#c0a24a"
                         }
                     }
                 }

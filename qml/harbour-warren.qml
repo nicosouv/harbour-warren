@@ -104,6 +104,15 @@ ApplicationWindow {
             qsTr("You scratch the dirt. It scratches back, metaphorically."),
             qsTr("More rummaging. Dust, mostly."),
             qsTr("Digging with intent. The intent is unclear.")]
+        else if (key === "pilfer") pool = [
+            qsTr("Something shiny. It is yours now. It was always going to be."),
+            qsTr("You snatched a trinket. Ownership is a flexible idea.")]
+        else if (key === "feedqueen") pool = [
+            qsTr("You fed the queen. She did not say thank you. Queens rarely do."),
+            qsTr("The queen accepts the offering. The colony hums a little louder.")]
+        else if (key === "watch") pool = [
+            qsTr("You post a lookout. Somewhere, a fox sighs."),
+            qsTr("Eyes on the treeline. For now.")]
         else if (key === "grow") pool = [
             qsTr("A new badger. More opinions to ignore."),
             qsTr("The colony grew. So did the food bill.")]

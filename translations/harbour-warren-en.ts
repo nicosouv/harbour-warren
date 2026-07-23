@@ -140,6 +140,12 @@
     <message><source>You scratch the dirt. It scratches back, metaphorically.</source><translation>You scratch the dirt. It scratches back, metaphorically.</translation></message>
     <message><source>More rummaging. Dust, mostly.</source><translation>More rummaging. Dust, mostly.</translation></message>
     <message><source>Digging with intent. The intent is unclear.</source><translation>Digging with intent. The intent is unclear.</translation></message>
+    <message><source>Something shiny. It is yours now. It was always going to be.</source><translation>Something shiny. It is yours now. It was always going to be.</translation></message>
+    <message><source>You snatched a trinket. Ownership is a flexible idea.</source><translation>You snatched a trinket. Ownership is a flexible idea.</translation></message>
+    <message><source>You fed the queen. She did not say thank you. Queens rarely do.</source><translation>You fed the queen. She did not say thank you. Queens rarely do.</translation></message>
+    <message><source>The queen accepts the offering. The colony hums a little louder.</source><translation>The queen accepts the offering. The colony hums a little louder.</translation></message>
+    <message><source>You post a lookout. Somewhere, a fox sighs.</source><translation>You post a lookout. Somewhere, a fox sighs.</translation></message>
+    <message><source>Eyes on the treeline. For now.</source><translation>Eyes on the treeline. For now.</translation></message>
     <message><source>A new badger. More opinions to ignore.</source><translation>A new badger. More opinions to ignore.</translation></message>
     <message><source>The colony grew. So did the food bill.</source><translation>The colony grew. So did the food bill.</translation></message>
     <message><source>The lights went out. Just like your plans.</source><translation>The lights went out. Just like your plans.</translation></message>
@@ -462,6 +468,7 @@
     <message><source>A vast swarm. Breeds fast; feed the queen to hold it together.</source><translation>A vast swarm. Breeds fast; feed the queen to hold it together.</translation></message>
     <message><source>Rabbits</source><translation>Rabbits</translation></message>
     <message><source>Breeds fastest of all, but fragile. Post lookouts or predators cull the warren.</source><translation>Breeds fastest of all, but fragile. Post lookouts or predators cull the warren.</translation></message>
+    <message><source>Locked. Win a raid as the badgers to unlock.</source><translation>Locked. Win a raid as the badgers to unlock.</translation></message>
     <message><source>Starting a new game</source><translation>Starting a new game</translation></message>
 </context>
 </TS>

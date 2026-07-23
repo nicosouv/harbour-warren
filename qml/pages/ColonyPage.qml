@@ -399,7 +399,7 @@ Page {
             MouseArea {
                 id: digArea
                 anchors.fill: parent
-                onClicked: { Game.tap(); floatReward.wasMat = Game.lastTapMat; app.buzz(); digPulse.restart(); floatAnim.restart(); if (Math.random() < 0.2) app.quip("scavenge") }
+                onClicked: { Game.tap(); floatReward.wasMat = Game.lastTapMat; app.buzz(); digPulse.restart(); floatAnim.restart(); if (Math.random() < 0.2) app.quip(Game.faction === 1 ? "pilfer" : Game.faction === 2 ? "feedqueen" : Game.faction === 3 ? "watch" : "scavenge") }
             }
             SequentialAnimation {
                 id: digPulse

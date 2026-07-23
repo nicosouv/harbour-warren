@@ -182,6 +182,7 @@ public:
     Q_INVOKABLE QVariantList globalStats() const;                 // all-time accumulators across runs
     Q_INVOKABLE void newGame(int faction = 0);                    // fresh run; keeps records & globals
     Q_INVOKABLE QVariantList saveSlots() const;                       // [{ index, exists, faction, active }]
+    Q_INVOKABLE QVariantList factionDefs() const;                     // [{ index, id, unlocked }]
     Q_INVOKABLE void switchSlot(int slot);                        // resume another save slot
     Q_INVOKABLE void createSlot(int slot, int faction);           // start a fresh game in a slot
     Q_INVOKABLE double playtimeMs() const;

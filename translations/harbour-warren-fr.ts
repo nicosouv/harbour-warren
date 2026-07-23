@@ -140,6 +140,12 @@
     <message><source>You scratch the dirt. It scratches back, metaphorically.</source><translation>Vous grattez la terre. Elle gratte en retour, métaphoriquement.</translation></message>
     <message><source>More rummaging. Dust, mostly.</source><translation>Encore à fouiller. De la poussière, surtout.</translation></message>
     <message><source>Digging with intent. The intent is unclear.</source><translation>Creuser avec intention. L'intention reste floue.</translation></message>
+    <message><source>Something shiny. It is yours now. It was always going to be.</source><translation>Un truc qui brille. À vous, désormais. Ça allait de soi.</translation></message>
+    <message><source>You snatched a trinket. Ownership is a flexible idea.</source><translation>Vous avez chipé une babiole. La propriété est une notion souple.</translation></message>
+    <message><source>You fed the queen. She did not say thank you. Queens rarely do.</source><translation>Vous avez nourri la reine. Pas de merci. Les reines n'en font pas.</translation></message>
+    <message><source>The queen accepts the offering. The colony hums a little louder.</source><translation>La reine accepte l'offrande. La colonie bourdonne un peu plus fort.</translation></message>
+    <message><source>You post a lookout. Somewhere, a fox sighs.</source><translation>Vous postez un guetteur. Quelque part, un renard soupire.</translation></message>
+    <message><source>Eyes on the treeline. For now.</source><translation>Les yeux sur la lisière. Pour l'instant.</translation></message>
     <message><source>A new badger. More opinions to ignore.</source><translation>Un nouveau blaireau. Encore des avis à ignorer.</translation></message>
     <message><source>The colony grew. So did the food bill.</source><translation>La colonie a grandi. La facture de nourriture aussi.</translation></message>
     <message><source>The lights went out. Just like your plans.</source><translation>Les lumières se sont éteintes. Comme vos projets.</translation></message>
@@ -462,6 +468,7 @@
     <message><source>A vast swarm. Breeds fast; feed the queen to hold it together.</source><translation>Un essaim immense. Pullule vite ; nourrissez la reine pour le tenir ensemble.</translation></message>
     <message><source>Rabbits</source><translation>Lapins</translation></message>
     <message><source>Breeds fastest of all, but fragile. Post lookouts or predators cull the warren.</source><translation>La repro la plus rapide, mais fragile. Postez des guetteurs ou les prédateurs déciment la garenne.</translation></message>
+    <message><source>Locked. Win a raid as the badgers to unlock.</source><translation>Verrouillé. Gagnez un raid avec les blaireaux pour débloquer.</translation></message>
     <message><source>Starting a new game</source><translation>Démarrage d'une nouvelle partie</translation></message>
 </context>
 </TS>
