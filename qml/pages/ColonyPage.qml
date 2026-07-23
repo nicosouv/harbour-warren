@@ -276,6 +276,7 @@ Page {
                 siteProgress: Game.buildProgress
                 ambiance: Game.ambiance
                 reduceFx: Game.reduceFx
+                faction: Game.faction
             }
 
             // A birth is announced right on the village: a new badger, unmistakably.

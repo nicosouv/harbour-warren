@@ -17,6 +17,13 @@ Item {
     property real siteProgress: 0
     property int ambiance: 0        // 0 cycle / 1 dawn / 2 dusk / 3 night
     property bool reduceFx: false
+    property int faction: 0         // 0 badger (dirt), 1 magpie (canopy) — drives biome + critters
+
+    // Per-faction ground biome. Badger digs brown earth; the magpie roosts over a green canopy.
+    readonly property color groundTop: faction === 1 ? "#3f5a38" : "#4a3d30"
+    readonly property color groundBot: faction === 1 ? "#2b4526" : "#3a2f26"
+    Component { id: badgerCritter; PixelBadger { opacity: 0.85 } }
+    Component { id: magpieCritter; PixelMagpie { opacity: 0.9 } }
 
     readonly property real horizon: 0.42
 
@@ -333,8 +340,8 @@ Item {
         y: parent.height * view.horizon
         height: parent.height * (1 - view.horizon)
         gradient: Gradient {
-            GradientStop { position: 0.0; color: "#4a3d30" }
-            GradientStop { position: 1.0; color: "#3a2f26" }
+            GradientStop { position: 0.0; color: view.groundTop }
+            GradientStop { position: 1.0; color: view.groundBot }
         }
     }
     // Ground texture: dirt grain, pebbles, grass tufts. Painted once.
@@ -483,28 +490,18 @@ Item {
                 NumberAnimation { target: wander; property: "x"; to: 0; duration: 1300; easing.type: Easing.InOutSine }
             }
 
-            // Blocky pixel badger, built from flat rectangles to match the rest of the scene
-            // (trees, clouds) instead of a smooth sprite: a white striped face over a grey body.
+            // The colony's critters, blocky to match the scene. The faction picks the species.
             Item {
                 id: spr
                 anchors.fill: parent
-                opacity: 0.85
-                property color furC: "#7f8590"
-                property color darkC: "#2b2e36"
-                property color faceC: "#d9dade"
                 transform: [
                     Translate { id: dig },
                     Rotation { id: lean; origin.x: spr.width / 2; origin.y: spr.height }
                 ]
-                Rectangle { x: parent.width*0.10; y: parent.height*0.08; width: parent.width*0.20; height: parent.height*0.16; color: spr.darkC; antialiasing: false }
-                Rectangle { x: parent.width*0.70; y: parent.height*0.08; width: parent.width*0.20; height: parent.height*0.16; color: spr.darkC; antialiasing: false }
-                Rectangle { x: parent.width*0.18; y: parent.height*0.16; width: parent.width*0.64; height: parent.height*0.40; color: spr.faceC; antialiasing: false }
-                Rectangle { x: parent.width*0.28; y: parent.height*0.16; width: parent.width*0.12; height: parent.height*0.40; color: spr.darkC; antialiasing: false }
-                Rectangle { x: parent.width*0.60; y: parent.height*0.16; width: parent.width*0.12; height: parent.height*0.40; color: spr.darkC; antialiasing: false }
-                Rectangle { x: parent.width*0.44; y: parent.height*0.44; width: parent.width*0.12; height: parent.height*0.10; color: spr.darkC; antialiasing: false }
-                Rectangle { x: parent.width*0.14; y: parent.height*0.54; width: parent.width*0.72; height: parent.height*0.34; color: spr.furC; antialiasing: false }
-                Rectangle { x: parent.width*0.20; y: parent.height*0.86; width: parent.width*0.18; height: parent.height*0.12; color: spr.darkC; antialiasing: false }
-                Rectangle { x: parent.width*0.62; y: parent.height*0.86; width: parent.width*0.18; height: parent.height*0.12; color: spr.darkC; antialiasing: false }
+                Loader {
+                    anchors.fill: parent
+                    sourceComponent: view.faction === 1 ? magpieCritter : badgerCritter
+                }
             }
 
             // A newborn pops in with a little bounce so the arrival is unmistakable in the village.
