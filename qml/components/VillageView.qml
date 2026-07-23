@@ -455,16 +455,49 @@ Item {
         opacity: (1 - view.sky.day) * 0.4
     }
 
+    // Faction-tinted building sprite for the current biome.
+    function bldPath(key) {
+        var pre = faction === 2 ? "bld-ant-" : faction === 3 ? "bld-rabbit-" : "bld-"
+        return "../images/" + pre + key + ".png"
+    }
+
     // Buildings, tidy rows.
     Repeater {
         model: view.buildingModel()
         Image {
-            source: Qt.resolvedUrl("../images/bld-" + modelData.key + ".png")
+            source: Qt.resolvedUrl(view.bldPath(modelData.key))
             smooth: false
             width: view.width * 0.082
             height: width * (sourceSize.height / Math.max(1, sourceSize.width))
             x: view.width * view.slotX(modelData.slot)
             y: view.height * view.slotY(modelData.slot)
+        }
+    }
+
+    // Magpie nests tucked onto the branches, and a hoard of shinies that grows with the flock.
+    Repeater {
+        model: view.canopy ? 2 : 0
+        Item {
+            z: 1
+            property real bx: index === 0 ? view.width * 0.10 : view.width * 0.74
+            property real by: view.height * view.perchRows[index === 0 ? 1 : 0] - view.height * 0.01
+            Rectangle { x: parent.bx; y: parent.by; width: view.width*0.13; height: view.height*0.05; radius: height/2; color: "#5a4632"; antialiasing: false }
+            Rectangle { x: parent.bx + view.width*0.02; y: parent.by - view.height*0.008; width: view.width*0.09; height: view.height*0.032; radius: height/2; color: "#3a2e22"; antialiasing: false }
+            Rectangle { x: parent.bx + view.width*0.05; y: parent.by; width: view.width*0.022; height: width; radius: 2; color: "#8fd0e0"; antialiasing: false }
+        }
+    }
+    Item {
+        visible: view.canopy
+        property int wealth: Math.max(1, Math.min(6, Math.floor(view.population / 3)))
+        x: view.width * 0.42; y: view.height * 0.88; z: 2
+        Repeater {
+            model: parent.wealth
+            Rectangle {
+                width: view.width * 0.026; height: width; radius: 2; antialiasing: false
+                color: index % 2 === 0 ? "#e0c246" : "#8fd0e0"
+                x: (index % 3) * view.width * 0.03
+                y: -Math.floor(index / 3) * view.width * 0.022
+            }
         }
     }
 
@@ -475,7 +508,7 @@ Item {
         width: view.width * 0.082; height: width
         Image {
             anchors.fill: parent
-            source: view.siteBld >= 0 ? Qt.resolvedUrl("../images/bld-" + view.siteKeys[view.siteBld] + ".png") : ""
+            source: view.siteBld >= 0 ? Qt.resolvedUrl(view.bldPath(view.siteKeys[view.siteBld])) : ""
             smooth: false; fillMode: Image.PreserveAspectFit; opacity: 0.4
         }
         Rectangle {

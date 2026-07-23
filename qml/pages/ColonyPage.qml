@@ -101,6 +101,11 @@ Page {
         if (k === "territory") return qsTr("Take %1 territory").arg(t) + tail
         return ""
     }
+    // Faction-tinted building sprite path (ant/rabbit reuse the badger set, recoloured to the biome).
+    function bldPath(key) {
+        var pre = Game.faction === 2 ? "bld-ant-" : Game.faction === 3 ? "bld-rabbit-" : "bld-"
+        return "../images/" + pre + key + ".png"
+    }
     function buildingCounts() {
         var c = {}
         var b = Game.buildings
@@ -512,7 +517,7 @@ Page {
                         id: bldIcon
                         x: Theme.horizontalPageMargin
                         anchors.verticalCenter: parent.verticalCenter
-                        source: Qt.resolvedUrl("../images/bld-" + modelData.key + ".png")
+                        source: Qt.resolvedUrl(page.bldPath(modelData.key))
                         smooth: false
                         width: Theme.iconSizeMedium; height: width
                         fillMode: Image.PreserveAspectFit
