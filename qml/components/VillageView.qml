@@ -28,8 +28,10 @@ Item {
     readonly property var perchRows: [0.66, 0.76, 0.86]   // where the magpies sit in the foliage
     // Factions with a hand-painted background: the image replaces the procedural scene, critters
     // and the night veil render over it.
-    readonly property bool useBg: faction === 1
-    readonly property string bgSource: faction === 1 ? "../images/bg-magpie.png" : ""
+    readonly property bool useBg: faction === 1 || faction === 2 || faction === 3
+    readonly property string bgSource: faction === 1 ? "../images/bg-magpie.png"
+                                     : faction === 2 ? "../images/bg-ant.png"
+                                     : faction === 3 ? "../images/bg-rabbit.png" : ""
     Component { id: badgerCritter; PixelBadger { opacity: 0.85 } }
     Component { id: magpieCritter; PixelMagpie { opacity: 0.9 } }
     Component { id: antCritter; PixelAnt { opacity: 0.9 } }
