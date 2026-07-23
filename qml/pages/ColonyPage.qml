@@ -327,7 +327,8 @@ Page {
                 Label { text: "+1"; color: Theme.highlightColor; font.pixelSize: Theme.fontSizeMedium }
                 Image {
                     anchors.verticalCenter: parent.verticalCenter
-                    source: Qt.resolvedUrl(floatReward.wasMat ? "../images/res-materials.png" : "../images/res-food.png")
+                    source: Qt.resolvedUrl(Game.faction === 1 ? "../images/res-shinies.png"
+                            : (floatReward.wasMat ? "../images/res-materials.png" : "../images/res-food.png"))
                     smooth: false
                     width: Theme.iconSizeExtraSmall; height: width
                     fillMode: Image.PreserveAspectFit
@@ -365,7 +366,7 @@ Page {
                     }
                     Label {
                         anchors.verticalCenter: parent.verticalCenter
-                        text: qsTr("Scavenge")
+                        text: Game.faction === 1 ? qsTr("Pilfer") : qsTr("Scavenge")
                         font.pixelSize: Theme.fontSizeSmall
                     }
                 }

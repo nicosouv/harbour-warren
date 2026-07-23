@@ -479,19 +479,33 @@ void WarrenController::setAmbiance(int mode)
 
 QVariantList WarrenController::resources() const
 {
-    static const char* const keys[ResCount] = { "food", "materials", "gold", "energy" };
+    // The set is faction-specific: the magpie has no materials, hoards shinies, and spends stamina.
+    const bool magpie = !warren::worksLand(m_state);
+    static const char* const badgerKeys[ResCount] = { "food", "materials", "gold", "energy" };
+    static const char* const magpieKeys[ResCount] = { "food", "materials", "shinies", "stamina" };
+    const char* const* keys = magpie ? magpieKeys : badgerKeys;
     QVariantList out;
     for (int r = 0; r < ResCount; ++r) {
-        bool visible = true;
-        if (r == Materials) visible = m_state.stage >= 1;
-        else if (r == Gold || r == Energy) visible = m_state.stage >= 2;
+        bool visible;
+        bool low = false;
+        if (magpie) {
+            if (r == Materials) visible = false;                  // magpies do not use materials
+            else if (r == Gold) visible = m_state.stage >= 1;     // shinies, from pilfering and raids
+            else visible = true;                                  // food, stamina
+            if (r == Energy) low = liveRes(Energy) < kStaminaRaidCost;
+        } else {
+            if (r == Materials) visible = m_state.stage >= 1;
+            else if (r == Gold || r == Energy) visible = m_state.stage >= 2;
+            else visible = true;
+            if (r == Energy) low = liveRes(r) <= 0.0 && m_state.stage >= 2;
+        }
         QVariantMap m;
         m.insert(QStringLiteral("key"), QLatin1String(keys[r]));
         m.insert(QStringLiteral("value"), liveRes(r));
         m.insert(QStringLiteral("rate"), rateOf(r));
         m.insert(QStringLiteral("cap"), capOf(r));
         m.insert(QStringLiteral("visible"), visible);
-        m.insert(QStringLiteral("low"), (r == Energy && liveRes(r) <= 0.0 && m_state.stage >= 2));
+        m.insert(QStringLiteral("low"), low);
         out.append(m);
     }
     return out;

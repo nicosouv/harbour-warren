@@ -65,6 +65,7 @@ private slots:
     void energySustainability();
     void foldMagpieEconomy();
     void foldMagpieRaid();
+    void foldMagpieHarvest();
 };
 
 void TstWarren::rngDeterminism()
@@ -429,6 +430,22 @@ void TstWarren::foldMagpieRaid()
     QVERIFY(s.res[Gold] > 0.0);                      // loot
     QVERIFY(s.population >= 1);                       // never wiped to zero
     QVERIFY(s.stage >= 2);                            // raid gate advanced the reveal
+}
+
+void TstWarren::foldMagpieHarvest()
+{
+    // Pilfering: a magpie tap snatches shinies (gold), never food or materials.
+    QVector<Event> v;
+    v << arriveF(1) << tap(5, 2000);
+    GameState s = fold(v, kSalt);
+    QVERIFY(s.res[Gold] >= 5 * kPilferShinies - 1e-6);
+    QCOMPARE(s.res[Materials], 0.0);
+    QCOMPARE(s.res[Food], kStartFood);              // taps add no food for magpies
+
+    // Flock scavenging: the per-bird yield rises when more birds forage together.
+    GameState lone;  lone.faction = 1;  lone.population = 8;  lone.assigned[Forage] = 1;
+    GameState group; group.faction = 1; group.population = 8; group.assigned[Forage] = 4;
+    QVERIFY(perWorker(group, Forage) > perWorker(lone, Forage));
 }
 
 QTEST_GUILESS_MAIN(TstWarren)

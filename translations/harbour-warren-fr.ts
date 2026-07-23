@@ -272,6 +272,7 @@
     <message><source>buy energy; powers the colony</source><translation>acheter de l'énergie ; alimente la colonie</translation></message>
     <message><source>train soldiers</source><translation>former des soldats</translation></message>
     <message><source>Scavenge</source><translation>Fouiller</translation></message>
+    <message><source>Pilfer</source><translation>Chaparder</translation></message>
     <message><source>Under construction</source><translation>En construction</translation></message>
     <message><source>New game</source><translation>Nouvelle partie</translation></message>
     <message><source>Starting over</source><translation>Nouvelle partie</translation></message>

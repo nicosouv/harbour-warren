@@ -272,6 +272,7 @@
     <message><source>buy energy; powers the colony</source><translation>buy energy; powers the colony</translation></message>
     <message><source>train soldiers</source><translation>train soldiers</translation></message>
     <message><source>Scavenge</source><translation>Scavenge</translation></message>
+    <message><source>Pilfer</source><translation>Pilfer</translation></message>
     <message><source>Under construction</source><translation>Under construction</translation></message>
     <message><source>New game</source><translation>New game</translation></message>
     <message><source>Starting over</source><translation>Starting over</translation></message>

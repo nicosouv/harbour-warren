@@ -406,8 +406,16 @@ double perWorker(const GameState& s, int job)
     if (job < 0 || job >= JobCount) return 0.0;
     // Factions that do not work the land loot their materials and gold instead of producing them.
     if (!fac(s).worksLand && (job == Gather || job == MineJob)) return 0.0;
+    // A scavenging flock does better in numbers: each forager finds more when others forage too.
+    double flock = 1.0;
+    if (!fac(s).worksLand && job == Forage) {
+        int extra = s.assigned[Forage] - 1;
+        if (extra < 0) extra = 0;
+        if (extra > kFlockScavCap) extra = kFlockScavCap;
+        flock = 1.0 + kFlockScavPerBird * extra;
+    }
     return kJobBase[job] * bldMult(s, job) * territoryMult(s) * watermillMult(s)
-         * energyMult(s) * s.modProdFactor * s.modJob[job];
+         * energyMult(s) * s.modProdFactor * s.modJob[job] * flock;
 }
 
 double production(const GameState& s, int job)
@@ -590,10 +598,14 @@ void applyEvent(GameState& s, const Event& e, quint64 salt)
     } else if (e.kind == QLatin1String("tap")) {
         const int n = p.value(QLatin1String("n")).toInt();
         for (int i = 0; i < n; ++i) {
-            if (s.stage >= 1 && (s.tapsTotal % 4) == 3)
+            if (!fac(s).worksLand) {                         // magpie pilfers something shiny
+                s.res[Gold] += kPilferShinies;
+                s.goldEarned += kPilferShinies;
+            } else if (s.stage >= 1 && (s.tapsTotal % 4) == 3) {
                 s.res[Materials] += kDigMat;                 // an apple's worth of luck: kindling
-            else
+            } else {
                 s.res[Food] = clampd(s.res[Food] + kDigFood, 0.0, foodCap(s));
+            }
             s.tapsTotal += 1;
         }
     } else if (e.kind == QLatin1String("assign")) {

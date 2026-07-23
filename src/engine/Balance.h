@@ -40,6 +40,9 @@ static const double kStaminaRegenPerSec   = 0.06; // rest refills the pool
 static const double kStaminaRaidCost      = 40.0; // each raid tires the flock
 static const double kStaminaLowFactor     = 0.5;  // raid power multiplier when the pool is empty
 static const double kMagpiePowerPerBird   = 4.0;  // the whole flock raids; power scales with numbers
+static const double kPilferShinies        = 2.0;  // shinies (gold) snatched per pilfer tap
+static const double kFlockScavPerBird     = 0.12; // scavenging is better in numbers: +yield per extra
+static const int    kFlockScavCap         = 6;    // ...capped so a big flock does not run away
 
 // --- Jobs (worker assignments). Each job feeds one resource; builders feed the site. ----------
 enum Job { Forage = 0, Gather, MineJob, Build, JobCount };
