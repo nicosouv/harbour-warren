@@ -16,23 +16,57 @@ namespace warren {
 
 using namespace Balance;
 
+static const int kSlotCount = 3;   // parallel save slots (one game / faction each)
+
+static QString slotDbFile(int slot)
+{
+    return slot == 0 ? QString(QLatin1String(AppId::kDatabaseFile))
+                     : QStringLiteral("warren-slot%1.db").arg(slot);
+}
+static QString slotKey(int slot, const QString& k)
+{
+    return QStringLiteral("slot/%1/%2").arg(slot).arg(k);
+}
+
 WarrenController::WarrenController(QObject* parent)
     : QObject(parent)
     , m_settings(QLatin1String(AppId::kOrganization), QLatin1String(AppId::kApplication))
 {
+    m_slot = m_settings.value(QStringLiteral("activeSlot"), 0).toInt();
+    if (m_slot < 0 || m_slot >= kSlotCount) m_slot = 0;
+    loadActiveSlot();
+
+    connect(&m_uiTimer, &QTimer::timeout, this, &WarrenController::onUiTick);
+    m_uiTimer.start(1000);
+}
+
+// Open the active slot's log, fold it, and apply offline accrual. Shared by construction and by
+// switching slots, so every transient is reset here.
+void WarrenController::loadActiveSlot()
+{
     const QString dir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
     QDir().mkpath(dir);
-    m_store.open(dir + QLatin1String("/") + QLatin1String(AppId::kDatabaseFile));
+    m_store.open(dir + QLatin1String("/") + slotDbFile(m_slot));
 
     const quint64 entropy = Rng::mix(static_cast<quint64>(m_clock.nowMs()),
-                                     reinterpret_cast<quintptr>(this));
+                                     reinterpret_cast<quintptr>(this) + static_cast<quintptr>(m_slot + 1));
     m_store.bootstrap(entropy != 0 ? entropy : Q_UINT64_C(0xC0FFEE));
     m_salt = m_store.installSalt();
 
-    m_faction = m_settings.value(QStringLiteral("faction"), 0).toInt();
+    m_faction = m_settings.value(slotKey(m_slot, QStringLiteral("faction")), 0).toInt();
+    m_pendingTaps = 0;
+    m_welcomePending = false;
+    m_welcomeGold = m_welcomeMaterials = m_welcomeFood = m_welcomeMs = 0.0;
+    m_welcomePop = 0;
+    m_hist.clear();
+    m_firstTs = 0;
     m_state = GameState();
+
     const QVector<Event> events = m_store.events();
-    if (!events.isEmpty()) m_firstTs = events.first().tsMs;
+    if (!events.isEmpty()) {
+        m_firstTs = events.first().tsMs;
+        m_settings.setValue(slotKey(m_slot, QStringLiteral("exists")), true);   // migrate/mark
+    }
     for (int i = 0; i < events.size(); ++i) {
         applyEvent(m_state, events.at(i), m_salt);
         recordSample(events.at(i).tsMs);
@@ -60,16 +94,57 @@ WarrenController::WarrenController(QObject* parent)
         m_welcomeMs = static_cast<double>(ms);
         m_welcomePending = ms > kWelcomeMs;
         if (m_welcomePop > 0) {
-            // Absurd-stats fodder: badgers born while you were away.
             const QString k = QStringLiteral("rec/offlineBirths_v");
             m_settings.setValue(k, m_settings.value(k, 0.0).toDouble() + m_welcomePop);
         }
     }
     m_lastFlushMs = now;
     updateRecords(now);
+}
 
-    connect(&m_uiTimer, &QTimer::timeout, this, &WarrenController::onUiTick);
-    m_uiTimer.start(1000);
+QVariantList WarrenController::saveSlots() const
+{
+    QVariantList out;
+    for (int n = 0; n < kSlotCount; ++n) {
+        QVariantMap m;
+        m.insert(QStringLiteral("index"), n);
+        m.insert(QStringLiteral("active"), n == m_slot);
+        if (n == m_slot) {
+            m.insert(QStringLiteral("exists"), m_state.arrived);
+            m.insert(QStringLiteral("faction"), m_state.faction);
+            m.insert(QStringLiteral("stage"), m_state.stage);
+            m.insert(QStringLiteral("population"), m_state.population);
+        } else {
+            m.insert(QStringLiteral("exists"), m_settings.value(slotKey(n, QStringLiteral("exists")), false).toBool());
+            m.insert(QStringLiteral("faction"), m_settings.value(slotKey(n, QStringLiteral("faction")), 0).toInt());
+            m.insert(QStringLiteral("stage"), 0);
+            m.insert(QStringLiteral("population"), 0);
+        }
+        out.append(m);
+    }
+    return out;
+}
+
+void WarrenController::switchSlot(int slot)
+{
+    if (slot < 0 || slot >= kSlotCount || slot == m_slot) return;
+    flushNow();
+    m_slot = slot;
+    m_settings.setValue(QStringLiteral("activeSlot"), slot);
+    loadActiveSlot();
+    emit stateChanged();
+    emit liveChanged();
+    emit prefsChanged();
+}
+
+void WarrenController::createSlot(int slot, int faction)
+{
+    if (slot < 0 || slot >= kSlotCount) return;
+    flushNow();
+    m_slot = slot;
+    m_settings.setValue(QStringLiteral("activeSlot"), slot);
+    loadActiveSlot();          // open the target slot (may hold an old game)
+    newGame(faction);          // wipe it and start fresh; records the slot's faction
 }
 
 WarrenController::~WarrenController()
@@ -1020,7 +1095,8 @@ void WarrenController::newGame(int faction)
     flushNow();
     if (faction < 0 || faction >= kFactionCount) faction = 0;
     m_faction = faction;
-    m_settings.setValue(QStringLiteral("faction"), faction);
+    m_settings.setValue(slotKey(m_slot, QStringLiteral("faction")), faction);
+    m_settings.setValue(slotKey(m_slot, QStringLiteral("exists")), true);
     // Bank this run into the all-time ledger, then start clean. Records (rec/*) survive.
     auto bump = [&](const char* k, double v) {
         const QString key = QStringLiteral("glob/") + QLatin1String(k);

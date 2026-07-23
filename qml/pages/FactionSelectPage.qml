@@ -7,6 +7,9 @@ Page {
     id: page
     allowedOrientations: Orientation.All
 
+    property int slot: 0        // which save slot this new game goes into
+    property var home: null     // page to return to once a game is started (the colony)
+
     property var factions: [
         { idx: 0, key: "badger", name: qsTr("Badgers"),
           tag: qsTr("Build, mine, and raise an army. The baseline faction.") },
@@ -36,8 +39,9 @@ Page {
                     width: col.width
                     height: Theme.itemSizeLarge
                     onClicked: rem.execute(qsTr("Starting a new game"), function() {
-                        Game.newGame(modelData.idx)
-                        pageStack.pop()
+                        Game.createSlot(page.slot, modelData.idx)
+                        if (page.home) pageStack.pop(page.home)
+                        else pageStack.pop()
                     })
 
                     Loader {

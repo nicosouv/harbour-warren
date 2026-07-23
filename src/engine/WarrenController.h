@@ -181,6 +181,9 @@ public:
     Q_INVOKABLE QVariantList sillyStats() const;                  // [{ key, value }] — the absurd ones
     Q_INVOKABLE QVariantList globalStats() const;                 // all-time accumulators across runs
     Q_INVOKABLE void newGame(int faction = 0);                    // fresh run; keeps records & globals
+    Q_INVOKABLE QVariantList saveSlots() const;                       // [{ index, exists, faction, active }]
+    Q_INVOKABLE void switchSlot(int slot);                        // resume another save slot
+    Q_INVOKABLE void createSlot(int slot, int faction);           // start a fresh game in a slot
     Q_INVOKABLE double playtimeMs() const;
     Q_INVOKABLE int eventCount() const;
 
@@ -219,6 +222,7 @@ private:
     void onUiTick();
     void recordSample(qint64 t);
     void updateRecords(qint64 now);
+    void loadActiveSlot();
     void bumpRecord(const QString& key, double value, qint64 now);
 
     SystemClock m_clock;
@@ -242,6 +246,7 @@ private:
     QVector<Sample> m_hist;
     qint64 m_firstTs = 0;
     int    m_faction = 0;
+    int    m_slot = 0;
 };
 
 } // namespace warren

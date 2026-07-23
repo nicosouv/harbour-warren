@@ -233,6 +233,7 @@
 <context>
     <name>ColonyPage</name>
     <message><source>Founding</source><translation>Founding</translation></message>
+    <message><source>Games</source><translation>Games</translation></message>
     <message><source>The roost</source><translation>The roost</translation></message>
     <message><source>First blood</source><translation>First blood</translation></message>
     <message><source>The hoard</source><translation>The hoard</translation></message>
@@ -435,6 +436,20 @@
 <context>
     <name>CoverPage</name>
     <message><source>badgers</source><translation>badgers</translation></message>
+</context>
+<context>
+    <name>SlotsPage</name>
+    <message><source>Games</source><translation>Games</translation></message>
+    <message><source>Slot</source><translation>Slot</translation></message>
+    <message><source>current</source><translation>current</translation></message>
+    <message><source>stage</source><translation>stage</translation></message>
+    <message><source>Empty. Tap to start.</source><translation>Empty. Tap to start.</translation></message>
+    <message><source>Start over</source><translation>Start over</translation></message>
+    <message><source>New game</source><translation>New game</translation></message>
+    <message><source>Badgers</source><translation>Badgers</translation></message>
+    <message><source>Magpies</source><translation>Magpies</translation></message>
+    <message><source>Ants</source><translation>Ants</translation></message>
+    <message><source>Rabbits</source><translation>Rabbits</translation></message>
 </context>
 <context>
     <name>FactionSelectPage</name>

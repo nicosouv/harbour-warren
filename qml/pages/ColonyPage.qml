@@ -424,8 +424,8 @@ Page {
         PullDownMenu {
             MenuItem { text: qsTr("Settings"); onClicked: pageStack.push(Qt.resolvedUrl("SettingsPage.qml")) }
             MenuItem {
-                text: qsTr("New game")
-                onClicked: pageStack.push(Qt.resolvedUrl("FactionSelectPage.qml"))
+                text: qsTr("Games")
+                onClicked: pageStack.push(Qt.resolvedUrl("SlotsPage.qml"), { home: page })
             }
         }
         RemorsePopup { id: newGameRemorse }
