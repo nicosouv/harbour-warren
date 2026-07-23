@@ -13,13 +13,16 @@ enum Res { Food = 0, Materials, Gold, Energy, ResCount };
 
 // --- Factions (asymmetric play). Badger is faction 0 and keeps every current rule; the descriptor
 // grows as faction 2 (magpies) lands. See docs-local/FACTIONS.md.
+// When a faction becomes selectable (hybrid onboarding, option C in FACTIONS.md).
+enum FactionUnlock { FUStart = 0, FUCoreLoop };   // from the start / after the core loop is learnt
 struct FactionDef {
     const char* id;
-    bool  canBuild;   // false: no construction — goods come from raiding
+    bool  canBuild;    // false: no construction — goods come from raiding
+    int   unlockAfter; // FactionUnlock: gates the faction picker in the slot-select screen
 };
 static const int kFactionCount = 1;
 static const FactionDef kFaction[kFactionCount] = {
-    { "badger", true },
+    { "badger", true, FUStart },
 };
 
 // --- Jobs (worker assignments). Each job feeds one resource; builders feed the site. ----------
