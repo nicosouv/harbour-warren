@@ -39,6 +39,7 @@ static const double kStaminaCap           = 100.0;
 static const double kStaminaRegenPerSec   = 0.06; // rest refills the pool
 static const double kStaminaRaidCost      = 40.0; // each raid tires the flock
 static const double kStaminaLowFactor     = 0.5;  // raid power multiplier when the pool is empty
+static const double kMagpiePowerPerBird   = 4.0;  // the whole flock raids; power scales with numbers
 
 // --- Jobs (worker assignments). Each job feeds one resource; builders feed the site. ----------
 enum Job { Forage = 0, Gather, MineJob, Build, JobCount };

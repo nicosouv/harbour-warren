@@ -72,6 +72,7 @@ class WarrenController : public QObject
     Q_PROPERTY(QVariantList targets READ targets NOTIFY liveChanged)
     Q_PROPERTY(double armyPower READ armyPowerQ NOTIFY stateChanged)
     Q_PROPERTY(int totalUnits READ totalUnitsQ NOTIFY stateChanged)
+    Q_PROPERTY(int raidForce READ raidForceQ NOTIFY stateChanged)
     Q_PROPERTY(int territory READ territory NOTIFY stateChanged)
 
     // Pixel village view inputs.
@@ -154,6 +155,7 @@ public:
     QVariantList targets() const;
     double armyPowerQ() const;
     int totalUnitsQ() const;
+    int raidForceQ() const;
     int territory() const;
     int buildingsTotal() const;
 

@@ -345,6 +345,7 @@ int WarrenController::lastEventResultQ() const { return m_state.lastEventResult;
 bool WarrenController::raidsUnlocked() const { return m_state.stage >= 4; }
 double WarrenController::armyPowerQ() const { return warren::armyPower(m_state); }
 int WarrenController::totalUnitsQ() const { return warren::totalUnits(m_state); }
+int WarrenController::raidForceQ() const { return warren::raidForce(m_state); }
 int WarrenController::territory() const { return m_state.territory; }
 int WarrenController::buildingsTotal() const { return warren::totalBuildings(m_state); }
 bool WarrenController::welcomePending() const { return m_welcomePending; }

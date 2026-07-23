@@ -64,6 +64,7 @@ private slots:
     void simulationProgression();
     void energySustainability();
     void foldMagpieEconomy();
+    void foldMagpieRaid();
 };
 
 void TstWarren::rngDeterminism()
@@ -408,6 +409,26 @@ void TstWarren::foldMagpieEconomy()
     GameState s2 = fold(v, kSalt);
     QCOMPARE(s2.siteBld, -1);
     QCOMPARE(s2.buildings[Burrow], 0);
+}
+
+void TstWarren::foldMagpieRaid()
+{
+    // The whole flock raids: power scales with numbers, stamina is spent, birds fall, and a win
+    // brings loot, territory, and recruits. No units, no barracks.
+    GameState s;
+    s.faction = 1;
+    s.stage = 1;                       // raids open early for the magpie
+    s.population = 12;                 // flock power 48 vs cache defence 18 -> a decisive win
+    s.res[Energy] = kStaminaCap;       // full stamina
+    QVERIFY(raidReady(s, 0, 100000));
+    applyEvent(s, raidEv(0, 100000), kSalt);
+    QCOMPARE(s.lastRaidOutcome, 1);                  // decisive at this power ratio
+    QVERIFY(s.res[Energy] < kStaminaCap);            // stamina spent
+    QCOMPARE(s.raidsWon, 1);
+    QVERIFY(s.territory >= 1);                        // ground taken
+    QVERIFY(s.res[Gold] > 0.0);                      // loot
+    QVERIFY(s.population >= 1);                       // never wiped to zero
+    QVERIFY(s.stage >= 2);                            // raid gate advanced the reveal
 }
 
 QTEST_GUILESS_MAIN(TstWarren)

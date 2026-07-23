@@ -772,7 +772,7 @@ Page {
                         id: raidBtn
                         anchors { right: parent.right; rightMargin: Theme.horizontalPageMargin; verticalCenter: parent.verticalCenter }
                         icon.source: "image://theme/icon-m-right"
-                        enabled: modelData.ready && Game.totalUnits > 0
+                        enabled: modelData.ready && Game.raidForce > 0
                         onClicked: { Game.raid(modelData.index); app.buzz() }
                     }
                 }

@@ -44,15 +44,27 @@ void reassignWithin(GameState& s)
 
 void advanceStage(GameState& s)
 {
+    const bool flock = !fac(s).worksLand;   // raid-driven progression instead of build-driven
     while (s.stage < kStageCount - 1) {
         bool ok = false;
-        switch (s.stage) {
-        case 0: ok = s.population >= kGatePopulation; break;
-        case 1: ok = s.buildingsBuilt >= kGateBuildings; break;
-        case 2: ok = s.goldEarned >= kGateGoldEarned; break;
-        case 3: ok = s.unitsTrained >= kGateUnitsTrained; break;
-        case 4: ok = s.raidsWon >= kGateRaidsWon; break;
-        default: ok = false; break;
+        if (flock) {
+            switch (s.stage) {
+            case 0: ok = s.population >= kStartPopulation; break;  // raids open at stage 1
+            case 1: ok = s.raidsWon >= 1; break;
+            case 2: ok = s.goldEarned >= kGateGoldEarned; break;
+            case 3: ok = s.territory >= 1; break;
+            case 4: ok = s.raidsWon >= 3; break;
+            default: ok = false; break;
+            }
+        } else {
+            switch (s.stage) {
+            case 0: ok = s.population >= kGatePopulation; break;
+            case 1: ok = s.buildingsBuilt >= kGateBuildings; break;
+            case 2: ok = s.goldEarned >= kGateGoldEarned; break;
+            case 3: ok = s.unitsTrained >= kGateUnitsTrained; break;
+            case 4: ok = s.raidsWon >= kGateRaidsWon; break;
+            default: ok = false; break;
+            }
         }
         if (ok) ++s.stage; else break;
     }
@@ -442,14 +454,26 @@ double unitCostMaterials(const GameState& s, int u)
 
 double armyPower(const GameState& s)
 {
+    // The whole flock raids: a faction without a standing army throws its numbers at the target.
+    if (!fac(s).worksLand) return s.population * kMagpiePowerPerBird;
     double p = 0.0;
     for (int u = 0; u < UnitCount; ++u) p += s.units[u] * kUnit[u].power;
     return p;
 }
 
+// Bodies committed to a raid: soldiers for an army faction, the flock itself otherwise.
+int raidForce(const GameState& s)
+{
+    return fac(s).worksLand ? totalUnits(s) : s.population;
+}
+
 bool targetUnlocked(const GameState& s, int t)
 {
-    return t >= 0 && t < kTargetCount && s.stage >= kTarget[t].unlockStage;
+    if (t < 0 || t >= kTargetCount) return false;
+    // Raiding is the magpie's core loop, not a late unlock: targets open far earlier for them.
+    const int gate = fac(s).worksLand ? kTarget[t].unlockStage
+                                      : (t <= 1 ? 1 : t <= 2 ? 2 : t <= 3 ? 3 : t <= 4 ? 4 : 5);
+    return s.stage >= gate;
 }
 
 qint64 raidCooldownLeft(const GameState& s, int t, qint64 nowMs)
@@ -461,7 +485,7 @@ qint64 raidCooldownLeft(const GameState& s, int t, qint64 nowMs)
 
 bool raidReady(const GameState& s, int t, qint64 nowMs)
 {
-    return targetUnlocked(s, t) && totalUnits(s) > 0 && raidCooldownLeft(s, t, nowMs) == 0;
+    return targetUnlocked(s, t) && raidForce(s) > 0 && raidCooldownLeft(s, t, nowMs) == 0;
 }
 
 bool eventEligible(const GameState& s, int ev, qint64 nowMs)
@@ -634,11 +658,19 @@ void applyEvent(GameState& s, const Event& e, quint64 salt)
         }
     } else if (e.kind == QLatin1String("raid")) {
         const int t = p.value(QLatin1String("t")).toInt(-1);
-        if (targetUnlocked(s, t) && totalUnits(s) > 0
+        if (targetUnlocked(s, t) && raidForce(s) > 0
             && (s.lastRaidMs == 0 || at - s.lastRaidMs >= kTarget[t].cooldownMs)) {
             const TargetDef& tg = kTarget[t];
-            const int committed = totalUnits(s);
-            const double power = armyPower(s) * (1.0 + s.intel[t]);
+            const bool flock = !fac(s).worksLand;
+            const int committed = raidForce(s);
+
+            // A raiding flock spends stamina; an empty pool sends them out at half strength.
+            double staminaFactor = 1.0;
+            if (flock) {
+                if (s.res[Energy] >= kStaminaRaidCost) s.res[Energy] -= kStaminaRaidCost;
+                else { s.res[Energy] = 0.0; staminaFactor = kStaminaLowFactor; }
+            }
+            const double power = armyPower(s) * staminaFactor * (1.0 + s.intel[t]);
             const double roll = rollUnit(salt, s.raidCount);
             const double score = (power / tg.defense) * (1.0 - kLuckBand + 2.0 * kLuckBand * roll);
             s.raidCount += 1;
@@ -651,11 +683,20 @@ void applyEvent(GameState& s, const Event& e, quint64 salt)
 
             int losses = static_cast<int>(std::ceil(committed * lossFrac));
             if (losses > committed) losses = committed;
-            int rem = losses;
-            for (int u = 0; u < UnitCount && rem > 0; ++u) {   // militia fall first
-                const int take = rem < s.units[u] ? rem : s.units[u];
-                s.units[u] -= take;
-                rem -= take;
+            if (flock) {                       // birds fall from the flock, never the last one
+                int take = losses;
+                if (take > s.population - 1) take = s.population - 1;
+                if (take < 0) take = 0;
+                s.population -= take;
+                losses = take;
+                reassignWithin(s);
+            } else {
+                int rem = losses;
+                for (int u = 0; u < UnitCount && rem > 0; ++u) {   // militia fall first
+                    const int take = rem < s.units[u] ? rem : s.units[u];
+                    s.units[u] -= take;
+                    rem -= take;
+                }
             }
 
             if (outcome == 1 || outcome == 2) {
@@ -666,6 +707,11 @@ void applyEvent(GameState& s, const Event& e, quint64 salt)
                 s.res[Food] = clampd(s.res[Food] + tg.lootFood * sc, 0.0, foodCap(s));
                 s.raidsWon += 1;
                 if (outcome == 1) s.territory += 1;
+                if (flock) {                   // recruits swell the flock, up to the roost's room
+                    int room = housingCap(s) - s.population;
+                    if (room < 0) room = 0;
+                    s.population += kMagpieRecruitPerWin < room ? kMagpieRecruitPerWin : room;
+                }
             } else {
                 s.res[Gold] *= (1.0 - kDefeatLossFrac);
                 s.res[Materials] *= (1.0 - kDefeatLossFrac);

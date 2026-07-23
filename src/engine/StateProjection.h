@@ -30,6 +30,7 @@ double buildCost(const GameState& s, int bld, int n);
 double unitCostGold(const GameState& s, int u);
 double unitCostMaterials(const GameState& s, int u);
 double armyPower(const GameState& s);
+int    raidForce(const GameState& s);            // bodies a raid commits (units, or the whole flock)
 bool   targetUnlocked(const GameState& s, int t);
 qint64 raidCooldownLeft(const GameState& s, int t, qint64 nowMs);
 bool   raidReady(const GameState& s, int t, qint64 nowMs);
