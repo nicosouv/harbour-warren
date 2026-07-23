@@ -550,6 +550,14 @@ Item {
         fillMode: Image.PreserveAspectCrop
         smooth: false
     }
+    // The magpie's growing hoard of stolen shinies, sat on the painted scene.
+    Image {
+        visible: view.faction === 1 && view.population > 0
+        source: Qt.resolvedUrl("../images/deco-hoard.png")
+        smooth: false; fillMode: Image.PreserveAspectFit
+        width: view.width * (0.10 + 0.006 * Math.min(12, view.population)); height: width
+        x: view.width * 0.44; y: view.height * 0.82; z: 1
+    }
 
     // Chibi critters: badgers scratch the earth; magpies perch on the branches. New ones pop in.
     Repeater {
