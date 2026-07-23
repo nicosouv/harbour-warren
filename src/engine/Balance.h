@@ -11,6 +11,17 @@ namespace Balance {
 // --- Resources -------------------------------------------------------------------------------
 enum Res { Food = 0, Materials, Gold, Energy, ResCount };
 
+// --- Factions (asymmetric play). Badger is faction 0 and keeps every current rule; the descriptor
+// grows as faction 2 (magpies) lands. See docs-local/FACTIONS.md.
+struct FactionDef {
+    const char* id;
+    bool  canBuild;   // false: no construction — goods come from raiding
+};
+static const int kFactionCount = 1;
+static const FactionDef kFaction[kFactionCount] = {
+    { "badger", true },
+};
+
 // --- Jobs (worker assignments). Each job feeds one resource; builders feed the site. ----------
 enum Job { Forage = 0, Gather, MineJob, Build, JobCount };
 // job -> resource produced (-1: construction work)

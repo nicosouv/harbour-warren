@@ -9,6 +9,7 @@ namespace warren {
 
 struct GameState {
     bool   arrived = false;         // player stepped past the intro
+    int    faction = 0;             // which faction this colony plays (0 = badger)
     int    stage = 0;               // A Dark Room reveal (0..5), monotonic
 
     double res[Balance::ResCount] = { Balance::kStartFood, 0.0, 0.0, 0.0 };

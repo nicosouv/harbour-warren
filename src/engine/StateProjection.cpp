@@ -325,6 +325,11 @@ double energyCap(const GameState& s)
     return kEnergyCapBase + kEnergyCapPerPost * (bldDamaged(s, TradingPost) ? 0 : s.buildings[TradingPost]);
 }
 
+bool canBuild(const GameState& s)
+{
+    return s.faction >= 0 && s.faction < kFactionCount ? kFaction[s.faction].canBuild : true;
+}
+
 int totalBuildings(const GameState& s)
 {
     int n = 0;
@@ -571,7 +576,7 @@ void applyEvent(GameState& s, const Event& e, quint64 salt)
     } else if (e.kind == QLatin1String("build")) {
         // Opens a construction site (one at a time). Builders finish it during ticks.
         const int b = p.value(QLatin1String("b")).toInt(-1);
-        if (b >= 0 && b < BldCount && s.stage >= kBld[b].unlockStage && s.siteBld < 0) {
+        if (canBuild(s) && b >= 0 && b < BldCount && s.stage >= kBld[b].unlockStage && s.siteBld < 0) {
             const double cost = buildCost(s, b, 1);
             if (s.res[Materials] >= cost) {
                 s.res[Materials] -= cost;
