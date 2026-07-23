@@ -421,4 +421,13 @@
     <name>CoverPage</name>
     <message><source>badgers</source><translation>blaireaux</translation></message>
 </context>
+<context>
+    <name>FactionSelectPage</name>
+    <message><source>Choose a faction</source><translation>Choisir une faction</translation></message>
+    <message><source>Badgers</source><translation>Blaireaux</translation></message>
+    <message><source>Magpies</source><translation>Pies</translation></message>
+    <message><source>Build, mine, and raise an army. The baseline faction.</source><translation>Construire, miner, lever une armée. La faction de base.</translation></message>
+    <message><source>Cannot build. A flock of thieves that lives by raiding.</source><translation>Ne construit pas. Une bande de voleuses qui vit du raid.</translation></message>
+    <message><source>Starting a new game</source><translation>Démarrage d'une nouvelle partie</translation></message>
+</context>
 </TS>

@@ -399,12 +399,8 @@ Page {
         PullDownMenu {
             MenuItem { text: qsTr("Settings"); onClicked: pageStack.push(Qt.resolvedUrl("SettingsPage.qml")) }
             MenuItem {
-                text: qsTr("New game: Badgers")
-                onClicked: newGameRemorse.execute(qsTr("Starting over"), function() { Game.newGame(0) })
-            }
-            MenuItem {
-                text: qsTr("New game: Magpies")
-                onClicked: newGameRemorse.execute(qsTr("Starting over"), function() { Game.newGame(1) })
+                text: qsTr("New game")
+                onClicked: pageStack.push(Qt.resolvedUrl("FactionSelectPage.qml"))
             }
         }
         RemorsePopup { id: newGameRemorse }

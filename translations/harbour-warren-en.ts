@@ -421,4 +421,13 @@
     <name>CoverPage</name>
     <message><source>badgers</source><translation>badgers</translation></message>
 </context>
+<context>
+    <name>FactionSelectPage</name>
+    <message><source>Choose a faction</source><translation>Choose a faction</translation></message>
+    <message><source>Badgers</source><translation>Badgers</translation></message>
+    <message><source>Magpies</source><translation>Magpies</translation></message>
+    <message><source>Build, mine, and raise an army. The baseline faction.</source><translation>Build, mine, and raise an army. The baseline faction.</translation></message>
+    <message><source>Cannot build. A flock of thieves that lives by raiding.</source><translation>Cannot build. A flock of thieves that lives by raiding.</translation></message>
+    <message><source>Starting a new game</source><translation>Starting a new game</translation></message>
+</context>
 </TS>
