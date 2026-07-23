@@ -113,7 +113,9 @@ Item {
         return out
     }
     function slotX(slot) { return 0.03 + (slot % 9) * 0.107 + jitter(slot * 3 + 1, 0.02) }
-    function slotY(slot) { return slot % 9 < 5 ? 0.52 : 0.74 }
+    // Two tidy rows; on a painted background they sit lower, on the scene's ground band.
+    function slotY(slot) { return useBg ? (slot % 9 < 5 ? 0.62 : 0.79)
+                                        : (slot % 9 < 5 ? 0.52 : 0.74) }
 
     property var siteKeys: ["burrow", "granary", "workshop", "mineshaft", "tradingpost", "barracks",
                             "watchtower", "watermill"]
@@ -462,6 +464,16 @@ Item {
         opacity: (1 - view.sky.day) * 0.4
     }
 
+    // Hand-painted faction background: covers the procedural scenery. Buildings, the construction
+    // site and critters all draw ON TOP of it, so the colony is still visible growing.
+    Image {
+        anchors.fill: parent
+        visible: view.useBg
+        source: view.useBg ? Qt.resolvedUrl(view.bgSource) : ""
+        fillMode: Image.PreserveAspectCrop
+        smooth: false
+    }
+
     // Every faction shares the hand-drawn building sprites for now.
     function bldPath(key) { return "../images/bld-" + key + ".png" }
 
@@ -479,8 +491,9 @@ Item {
     }
 
     // Magpie nests tucked onto the branches, and a hoard of shinies that grows with the flock.
+    // Procedural decor only when there is no painted background (the image provides its own).
     Repeater {
-        model: view.canopy ? 2 : 0
+        model: (view.canopy && !view.useBg) ? 2 : 0
         Item {
             z: 1
             property real bx: index === 0 ? view.width * 0.10 : view.width * 0.74
@@ -491,7 +504,7 @@ Item {
         }
     }
     Item {
-        visible: view.canopy
+        visible: view.canopy && !view.useBg
         property int wealth: Math.max(1, Math.min(6, Math.floor(view.population / 3)))
         x: view.width * 0.42; y: view.height * 0.88; z: 2
         Repeater {
@@ -527,7 +540,7 @@ Item {
 
     // Canopy branches the magpies perch on. Plain limbs with a foliage tuft at each end.
     Repeater {
-        model: view.canopy ? view.perchRows.length : 0
+        model: (view.canopy && !view.useBg) ? view.perchRows.length : 0
         Item {
             z: 1
             readonly property real by: view.height * view.perchRows[index] + view.width * 0.035
@@ -540,14 +553,6 @@ Item {
         }
     }
 
-    // Hand-painted faction background: covers the procedural scene above it. Critters draw on top.
-    Image {
-        anchors.fill: parent
-        visible: view.useBg
-        source: view.useBg ? Qt.resolvedUrl(view.bgSource) : ""
-        fillMode: Image.PreserveAspectCrop
-        smooth: false
-    }
     // The magpie's growing hoard of stolen shinies, sat on the painted scene.
     Image {
         visible: view.faction === 1 && view.population > 0
