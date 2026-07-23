@@ -37,7 +37,7 @@ WarrenController::WarrenController(QObject* parent)
     loadActiveSlot();
 
     connect(&m_uiTimer, &QTimer::timeout, this, &WarrenController::onUiTick);
-    m_uiTimer.start(1000);
+    m_uiTimer.start(250);   // refresh the display ~4x/s so income counts up smoothly
 }
 
 // Open the active slot's log, fold it, and apply offline accrual. Shared by construction and by
@@ -884,37 +884,45 @@ void WarrenController::flushNow()
 void WarrenController::onUiTick()
 {
     const qint64 now = m_clock.nowMs();
-    if (now - m_lastFlushMs >= kFlushMs) {
-        flushNow();
-    } else if (m_state.arrived) {
-        // Bank a birth or a finished building the instant it is due — otherwise the count and the
-        // construction bar sit frozen (at the last flush, or at 100%) until the next 30 s flush.
-        const double secs = (now - m_lastFlushMs) / 1000.0;
-        bool due = false;
-        if (secs > 0.0 && growing()) {
-            const double bb = m_state.brood + kGrowthRate * secs;
-            if (std::floor(bb) >= 1.0) due = true;
-        }
-        if (!due && m_state.siteBld >= 0 && m_state.assigned[Build] > 0 && buildProgress() >= 1.0)
-            due = true;
-        if (due) flushNow();
-    }
 
-    // Fire an event when the seeded roll and cooldowns allow, and none is active.
-    if (m_state.arrived && m_state.eventActive < 0) {
-        const int ev = rollEvent(m_state, m_salt, now);
-        if (ev >= 0) {
+    // The heavy work (flush, event rolls, records) runs about once a second; the display refreshes
+    // faster below so continuous income counts up smoothly rather than jumping once a second — which
+    // made tapping look like it sped up gold, when it was only refreshing the view more often.
+    if (now - m_lastHeavyMs >= 1000) {
+        m_lastHeavyMs = now;
+        if (now - m_lastFlushMs >= kFlushMs) {
             flushNow();
-            QJsonObject p;
-            p.insert(QLatin1String("ev"), ev);
-            p.insert(QLatin1String("at"), static_cast<double>(now));
-            appendAndApply(QLatin1String("event"),
-                           QString::fromUtf8(QJsonDocument(p).toJson(QJsonDocument::Compact)));
-            emit stateChanged();
+        } else if (m_state.arrived) {
+            // Bank a birth or a finished building the instant it is due — otherwise the count and the
+            // construction bar sit frozen (at the last flush, or at 100%) until the next 30 s flush.
+            const double secs = (now - m_lastFlushMs) / 1000.0;
+            bool due = false;
+            if (secs > 0.0 && growing()) {
+                const double bb = m_state.brood + kGrowthRate * secs;
+                if (std::floor(bb) >= 1.0) due = true;
+            }
+            if (!due && m_state.siteBld >= 0 && m_state.assigned[Build] > 0 && buildProgress() >= 1.0)
+                due = true;
+            if (due) flushNow();
         }
+
+        // Fire an event when the seeded roll and cooldowns allow, and none is active.
+        if (m_state.arrived && m_state.eventActive < 0) {
+            const int ev = rollEvent(m_state, m_salt, now);
+            if (ev >= 0) {
+                flushNow();
+                QJsonObject p;
+                p.insert(QLatin1String("ev"), ev);
+                p.insert(QLatin1String("at"), static_cast<double>(now));
+                appendAndApply(QLatin1String("event"),
+                               QString::fromUtf8(QJsonDocument(p).toJson(QJsonDocument::Compact)));
+                emit stateChanged();
+            }
+        }
+
+        updateRecords(now);
     }
 
-    updateRecords(now);
     emit liveChanged();
 }
 

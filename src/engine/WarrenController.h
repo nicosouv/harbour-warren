@@ -233,6 +233,7 @@ private:
     quint64     m_salt = 0;
 
     qint64 m_lastFlushMs = 0;
+    qint64 m_lastHeavyMs = 0;
     int    m_pendingTaps = 0;
     QTimer m_uiTimer;
 

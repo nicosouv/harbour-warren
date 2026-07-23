@@ -25,7 +25,11 @@ Item {
     readonly property color groundTop: canopy ? "#3f5a38" : faction === 2 ? "#4a3a28" : faction === 3 ? "#4e6d38" : "#4a3d30"
     readonly property color groundBot: canopy ? "#2b4526" : faction === 2 ? "#2e2116" : faction === 3 ? "#39531f" : "#3a2f26"
     readonly property real critterW: faction === 2 ? width * 0.020 : width * 0.036
-    readonly property var perchRows: [0.50, 0.64, 0.77]   // branch heights the magpies sit on
+    readonly property var perchRows: [0.66, 0.76, 0.86]   // where the magpies sit in the foliage
+    // Factions with a hand-painted background: the image replaces the procedural scene, critters
+    // and the night veil render over it.
+    readonly property bool useBg: faction === 1
+    readonly property string bgSource: faction === 1 ? "../images/bg-magpie.png" : ""
     Component { id: badgerCritter; PixelBadger { opacity: 0.85 } }
     Component { id: magpieCritter; PixelMagpie { opacity: 0.9 } }
     Component { id: antCritter; PixelAnt { opacity: 0.9 } }
@@ -536,6 +540,15 @@ Item {
         }
     }
 
+    // Hand-painted faction background: covers the procedural scene above it. Critters draw on top.
+    Image {
+        anchors.fill: parent
+        visible: view.useBg
+        source: view.useBg ? Qt.resolvedUrl(view.bgSource) : ""
+        fillMode: Image.PreserveAspectCrop
+        smooth: false
+    }
+
     // Chibi critters: badgers scratch the earth; magpies perch on the branches. New ones pop in.
     Repeater {
         model: Math.min(14, view.population)
@@ -678,6 +691,14 @@ Item {
                 }
             }
         }
+    }
+
+    // Night veil over a painted background, so the day/night cycle still reads on the image.
+    Rectangle {
+        visible: view.useBg
+        anchors.fill: parent
+        color: "#0b1020"
+        opacity: (1 - view.sky.day) * 0.5
     }
 
     // The dark: energy at zero. Nobody works in the dark, on top of everything.
