@@ -19,9 +19,11 @@ Item {
     property bool reduceFx: false
     property int faction: 0         // 0 badger (dirt), 1 magpie (canopy) — drives biome + critters
 
-    // Per-faction ground biome. Badger digs brown earth; the magpie roosts over a green canopy.
-    readonly property color groundTop: faction === 1 ? "#3f5a38" : "#4a3d30"
-    readonly property color groundBot: faction === 1 ? "#2b4526" : "#3a2f26"
+    // Per-faction ground biome. Badger digs brown earth; the magpie roosts in a green canopy.
+    readonly property bool canopy: faction === 1
+    readonly property color groundTop: canopy ? "#3f5a38" : "#4a3d30"
+    readonly property color groundBot: canopy ? "#2b4526" : "#3a2f26"
+    readonly property var perchRows: [0.50, 0.64, 0.77]   // branch heights the magpies sit on
     Component { id: badgerCritter; PixelBadger { opacity: 0.85 } }
     Component { id: magpieCritter; PixelMagpie { opacity: 0.9 } }
 
@@ -356,26 +358,41 @@ Item {
             var g = height * view.horizon
             var seed = 20260721
             function rnd() { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff }
-            for (var i = 0; i < 240; i++) {
-                var x = rnd() * width, y = g + rnd() * (height - g), s = 1 + rnd() * 2
-                ctx.fillStyle = rnd() < 0.5 ? "rgba(28,20,12,0.35)" : "rgba(122,98,62,0.28)"
-                ctx.fillRect(x, y, s, s)
-            }
-            for (i = 0; i < 20; i++) {
-                x = rnd() * width; y = g + rnd() * (height - g); s = 2 + rnd() * 2
-                ctx.fillStyle = "rgba(150,140,128,0.22)"
-                ctx.beginPath(); ctx.arc(x, y, s, 0, 6.283); ctx.fill()
-            }
-            // A dense, short carpet of grass across the whole field. Painted once, so a big count is
-            // free: many tufts, each only a few pixels tall, for a lush ground without long blades.
-            for (i = 0; i < 900; i++) {
-                x = rnd() * width; y = g + rnd() * (height - g); var h = 1 + rnd() * 2.5
-                ctx.strokeStyle = rnd() < 0.5 ? "rgba(78,96,54,0.55)" : "rgba(96,116,66,0.5)"
-                ctx.lineWidth = 1
-                var blades = 2 + Math.floor(rnd() * 3)
-                for (var bld = 0; bld < blades; bld++) {
-                    ctx.beginPath(); ctx.moveTo(x + (rnd() - 0.5) * 3, y)
-                    ctx.lineTo(x + (rnd() - 0.5) * 3, y - h * (0.7 + rnd() * 0.5)); ctx.stroke()
+            var x, y, s
+            if (view.canopy) {
+                // Treetop foliage: overlapping leafy clumps instead of dirt and grass.
+                for (var k = 0; k < 160; k++) {
+                    x = rnd() * width; y = g + rnd() * (height - g); var r = 6 + rnd() * 18
+                    ctx.fillStyle = rnd() < 0.5 ? "rgba(63,90,51,0.75)" : "rgba(76,106,60,0.7)"
+                    ctx.beginPath(); ctx.arc(x, y, r, 0, 6.283); ctx.fill()
+                }
+                for (k = 0; k < 50; k++) {   // darker pockets for depth
+                    x = rnd() * width; y = g + rnd() * (height - g)
+                    ctx.fillStyle = "rgba(40,64,36,0.55)"
+                    ctx.beginPath(); ctx.arc(x, y, 4 + rnd() * 9, 0, 6.283); ctx.fill()
+                }
+            } else {
+                for (var i = 0; i < 240; i++) {
+                    x = rnd() * width; y = g + rnd() * (height - g); s = 1 + rnd() * 2
+                    ctx.fillStyle = rnd() < 0.5 ? "rgba(28,20,12,0.35)" : "rgba(122,98,62,0.28)"
+                    ctx.fillRect(x, y, s, s)
+                }
+                for (i = 0; i < 20; i++) {
+                    x = rnd() * width; y = g + rnd() * (height - g); s = 2 + rnd() * 2
+                    ctx.fillStyle = "rgba(150,140,128,0.22)"
+                    ctx.beginPath(); ctx.arc(x, y, s, 0, 6.283); ctx.fill()
+                }
+                // A dense, short carpet of grass across the whole field. Painted once, so a big count
+                // is free: many tufts, each only a few pixels tall, for a lush ground.
+                for (i = 0; i < 900; i++) {
+                    x = rnd() * width; y = g + rnd() * (height - g); var h = 1 + rnd() * 2.5
+                    ctx.strokeStyle = rnd() < 0.5 ? "rgba(78,96,54,0.55)" : "rgba(96,116,66,0.5)"
+                    ctx.lineWidth = 1
+                    var blades = 2 + Math.floor(rnd() * 3)
+                    for (var bld = 0; bld < blades; bld++) {
+                        ctx.beginPath(); ctx.moveTo(x + (rnd() - 0.5) * 3, y)
+                        ctx.lineTo(x + (rnd() - 0.5) * 3, y - h * (0.7 + rnd() * 0.5)); ctx.stroke()
+                    }
                 }
             }
         }
@@ -413,9 +430,9 @@ Item {
             }
         }
     }
-    // Animated blades on top of the carpet — short and many, swaying in the breeze.
+    // Animated blades on top of the carpet — short and many, swaying in the breeze. Ground-only.
     Repeater {
-        model: 120
+        model: view.canopy ? 0 : 120
         Rectangle {
             width: 2; height: view.height * (0.012 + 0.016 * view.jitter(index * 17 + 2, 1))
             antialiasing: false
@@ -467,20 +484,39 @@ Item {
         }
     }
 
-    // Chibi badgers: grounded, muted, scratching the earth; new ones pop into being.
+    // Canopy branches the magpies perch on. Plain limbs with a foliage tuft at each end.
+    Repeater {
+        model: view.canopy ? view.perchRows.length : 0
+        Item {
+            z: 1
+            readonly property real by: view.height * view.perchRows[index] + view.width * 0.035
+            Rectangle {
+                x: view.width * 0.05; y: parent.by; width: view.width * 0.9; height: view.height * 0.012
+                color: "#5a4632"; antialiasing: false
+            }
+            Rectangle { x: view.width*0.00; y: parent.by - view.height*0.035; width: view.width*0.16; height: view.height*0.075; radius: height/2; color: "#3f5a33"; antialiasing: false }
+            Rectangle { x: view.width*0.84; y: parent.by - view.height*0.035; width: view.width*0.17; height: view.height*0.075; radius: height/2; color: "#4c6a3c"; antialiasing: false }
+        }
+    }
+
+    // Chibi critters: badgers scratch the earth; magpies perch on the branches. New ones pop in.
     Repeater {
         model: Math.min(14, view.population)
         Item {
             id: badger
             width: view.width * 0.036; height: width
-            x: view.width * (0.04 + 0.88 * view.jitter(index * 13 + 1, 1))
-            y: view.height * (0.60 + 0.30 * view.jitter(index * 31 + 2, 1))
+            x: view.canopy ? view.width * (0.11 + 0.15 * Math.floor(index / view.perchRows.length)
+                                           + view.jitter(index * 7 + 5, 0.03))
+                           : view.width * (0.04 + 0.88 * view.jitter(index * 13 + 1, 1))
+            y: view.canopy ? view.height * view.perchRows[index % view.perchRows.length] - height * 0.7
+                           : view.height * (0.60 + 0.30 * view.jitter(index * 31 + 2, 1))
             z: 2
             transform: Translate { id: wander }
 
-            // Idle wander: a gentle side-to-side shuffle so the colony never looks frozen.
+            // Idle wander: a gentle side-to-side shuffle so the colony never looks frozen. Perched
+            // magpies stay put, so it is disabled in the canopy.
             SequentialAnimation {
-                running: view.visible && Qt.application.active && !view.reduceFx
+                running: view.visible && Qt.application.active && !view.reduceFx && !view.canopy
                 loops: Animation.Infinite
                 PauseAnimation { duration: 400 + (index % 6) * 320 }
                 NumberAnimation { target: wander; property: "x"; to: view.width * 0.013; duration: 1500; easing.type: Easing.InOutSine }
@@ -531,9 +567,9 @@ Item {
                 }
             }
 
-            // Digging: quick bursts of head-dips toward the ground, then a rest. Not a wobble.
+            // Digging: quick bursts of head-dips toward the ground, then a rest. Badger-only.
             SequentialAnimation {
-                running: view.visible && Qt.application.active && !view.blackout && !view.starving && !view.reduceFx
+                running: view.visible && Qt.application.active && !view.blackout && !view.starving && !view.reduceFx && !view.canopy
                 loops: Animation.Infinite
                 onRunningChanged: if (!running) { dig.y = 0; lean.angle = 0 }
                 PauseAnimation { duration: 200 + (index % 5) * 150 }
@@ -550,6 +586,23 @@ Item {
                     }
                 }
                 PauseAnimation { duration: 650 + (index % 4) * 220 }
+            }
+
+            // Perched flutter: an occasional wing-flap and hop, the canopy answer to digging.
+            SequentialAnimation {
+                running: view.canopy && view.visible && Qt.application.active && !view.reduceFx
+                loops: Animation.Infinite
+                onRunningChanged: if (!running) { dig.y = 0; lean.angle = 0 }
+                PauseAnimation { duration: 1100 + (index % 7) * 520 }
+                ParallelAnimation {
+                    NumberAnimation { target: dig; property: "y"; to: -badger.height * 0.14; duration: 110 }
+                    NumberAnimation { target: lean; property: "angle"; to: -9; duration: 110 }
+                }
+                NumberAnimation { target: lean; property: "angle"; to: 9; duration: 120 }
+                ParallelAnimation {
+                    NumberAnimation { target: dig; property: "y"; to: 0; duration: 150; easing.type: Easing.OutQuad }
+                    NumberAnimation { target: lean; property: "angle"; to: 0; duration: 150 }
+                }
             }
 
             // Speech: each badger pipes up on its own irregular beat, so the colony chatters
