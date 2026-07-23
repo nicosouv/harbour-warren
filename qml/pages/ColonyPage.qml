@@ -101,11 +101,8 @@ Page {
         if (k === "territory") return qsTr("Take %1 territory").arg(t) + tail
         return ""
     }
-    // Faction-tinted building sprite path (ant/rabbit reuse the badger set, recoloured to the biome).
-    function bldPath(key) {
-        var pre = Game.faction === 2 ? "bld-ant-" : Game.faction === 3 ? "bld-rabbit-" : "bld-"
-        return "../images/" + pre + key + ".png"
-    }
+    // Every faction shares the hand-drawn building sprites for now (prettier than per-faction tints).
+    function bldPath(key) { return "../images/bld-" + key + ".png" }
     function buildingCounts() {
         var c = {}
         var b = Game.buildings

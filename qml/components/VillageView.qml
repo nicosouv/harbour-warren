@@ -462,11 +462,8 @@ Item {
         opacity: (1 - view.sky.day) * 0.4
     }
 
-    // Faction-tinted building sprite for the current biome.
-    function bldPath(key) {
-        var pre = faction === 2 ? "bld-ant-" : faction === 3 ? "bld-rabbit-" : "bld-"
-        return "../images/" + pre + key + ".png"
-    }
+    // Every faction shares the hand-drawn building sprites for now.
+    function bldPath(key) { return "../images/bld-" + key + ".png" }
 
     // Buildings, tidy rows.
     Repeater {
