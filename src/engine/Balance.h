@@ -18,7 +18,8 @@ enum FactionUnlock { FUStart = 0, FUCoreLoop };   // from the start / after the 
 // The energy-equivalent each faction must top up. Stored in the res[Energy] slot, read per faction.
 // Energy: bought with gold, drains, boosts production. Stamina: rests back, spent on raids.
 // Pheromone: the queen's scent, fed by hand, drains, and production sags when it runs out.
-enum RechargeMechanic { RMEnergy = 0, RMStamina, RMPheromone };
+// Vigilance: watch for predators or the warren is culled while your back is turned.
+enum RechargeMechanic { RMEnergy = 0, RMStamina, RMPheromone, RMVigilance };
 struct FactionDef {
     const char* id;
     bool  canBuild;    // false: no construction — goods come from raiding
@@ -27,12 +28,20 @@ struct FactionDef {
     int   unlockAfter; // FactionUnlock: gates the faction picker in the slot-select screen
     int   recharge;    // RechargeMechanic: what the res[Energy] slot means for this faction
 };
-static const int kFactionCount = 3;
+static const int kFactionCount = 4;
 static const FactionDef kFaction[kFactionCount] = {
-    { "badger", true,  true,  true,  FUStart,    RMEnergy    },
-    { "magpie", false, false, false, FUCoreLoop, RMStamina   },  // can't build; recruits by raiding
-    { "ant",    true,  true,  true,  FUCoreLoop, RMPheromone },  // a swarm; feed the queen or it sags
+    { "badger", true,  true,  true,  FUStart,    RMEnergy     },
+    { "magpie", false, false, false, FUCoreLoop, RMStamina    },  // can't build; recruits by raiding
+    { "ant",    true,  true,  true,  FUCoreLoop, RMPheromone  },  // a swarm; feed the queen or it sags
+    { "rabbit", true,  true,  true,  FUCoreLoop, RMVigilance  },  // breeds fastest; watch for predators
 };
+
+// --- Rabbit (faction 3): the many. Breeds fastest, but predators cull an unwatched warren. -----
+static const double kRabbitGrowthRate     = 0.016;  // the fastest breeders of all
+static const double kVigilanceCap         = 100.0;
+static const double kVigilanceDrainPerSec = 0.05;   // attention lapses without effort
+static const double kPostLookout          = 8.0;    // vigilance restored per "watch" tap
+static const double kCullPerSec           = 0.004;  // fraction of the warren lost per second unwatched
 
 // --- Ant (faction 2): a fast-breeding swarm kept together by the queen's pheromone. -----------
 static const double kAntGrowthRate        = 0.012;  // explosive breeding (vs 0.0045 for badgers)

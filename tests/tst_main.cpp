@@ -67,6 +67,7 @@ private slots:
     void foldMagpieRaid();
     void foldMagpieHarvest();
     void foldAntColony();
+    void foldRabbitWarren();
 };
 
 void TstWarren::rngDeterminism()
@@ -470,6 +471,33 @@ void TstWarren::foldAntColony()
 
     // Feeding the queen (a tap) restores pheromone after it has drained.
     GameState s = fold(QVector<Event>() << arriveF(2) << tick(300000, 301000) << tap(1, 302000), kSalt);
+    QVERIFY(s.res[Energy] > 0.0);
+}
+
+void TstWarren::foldRabbitWarren()
+{
+    // Rabbits start watchful and breed fastest; an unwatched warren gets culled by predators.
+    GameState s0 = fold(QVector<Event>() << arriveF(3), kSalt);
+    QCOMPARE(s0.faction, 3);
+    QCOMPARE(s0.res[Energy], kVigilanceCap);
+
+    // Breeds faster than a badger (compare accumulated brood, independent of the housing cap).
+    GameState rab; rab.faction = 3; rab.arrived = true; rab.res[Food] = 80; rab.population = 4;
+    rab.res[Energy] = kVigilanceCap;
+    GameState bad; bad.arrived = true; bad.res[Food] = 80; bad.population = 4;
+    applyEvent(rab, tick(60000, 70000), kSalt);
+    applyEvent(bad, tick(60000, 70000), kSalt);
+    QVERIFY(rab.brood > bad.brood);
+
+    // Unwatched (vigilance 0): predators cull the warren.
+    GameState dry; dry.faction = 3; dry.arrived = true; dry.population = 20; dry.res[Energy] = 0.0;
+    const int before = dry.population;
+    applyEvent(dry, tick(120000, 130000), kSalt);
+    QVERIFY(dry.population < before);
+    QVERIFY(dry.population >= 1);
+
+    // A watch (tap) refills vigilance.
+    GameState s = fold(QVector<Event>() << arriveF(3) << tick(300000, 301000) << tap(1, 302000), kSalt);
     QVERIFY(s.res[Energy] > 0.0);
 }
 

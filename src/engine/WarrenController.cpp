@@ -485,10 +485,12 @@ QVariantList WarrenController::resources() const
     const int mech = kFaction[m_state.faction].recharge;
     const bool magpie = mech == RMStamina;
     const bool ant = mech == RMPheromone;
+    const bool rabbit = mech == RMVigilance;
     static const char* const badgerKeys[ResCount] = { "food", "materials", "gold", "energy" };
     static const char* const magpieKeys[ResCount] = { "food", "materials", "shinies", "stamina" };
     static const char* const antKeys[ResCount]    = { "food", "biomass", "gold", "pheromone" };
-    const char* const* keys = magpie ? magpieKeys : ant ? antKeys : badgerKeys;
+    static const char* const rabbitKeys[ResCount] = { "food", "greens", "gold", "vigilance" };
+    const char* const* keys = magpie ? magpieKeys : ant ? antKeys : rabbit ? rabbitKeys : badgerKeys;
     QVariantList out;
     for (int r = 0; r < ResCount; ++r) {
         bool visible;
@@ -503,6 +505,11 @@ QVariantList WarrenController::resources() const
             else if (r == Materials) visible = m_state.stage >= 1; // biomass
             else visible = true;                                  // food, pheromone
             if (r == Energy) low = liveRes(Energy) <= 0.0;        // the queen has gone quiet
+        } else if (rabbit) {
+            if (r == Gold) visible = false;                       // rabbits have no use for gold
+            else if (r == Materials) visible = m_state.stage >= 1; // greens
+            else visible = true;                                  // food, vigilance
+            if (r == Energy) low = liveRes(Energy) <= 0.0;        // predators are circling
         } else {
             if (r == Materials) visible = m_state.stage >= 1;
             else if (r == Gold || r == Energy) visible = m_state.stage >= 2;

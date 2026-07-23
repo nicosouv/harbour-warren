@@ -274,6 +274,13 @@
     <message><source>Scavenge</source><translation>Scavenge</translation></message>
     <message><source>Pilfer</source><translation>Pilfer</translation></message>
     <message><source>Feed the queen</source><translation>Feed the queen</translation></message>
+    <message><source>Post a lookout</source><translation>Post a lookout</translation></message>
+    <message><source>The burrow</source><translation>The burrow</translation></message>
+    <message><source>The warren</source><translation>The warren</translation></message>
+    <message><source>The thicket</source><translation>The thicket</translation></message>
+    <message><source>The bristle</source><translation>The bristle</translation></message>
+    <message><source>The fray</source><translation>The fray</translation></message>
+    <message><source>Overrun</source><translation>Overrun</translation></message>
     <message><source>The nest</source><translation>The nest</translation></message>
     <message><source>The swarm</source><translation>The swarm</translation></message>
     <message><source>The deep</source><translation>The deep</translation></message>
@@ -438,6 +445,8 @@
     <message><source>Cannot build. A flock of thieves that lives by raiding.</source><translation>Cannot build. A flock of thieves that lives by raiding.</translation></message>
     <message><source>Ants</source><translation>Ants</translation></message>
     <message><source>A vast swarm. Breeds fast; feed the queen to hold it together.</source><translation>A vast swarm. Breeds fast; feed the queen to hold it together.</translation></message>
+    <message><source>Rabbits</source><translation>Rabbits</translation></message>
+    <message><source>Breeds fastest of all, but fragile. Post lookouts or predators cull the warren.</source><translation>Breeds fastest of all, but fragile. Post lookouts or predators cull the warren.</translation></message>
     <message><source>Starting a new game</source><translation>Starting a new game</translation></message>
 </context>
 </TS>

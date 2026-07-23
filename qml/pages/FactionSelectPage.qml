@@ -13,7 +13,9 @@ Page {
         { idx: 1, key: "magpie", name: qsTr("Magpies"),
           tag: qsTr("Cannot build. A flock of thieves that lives by raiding.") },
         { idx: 2, key: "ant", name: qsTr("Ants"),
-          tag: qsTr("A vast swarm. Breeds fast; feed the queen to hold it together.") }
+          tag: qsTr("A vast swarm. Breeds fast; feed the queen to hold it together.") },
+        { idx: 3, key: "rabbit", name: qsTr("Rabbits"),
+          tag: qsTr("Breeds fastest of all, but fragile. Post lookouts or predators cull the warren.") }
     ]
 
     RemorsePopup { id: rem }
@@ -44,7 +46,8 @@ Page {
                         anchors.verticalCenter: parent.verticalCenter
                         width: Theme.iconSizeMedium; height: width
                         sourceComponent: modelData.key === "magpie" ? magpieC
-                                         : modelData.key === "ant" ? antC : badgerC
+                                         : modelData.key === "ant" ? antC
+                                         : modelData.key === "rabbit" ? rabbitC : badgerC
                     }
                     Column {
                         anchors { left: critter.right; leftMargin: Theme.paddingLarge
@@ -65,4 +68,5 @@ Page {
     Component { id: badgerC; PixelBadger {} }
     Component { id: magpieC; PixelMagpie {} }
     Component { id: antC; PixelAnt {} }
+    Component { id: rabbitC; PixelRabbit {} }
 }

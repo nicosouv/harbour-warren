@@ -17,6 +17,7 @@ struct GameState {
     int    population = Balance::kStartPopulation;   // assignable workers
     int    assigned[Balance::JobCount] = { 0, 0, 0 };
     double brood = 0.0;             // population growth accumulator
+    double predation = 0.0;         // predator-cull accumulator (rabbit, when vigilance runs out)
 
     int    buildings[Balance::BldCount] = { 0, 0, 0, 0, 0, 0, 0, 0 };
     int    buildingsBuilt = 0;      // lifetime count (stage gate)

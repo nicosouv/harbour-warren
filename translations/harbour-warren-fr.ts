@@ -274,6 +274,13 @@
     <message><source>Scavenge</source><translation>Fouiller</translation></message>
     <message><source>Pilfer</source><translation>Chaparder</translation></message>
     <message><source>Feed the queen</source><translation>Nourrir la reine</translation></message>
+    <message><source>Post a lookout</source><translation>Poster un guetteur</translation></message>
+    <message><source>The burrow</source><translation>Le terrier</translation></message>
+    <message><source>The warren</source><translation>La garenne</translation></message>
+    <message><source>The thicket</source><translation>Le fourré</translation></message>
+    <message><source>The bristle</source><translation>Le hérissement</translation></message>
+    <message><source>The fray</source><translation>La mêlée</translation></message>
+    <message><source>Overrun</source><translation>Submergé</translation></message>
     <message><source>The nest</source><translation>Le nid</translation></message>
     <message><source>The swarm</source><translation>L'essaim</translation></message>
     <message><source>The deep</source><translation>Les profondeurs</translation></message>
@@ -438,6 +445,8 @@
     <message><source>Cannot build. A flock of thieves that lives by raiding.</source><translation>Ne construit pas. Une bande de voleuses qui vit du raid.</translation></message>
     <message><source>Ants</source><translation>Fourmis</translation></message>
     <message><source>A vast swarm. Breeds fast; feed the queen to hold it together.</source><translation>Un essaim immense. Pullule vite ; nourrissez la reine pour le tenir ensemble.</translation></message>
+    <message><source>Rabbits</source><translation>Lapins</translation></message>
+    <message><source>Breeds fastest of all, but fragile. Post lookouts or predators cull the warren.</source><translation>La repro la plus rapide, mais fragile. Postez des guetteurs ou les prédateurs déciment la garenne.</translation></message>
     <message><source>Starting a new game</source><translation>Démarrage d'une nouvelle partie</translation></message>
 </context>
 </TS>

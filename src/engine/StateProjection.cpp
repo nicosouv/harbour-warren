@@ -399,6 +399,7 @@ double rechargeMult(const GameState& s)
     // raids (neutral to work); pheromone holds the swarm together and sags when the queen goes quiet.
     switch (fac(s).recharge) {
     case RMStamina:   return 1.0;
+    case RMVigilance: return 1.0;                                   // vigilance costs population, not output
     case RMPheromone: return s.res[Energy] > 0.0 ? 1.0 : kPheromoneLowFactor;
     default:          return energyMult(s);
     }
@@ -575,7 +576,8 @@ void applyEvent(GameState& s, const Event& e, quint64 salt)
         s.arrived = true;
         const int f = p.value(QLatin1String("faction")).toInt(0);
         if (f >= 0 && f < kFactionCount) s.faction = f;
-        if (fac(s).recharge == RMPheromone) s.res[Energy] = kPheromoneCap;  // the queen starts full
+        if (fac(s).recharge == RMPheromone) s.res[Energy] = kPheromoneCap;    // the queen starts full
+        else if (fac(s).recharge == RMVigilance) s.res[Energy] = kVigilanceCap; // watchful at the start
     } else if (e.kind == QLatin1String("event")) {
         const int ev = p.value(QLatin1String("ev")).toInt(-1);
         if (ev >= 0 && ev < EventCount && s.eventActive < 0) {
@@ -615,6 +617,8 @@ void applyEvent(GameState& s, const Event& e, quint64 salt)
                 s.goldEarned += kPilferShinies;
             } else if (fac(s).recharge == RMPheromone) {     // ant feeds the queen her pheromone
                 s.res[Energy] = clampd(s.res[Energy] + kFeedQueen, 0.0, kPheromoneCap);
+            } else if (fac(s).recharge == RMVigilance) {     // rabbit posts a lookout
+                s.res[Energy] = clampd(s.res[Energy] + kPostLookout, 0.0, kVigilanceCap);
             } else if (s.stage >= 1 && (s.tapsTotal % 4) == 3) {
                 s.res[Materials] += kDigMat;                 // an apple's worth of luck: kindling
             } else {
@@ -773,6 +777,22 @@ void applyEvent(GameState& s, const Event& e, quint64 salt)
             s.res[Energy] = clampd(s.res[Energy] + kStaminaRegenPerSec * secs, 0.0, kStaminaCap);
         else if (fac(s).recharge == RMPheromone)
             s.res[Energy] = clampd(s.res[Energy] - kPheromoneDrainPerSec * secs, 0.0, kPheromoneCap);
+        else if (fac(s).recharge == RMVigilance) {
+            s.res[Energy] = clampd(s.res[Energy] - kVigilanceDrainPerSec * secs, 0.0, kVigilanceCap);
+            if (s.res[Energy] <= 0.0) {                     // unwatched: predators pick off the warren
+                s.predation += kCullPerSec * s.population * secs;
+                int lost = static_cast<int>(std::floor(s.predation));
+                if (lost > 0) {
+                    int take = lost < s.population - 1 ? lost : s.population - 1;
+                    if (take < 0) take = 0;
+                    s.population -= take;
+                    s.predation -= lost;
+                    reassignWithin(s);
+                }
+            } else {
+                s.predation = 0.0;
+            }
+        }
         else if (s.stage >= 2)
             s.res[Energy] = clampd(s.res[Energy] - energyDrain(s) * secs, 0.0, energyCap(s));
 
@@ -791,7 +811,9 @@ void applyEvent(GameState& s, const Event& e, quint64 salt)
 
         // Growth: fed and housed colonies breed a new worker over time. Non-breeding factions
         // (magpies) grow only by recruiting on raids; the ant swarm breeds explosively.
-        const double gr = fac(s).recharge == RMPheromone ? kAntGrowthRate : kGrowthRate;
+        double gr = kGrowthRate;
+        if (fac(s).recharge == RMPheromone) gr = kAntGrowthRate;
+        else if (fac(s).recharge == RMVigilance) gr = kRabbitGrowthRate;
         if (fac(s).breeds && s.res[Food] > kGrowthFoodFloor && s.population < housingCap(s))
             s.brood += gr * secs;
         int grown = static_cast<int>(std::floor(s.brood));

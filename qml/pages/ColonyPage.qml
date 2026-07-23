@@ -13,7 +13,9 @@ Page {
     Component { id: badgerCritter; PixelBadger {} }
     Component { id: magpieCritter; PixelMagpie {} }
     Component { id: antCritter; PixelAnt {} }
-    function critterFor(f) { return f === 1 ? magpieCritter : f === 2 ? antCritter : badgerCritter }
+    Component { id: rabbitCritter; PixelRabbit {} }
+    function critterFor(f) { return f === 1 ? magpieCritter : f === 2 ? antCritter
+                                    : f === 3 ? rabbitCritter : badgerCritter }
 
     // Swipe left for the stats page, the Silica way.
     onStatusChanged: {
@@ -44,6 +46,14 @@ Page {
     }
 
     function stageName(s) {
+        if (Game.faction === 3) {          // rabbit: the many
+            if (s === 0) return qsTr("The burrow")
+            if (s === 1) return qsTr("The warren")
+            if (s === 2) return qsTr("The thicket")
+            if (s === 3) return qsTr("The bristle")
+            if (s === 4) return qsTr("The fray")
+            return qsTr("Overrun")
+        }
         if (Game.faction === 2) {          // ant: a swarm that digs and marches
             if (s === 0) return qsTr("The nest")
             if (s === 1) return qsTr("The swarm")
@@ -339,6 +349,7 @@ Page {
                     anchors.verticalCenter: parent.verticalCenter
                     source: Qt.resolvedUrl(Game.faction === 1 ? "../images/res-shinies.png"
                             : Game.faction === 2 ? "../images/res-pheromone.png"
+                            : Game.faction === 3 ? "../images/res-vigilance.png"
                             : (floatReward.wasMat ? "../images/res-materials.png" : "../images/res-food.png"))
                     smooth: false
                     width: Theme.iconSizeExtraSmall; height: width
@@ -378,7 +389,8 @@ Page {
                     Label {
                         anchors.verticalCenter: parent.verticalCenter
                         text: Game.faction === 1 ? qsTr("Pilfer")
-                              : Game.faction === 2 ? qsTr("Feed the queen") : qsTr("Scavenge")
+                              : Game.faction === 2 ? qsTr("Feed the queen")
+                              : Game.faction === 3 ? qsTr("Post a lookout") : qsTr("Scavenge")
                         font.pixelSize: Theme.fontSizeSmall
                     }
                 }
