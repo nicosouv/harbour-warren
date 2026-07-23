@@ -35,6 +35,7 @@ Event ev(const QString& kind, const QString& payload)
 }
 
 Event arrive(qint64 at = 1000) { return ev("arrive", json({{"at", double(at)}})); }
+Event arriveF(int f, qint64 at = 1000) { return ev("arrive", json({{"faction", f}, {"at", double(at)}})); }
 Event tap(int n, qint64 at = 1000) { return ev("tap", json({{"n", n}, {"at", double(at)}})); }
 Event assign(int j, int d, qint64 at = 1000) { return ev("assign", json({{"j", j}, {"d", d}, {"at", double(at)}})); }
 Event build(int b, qint64 at = 1000) { return ev("build", json({{"b", b}, {"n", 1}, {"at", double(at)}})); }
@@ -62,6 +63,7 @@ private slots:
     void foldReplayDeterministic();
     void simulationProgression();
     void energySustainability();
+    void foldMagpieEconomy();
 };
 
 void TstWarren::rngDeterminism()
@@ -382,6 +384,30 @@ void TstWarren::energySustainability()
     // A full tank should last long enough that topping up is not a chore.
     const double tankSeconds = energyCap(s) / energyDrain(s);
     QVERIFY2(tankSeconds >= 300.0, "a full energy tank should last at least five minutes");
+}
+
+void TstWarren::foldMagpieEconomy()
+{
+    // The magpie (faction 1) is asymmetric: forages to eat, but loots materials and gold rather
+    // than working the land, never breeds, and rests its stamina back into the res[Energy] slot.
+    QVector<Event> v;
+    v << arriveF(1) << assign(Forage, 1) << assign(Gather, 1) << assign(MineJob, 1)
+      << tick(60000, 61000);
+    GameState s = fold(v, kSalt);
+    QCOMPARE(s.faction, 1);
+    QVERIFY(!canBuild(s));                            // cannot construct
+    QVERIFY(s.res[Food] > kStartFood);               // foraging still feeds the flock
+    QCOMPARE(s.res[Materials], 0.0);                 // does not gather from the ground
+    QCOMPARE(s.res[Gold], 0.0);                      // does not mine
+    QVERIFY(s.res[Energy] > 0.0);                    // stamina rests back up
+    QCOMPARE(s.population, kStartPopulation);        // no breeding
+    QCOMPARE(housingCap(s), kMagpieHousingBase);     // housing from territory held (none yet)
+
+    // A build order is a no-op for a faction that cannot build.
+    v << build(Burrow, 62000) << tick(1000, 63000);
+    GameState s2 = fold(v, kSalt);
+    QCOMPARE(s2.siteBld, -1);
+    QCOMPARE(s2.buildings[Burrow], 0);
 }
 
 QTEST_GUILESS_MAIN(TstWarren)

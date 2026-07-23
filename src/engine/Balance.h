@@ -15,15 +15,30 @@ enum Res { Food = 0, Materials, Gold, Energy, ResCount };
 // grows as faction 2 (magpies) lands. See docs-local/FACTIONS.md.
 // When a faction becomes selectable (hybrid onboarding, option C in FACTIONS.md).
 enum FactionUnlock { FUStart = 0, FUCoreLoop };   // from the start / after the core loop is learnt
+// The energy-equivalent each faction must top up. Stored in the res[Energy] slot, read per faction.
+enum RechargeMechanic { RMEnergy = 0, RMStamina };
 struct FactionDef {
     const char* id;
     bool  canBuild;    // false: no construction — goods come from raiding
+    bool  breeds;      // population grows by breeding (else by recruitment)
+    bool  worksLand;   // gather/mine jobs produce (else materials & gold come only from raids)
     int   unlockAfter; // FactionUnlock: gates the faction picker in the slot-select screen
+    int   recharge;    // RechargeMechanic: what the res[Energy] slot means for this faction
 };
-static const int kFactionCount = 1;
+static const int kFactionCount = 2;
 static const FactionDef kFaction[kFactionCount] = {
-    { "badger", true, FUStart },
+    { "badger", true,  true,  true,  FUStart,    RMEnergy  },
+    { "magpie", false, false, false, FUCoreLoop, RMStamina },   // can't build; recruits by raiding
 };
+
+// --- Magpie (faction 1): raid-centric, no construction, stamina instead of energy. -------------
+static const int    kMagpieHousingBase    = 6;
+static const int    kMagpieHousingPerTerr = 3;    // the roost widens with each territory taken
+static const int    kMagpieRecruitPerWin  = 2;    // birds join the flock after a won raid
+static const double kStaminaCap           = 100.0;
+static const double kStaminaRegenPerSec   = 0.06; // rest refills the pool
+static const double kStaminaRaidCost      = 40.0; // each raid tires the flock
+static const double kStaminaLowFactor     = 0.5;  // raid power multiplier when the pool is empty
 
 // --- Jobs (worker assignments). Each job feeds one resource; builders feed the site. ----------
 enum Job { Forage = 0, Gather, MineJob, Build, JobCount };

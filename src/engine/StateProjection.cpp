@@ -24,6 +24,11 @@ QJsonObject parse(const Event& e)
 
 double clampd(double v, double lo, double hi) { return v < lo ? lo : (v > hi ? hi : v); }
 
+const FactionDef& fac(const GameState& s)
+{
+    return kFaction[(s.faction >= 0 && s.faction < kFactionCount) ? s.faction : 0];
+}
+
 void reassignWithin(GameState& s)
 {
     // Keep worker assignments within the current population.
@@ -312,6 +317,9 @@ bool bldDamaged(const GameState& s, int b)
 
 int housingCap(const GameState& s)
 {
+    // No buildings? Housing comes from the ground you hold, not from burrows (magpie roosts widen).
+    if (!fac(s).canBuild)
+        return kMagpieHousingBase + kMagpieHousingPerTerr * s.territory;
     return kHousingBase + kHousingPerBurrow * (bldDamaged(s, Burrow) ? 0 : s.buildings[Burrow]);
 }
 
@@ -325,10 +333,7 @@ double energyCap(const GameState& s)
     return kEnergyCapBase + kEnergyCapPerPost * (bldDamaged(s, TradingPost) ? 0 : s.buildings[TradingPost]);
 }
 
-bool canBuild(const GameState& s)
-{
-    return s.faction >= 0 && s.faction < kFactionCount ? kFaction[s.faction].canBuild : true;
-}
+bool canBuild(const GameState& s) { return fac(s).canBuild; }
 
 int totalBuildings(const GameState& s)
 {
@@ -386,6 +391,8 @@ static double bldMult(const GameState& s, int job)
 double perWorker(const GameState& s, int job)
 {
     if (job < 0 || job >= JobCount) return 0.0;
+    // Factions that do not work the land loot their materials and gold instead of producing them.
+    if (!fac(s).worksLand && (job == Gather || job == MineJob)) return 0.0;
     return kJobBase[job] * bldMult(s, job) * territoryMult(s) * watermillMult(s)
          * energyMult(s) * s.modProdFactor * s.modJob[job];
 }
@@ -687,7 +694,11 @@ void applyEvent(GameState& s, const Event& e, quint64 salt)
         s.res[Gold] += gold;
         if (gold > 0.0) s.goldEarned += gold;
 
-        if (s.stage >= 2)
+        // The res[Energy] slot: energy that drains for builders, or stamina that rests back for
+        // raiders. A resting flock refills its stamina; a powered colony spends its energy.
+        if (fac(s).recharge == RMStamina)
+            s.res[Energy] = clampd(s.res[Energy] + kStaminaRegenPerSec * secs, 0.0, kStaminaCap);
+        else if (s.stage >= 2)
             s.res[Energy] = clampd(s.res[Energy] - energyDrain(s) * secs, 0.0, energyCap(s));
 
         // Builders raise the site; the dark slows them like everyone else.
@@ -703,8 +714,9 @@ void applyEvent(GameState& s, const Event& e, quint64 salt)
             }
         }
 
-        // Growth: fed and housed colonies raise a new worker over time.
-        if (s.res[Food] > kGrowthFoodFloor && s.population < housingCap(s))
+        // Growth: fed and housed colonies breed a new worker over time. Non-breeding factions
+        // (magpies) grow only by recruiting on raids, so they never accrue brood here.
+        if (fac(s).breeds && s.res[Food] > kGrowthFoodFloor && s.population < housingCap(s))
             s.brood += kGrowthRate * secs;
         int grown = static_cast<int>(std::floor(s.brood));
         if (grown > 0) {
