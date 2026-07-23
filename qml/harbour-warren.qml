@@ -32,6 +32,28 @@ ApplicationWindow {
         return key
     }
     function bldName(key) {
+        if (Game.faction === 2) {          // ant: chambers and galleries
+            if (key === "burrow") return qsTr("Brood chamber")
+            if (key === "granary") return qsTr("Larder")
+            if (key === "workshop") return qsTr("Fungus garden")
+            if (key === "mineshaft") return qsTr("Deep gallery")
+            if (key === "tradingpost") return qsTr("Aphid pen")
+            if (key === "barracks") return qsTr("Soldier caste")
+            if (key === "watchtower") return qsTr("Sentry mound")
+            if (key === "watermill") return qsTr("Grand chamber")
+            return key
+        }
+        if (Game.faction === 3) {          // rabbit: burrows and warrens
+            if (key === "burrow") return qsTr("Burrow")
+            if (key === "granary") return qsTr("Pantry")
+            if (key === "workshop") return qsTr("Foraging run")
+            if (key === "mineshaft") return qsTr("Deep warren")
+            if (key === "tradingpost") return qsTr("Barter burrow")
+            if (key === "barracks") return qsTr("Muster warren")
+            if (key === "watchtower") return qsTr("Lookout mound")
+            if (key === "watermill") return qsTr("Grand warren")
+            return key
+        }
         if (key === "burrow") return qsTr("Burrow")
         if (key === "granary") return qsTr("Granary")
         if (key === "workshop") return qsTr("Workshop")

@@ -121,6 +121,21 @@
     <message><source>The word "tyrant" was used. Twice. Well enunciated.</source><translation>Le mot « tyran » a été prononcé. Deux fois. Bien articulé.</translation></message>
     <message><source>Watchtower</source><translation>Tour de guet</translation></message>
     <message><source>Watermill</source><translation>Moulin à eau</translation></message>
+    <message><source>Brood chamber</source><translation>Chambre à couvain</translation></message>
+    <message><source>Larder</source><translation>Garde-manger</translation></message>
+    <message><source>Fungus garden</source><translation>Champignonnière</translation></message>
+    <message><source>Deep gallery</source><translation>Galerie profonde</translation></message>
+    <message><source>Aphid pen</source><translation>Élevage de pucerons</translation></message>
+    <message><source>Soldier caste</source><translation>Caste guerrière</translation></message>
+    <message><source>Sentry mound</source><translation>Butte de garde</translation></message>
+    <message><source>Grand chamber</source><translation>Grande chambre</translation></message>
+    <message><source>Pantry</source><translation>Cellier</translation></message>
+    <message><source>Foraging run</source><translation>Parcours de cueillette</translation></message>
+    <message><source>Deep warren</source><translation>Garenne profonde</translation></message>
+    <message><source>Barter burrow</source><translation>Terrier de troc</translation></message>
+    <message><source>Muster warren</source><translation>Garenne de rassemblement</translation></message>
+    <message><source>Lookout mound</source><translation>Butte de guet</translation></message>
+    <message><source>Grand warren</source><translation>Grande garenne</translation></message>
     <message><source>The foxes strike back</source><translation>Les renards ripostent</translation></message>
     <message><source>The foxes came back with torches and a grudge. They remember the ground you took. So, apparently, do their cousins.</source><translation>Les renards sont revenus avec des torches et une rancune. Ils se souviennent du terrain que vous avez pris. Leurs cousins aussi, apparemment.</translation></message>
     <message><source>Defend the warren</source><translation>Défendre la garenne</translation></message>

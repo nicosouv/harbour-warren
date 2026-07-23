@@ -121,6 +121,21 @@
     <message><source>The word "tyrant" was used. Twice. Well enunciated.</source><translation>The word "tyrant" was used. Twice. Well enunciated.</translation></message>
     <message><source>Watchtower</source><translation>Watchtower</translation></message>
     <message><source>Watermill</source><translation>Watermill</translation></message>
+    <message><source>Brood chamber</source><translation>Brood chamber</translation></message>
+    <message><source>Larder</source><translation>Larder</translation></message>
+    <message><source>Fungus garden</source><translation>Fungus garden</translation></message>
+    <message><source>Deep gallery</source><translation>Deep gallery</translation></message>
+    <message><source>Aphid pen</source><translation>Aphid pen</translation></message>
+    <message><source>Soldier caste</source><translation>Soldier caste</translation></message>
+    <message><source>Sentry mound</source><translation>Sentry mound</translation></message>
+    <message><source>Grand chamber</source><translation>Grand chamber</translation></message>
+    <message><source>Pantry</source><translation>Pantry</translation></message>
+    <message><source>Foraging run</source><translation>Foraging run</translation></message>
+    <message><source>Deep warren</source><translation>Deep warren</translation></message>
+    <message><source>Barter burrow</source><translation>Barter burrow</translation></message>
+    <message><source>Muster warren</source><translation>Muster warren</translation></message>
+    <message><source>Lookout mound</source><translation>Lookout mound</translation></message>
+    <message><source>Grand warren</source><translation>Grand warren</translation></message>
     <message><source>The foxes strike back</source><translation>The foxes strike back</translation></message>
     <message><source>The foxes came back with torches and a grudge. They remember the ground you took. So, apparently, do their cousins.</source><translation>The foxes came back with torches and a grudge. They remember the ground you took. So, apparently, do their cousins.</translation></message>
     <message><source>Defend the warren</source><translation>Defend the warren</translation></message>
