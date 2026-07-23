@@ -273,6 +273,13 @@
     <message><source>train soldiers</source><translation>train soldiers</translation></message>
     <message><source>Scavenge</source><translation>Scavenge</translation></message>
     <message><source>Pilfer</source><translation>Pilfer</translation></message>
+    <message><source>Feed the queen</source><translation>Feed the queen</translation></message>
+    <message><source>The nest</source><translation>The nest</translation></message>
+    <message><source>The swarm</source><translation>The swarm</translation></message>
+    <message><source>The deep</source><translation>The deep</translation></message>
+    <message><source>The march</source><translation>The march</translation></message>
+    <message><source>The war</source><translation>The war</translation></message>
+    <message><source>The colony eternal</source><translation>The colony eternal</translation></message>
     <message><source>Under construction</source><translation>Under construction</translation></message>
     <message><source>New game</source><translation>New game</translation></message>
     <message><source>Starting over</source><translation>Starting over</translation></message>
@@ -429,6 +436,8 @@
     <message><source>Magpies</source><translation>Magpies</translation></message>
     <message><source>Build, mine, and raise an army. The baseline faction.</source><translation>Build, mine, and raise an army. The baseline faction.</translation></message>
     <message><source>Cannot build. A flock of thieves that lives by raiding.</source><translation>Cannot build. A flock of thieves that lives by raiding.</translation></message>
+    <message><source>Ants</source><translation>Ants</translation></message>
+    <message><source>A vast swarm. Breeds fast; feed the queen to hold it together.</source><translation>A vast swarm. Breeds fast; feed the queen to hold it together.</translation></message>
     <message><source>Starting a new game</source><translation>Starting a new game</translation></message>
 </context>
 </TS>

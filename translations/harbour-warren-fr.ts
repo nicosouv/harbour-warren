@@ -273,6 +273,13 @@
     <message><source>train soldiers</source><translation>former des soldats</translation></message>
     <message><source>Scavenge</source><translation>Fouiller</translation></message>
     <message><source>Pilfer</source><translation>Chaparder</translation></message>
+    <message><source>Feed the queen</source><translation>Nourrir la reine</translation></message>
+    <message><source>The nest</source><translation>Le nid</translation></message>
+    <message><source>The swarm</source><translation>L'essaim</translation></message>
+    <message><source>The deep</source><translation>Les profondeurs</translation></message>
+    <message><source>The march</source><translation>La marche</translation></message>
+    <message><source>The war</source><translation>La guerre</translation></message>
+    <message><source>The colony eternal</source><translation>La colonie éternelle</translation></message>
     <message><source>Under construction</source><translation>En construction</translation></message>
     <message><source>New game</source><translation>Nouvelle partie</translation></message>
     <message><source>Starting over</source><translation>Nouvelle partie</translation></message>
@@ -429,6 +436,8 @@
     <message><source>Magpies</source><translation>Pies</translation></message>
     <message><source>Build, mine, and raise an army. The baseline faction.</source><translation>Construire, miner, lever une armée. La faction de base.</translation></message>
     <message><source>Cannot build. A flock of thieves that lives by raiding.</source><translation>Ne construit pas. Une bande de voleuses qui vit du raid.</translation></message>
+    <message><source>Ants</source><translation>Fourmis</translation></message>
+    <message><source>A vast swarm. Breeds fast; feed the queen to hold it together.</source><translation>Un essaim immense. Pullule vite ; nourrissez la reine pour le tenir ensemble.</translation></message>
     <message><source>Starting a new game</source><translation>Démarrage d'une nouvelle partie</translation></message>
 </context>
 </TS>

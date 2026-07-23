@@ -19,13 +19,16 @@ Item {
     property bool reduceFx: false
     property int faction: 0         // 0 badger (dirt), 1 magpie (canopy) — drives biome + critters
 
-    // Per-faction ground biome. Badger digs brown earth; the magpie roosts in a green canopy.
+    // Per-faction ground biome. Badger digs brown earth; the magpie roosts in a green canopy; the
+    // ant swarms dark soil. Ants also render much smaller than the other animals.
     readonly property bool canopy: faction === 1
-    readonly property color groundTop: canopy ? "#3f5a38" : "#4a3d30"
-    readonly property color groundBot: canopy ? "#2b4526" : "#3a2f26"
+    readonly property color groundTop: canopy ? "#3f5a38" : faction === 2 ? "#4a3a28" : "#4a3d30"
+    readonly property color groundBot: canopy ? "#2b4526" : faction === 2 ? "#2e2116" : "#3a2f26"
+    readonly property real critterW: faction === 2 ? width * 0.020 : width * 0.036
     readonly property var perchRows: [0.50, 0.64, 0.77]   // branch heights the magpies sit on
     Component { id: badgerCritter; PixelBadger { opacity: 0.85 } }
     Component { id: magpieCritter; PixelMagpie { opacity: 0.9 } }
+    Component { id: antCritter; PixelAnt { opacity: 0.9 } }
 
     readonly property real horizon: 0.42
 
@@ -504,7 +507,7 @@ Item {
         model: Math.min(14, view.population)
         Item {
             id: badger
-            width: view.width * 0.036; height: width
+            width: view.critterW; height: width
             x: view.canopy ? view.width * (0.11 + 0.15 * Math.floor(index / view.perchRows.length)
                                            + view.jitter(index * 7 + 5, 0.03))
                            : view.width * (0.04 + 0.88 * view.jitter(index * 13 + 1, 1))
@@ -536,7 +539,8 @@ Item {
                 ]
                 Loader {
                     anchors.fill: parent
-                    sourceComponent: view.faction === 1 ? magpieCritter : badgerCritter
+                    sourceComponent: view.faction === 1 ? magpieCritter
+                                     : view.faction === 2 ? antCritter : badgerCritter
                 }
             }
 

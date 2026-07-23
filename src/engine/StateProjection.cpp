@@ -393,6 +393,17 @@ double energyMult(const GameState& s)
     return s.res[Energy] > 0.0 ? kEnergyBonus : kBlackout;
 }
 
+double rechargeMult(const GameState& s)
+{
+    // How the faction's recharge pool bends production. Energy boosts/penalises; stamina is for
+    // raids (neutral to work); pheromone holds the swarm together and sags when the queen goes quiet.
+    switch (fac(s).recharge) {
+    case RMStamina:   return 1.0;
+    case RMPheromone: return s.res[Energy] > 0.0 ? 1.0 : kPheromoneLowFactor;
+    default:          return energyMult(s);
+    }
+}
+
 static double bldMult(const GameState& s, int job)
 {
     if (job == Forage)  return 1.0 + kForageBonusPerGranary * (bldDamaged(s, Granary) ? 0 : s.buildings[Granary]);
@@ -415,7 +426,7 @@ double perWorker(const GameState& s, int job)
         flock = 1.0 + kFlockScavPerBird * extra;
     }
     return kJobBase[job] * bldMult(s, job) * territoryMult(s) * watermillMult(s)
-         * energyMult(s) * s.modProdFactor * s.modJob[job] * flock;
+         * rechargeMult(s) * s.modProdFactor * s.modJob[job] * flock;
 }
 
 double production(const GameState& s, int job)
@@ -564,6 +575,7 @@ void applyEvent(GameState& s, const Event& e, quint64 salt)
         s.arrived = true;
         const int f = p.value(QLatin1String("faction")).toInt(0);
         if (f >= 0 && f < kFactionCount) s.faction = f;
+        if (fac(s).recharge == RMPheromone) s.res[Energy] = kPheromoneCap;  // the queen starts full
     } else if (e.kind == QLatin1String("event")) {
         const int ev = p.value(QLatin1String("ev")).toInt(-1);
         if (ev >= 0 && ev < EventCount && s.eventActive < 0) {
@@ -601,6 +613,8 @@ void applyEvent(GameState& s, const Event& e, quint64 salt)
             if (!fac(s).worksLand) {                         // magpie pilfers something shiny
                 s.res[Gold] += kPilferShinies;
                 s.goldEarned += kPilferShinies;
+            } else if (fac(s).recharge == RMPheromone) {     // ant feeds the queen her pheromone
+                s.res[Energy] = clampd(s.res[Energy] + kFeedQueen, 0.0, kPheromoneCap);
             } else if (s.stage >= 1 && (s.tapsTotal % 4) == 3) {
                 s.res[Materials] += kDigMat;                 // an apple's worth of luck: kindling
             } else {
@@ -757,12 +771,14 @@ void applyEvent(GameState& s, const Event& e, quint64 salt)
         // raiders. A resting flock refills its stamina; a powered colony spends its energy.
         if (fac(s).recharge == RMStamina)
             s.res[Energy] = clampd(s.res[Energy] + kStaminaRegenPerSec * secs, 0.0, kStaminaCap);
+        else if (fac(s).recharge == RMPheromone)
+            s.res[Energy] = clampd(s.res[Energy] - kPheromoneDrainPerSec * secs, 0.0, kPheromoneCap);
         else if (s.stage >= 2)
             s.res[Energy] = clampd(s.res[Energy] - energyDrain(s) * secs, 0.0, energyCap(s));
 
         // Builders raise the site; the dark slows them like everyone else.
         if (s.siteBld >= 0 && s.assigned[Build] > 0) {
-            s.siteProgress += s.assigned[Build] * kJobBase[Build] * energyMult(s) * secs;
+            s.siteProgress += s.assigned[Build] * kJobBase[Build] * rechargeMult(s) * secs;
             if (s.siteProgress >= kBld[s.siteBld].work) {
                 s.buildings[s.siteBld] += 1;
                 s.buildingsBuilt += 1;
@@ -774,9 +790,10 @@ void applyEvent(GameState& s, const Event& e, quint64 salt)
         }
 
         // Growth: fed and housed colonies breed a new worker over time. Non-breeding factions
-        // (magpies) grow only by recruiting on raids, so they never accrue brood here.
+        // (magpies) grow only by recruiting on raids; the ant swarm breeds explosively.
+        const double gr = fac(s).recharge == RMPheromone ? kAntGrowthRate : kGrowthRate;
         if (fac(s).breeds && s.res[Food] > kGrowthFoodFloor && s.population < housingCap(s))
-            s.brood += kGrowthRate * secs;
+            s.brood += gr * secs;
         int grown = static_cast<int>(std::floor(s.brood));
         if (grown > 0) {
             int room = housingCap(s) - s.population;

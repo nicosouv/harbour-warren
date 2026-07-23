@@ -12,6 +12,8 @@ Page {
     // The colony's species, for the small critter icons dotted around the UI.
     Component { id: badgerCritter; PixelBadger {} }
     Component { id: magpieCritter; PixelMagpie {} }
+    Component { id: antCritter; PixelAnt {} }
+    function critterFor(f) { return f === 1 ? magpieCritter : f === 2 ? antCritter : badgerCritter }
 
     // Swipe left for the stats page, the Silica way.
     onStatusChanged: {
@@ -42,6 +44,14 @@ Page {
     }
 
     function stageName(s) {
+        if (Game.faction === 2) {          // ant: a swarm that digs and marches
+            if (s === 0) return qsTr("The nest")
+            if (s === 1) return qsTr("The swarm")
+            if (s === 2) return qsTr("The deep")
+            if (s === 3) return qsTr("The march")
+            if (s === 4) return qsTr("The war")
+            return qsTr("The colony eternal")
+        }
         if (Game.faction === 1) {          // magpie: a raid-driven reveal
             if (s === 0) return qsTr("The roost")
             if (s === 1) return qsTr("First blood")
@@ -137,7 +147,7 @@ Page {
             Loader {
                 anchors.verticalCenter: parent.verticalCenter
                 width: Theme.iconSizeExtraSmall * 0.7; height: width
-                sourceComponent: Game.faction === 1 ? magpieCritter : badgerCritter
+                sourceComponent: critterFor(Game.faction)
             }
             Label {
                 anchors.verticalCenter: parent.verticalCenter
@@ -302,7 +312,7 @@ Page {
                 Loader {
                     anchors.verticalCenter: parent.verticalCenter
                     width: Theme.iconSizeSmall; height: width
-                    sourceComponent: Game.faction === 1 ? magpieCritter : badgerCritter
+                    sourceComponent: critterFor(Game.faction)
                 }
                 Label { anchors.verticalCenter: parent.verticalCenter; text: Game.faction === 1 ? qsTr("a new recruit") : qsTr("a new badger"); color: Theme.primaryColor; font.pixelSize: Theme.fontSizeSmall }
             }
@@ -328,6 +338,7 @@ Page {
                 Image {
                     anchors.verticalCenter: parent.verticalCenter
                     source: Qt.resolvedUrl(Game.faction === 1 ? "../images/res-shinies.png"
+                            : Game.faction === 2 ? "../images/res-pheromone.png"
                             : (floatReward.wasMat ? "../images/res-materials.png" : "../images/res-food.png"))
                     smooth: false
                     width: Theme.iconSizeExtraSmall; height: width
@@ -366,7 +377,8 @@ Page {
                     }
                     Label {
                         anchors.verticalCenter: parent.verticalCenter
-                        text: Game.faction === 1 ? qsTr("Pilfer") : qsTr("Scavenge")
+                        text: Game.faction === 1 ? qsTr("Pilfer")
+                              : Game.faction === 2 ? qsTr("Feed the queen") : qsTr("Scavenge")
                         font.pixelSize: Theme.fontSizeSmall
                     }
                 }
@@ -569,10 +581,10 @@ Page {
             }
 
             // Energy: the bar drains toward the dark. ---------------------------------
-            SectionHeader { visible: Game.energyActive && Game.canBuild; text: qsTr("Energy") }
+            SectionHeader { visible: Game.energyActive && Game.buysEnergy; text: qsTr("Energy") }
             // No trading post yet: energy matters now, but you can't buy any until you build one.
             BackgroundItem {
-                visible: Game.energyActive && Game.canBuild && !Game.tradingUnlocked
+                visible: Game.energyActive && Game.buysEnergy && !Game.tradingUnlocked
                 width: parent.width
                 height: Theme.itemSizeMedium
                 enabled: false

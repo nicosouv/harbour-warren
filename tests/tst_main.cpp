@@ -66,6 +66,7 @@ private slots:
     void foldMagpieEconomy();
     void foldMagpieRaid();
     void foldMagpieHarvest();
+    void foldAntColony();
 };
 
 void TstWarren::rngDeterminism()
@@ -446,6 +447,30 @@ void TstWarren::foldMagpieHarvest()
     GameState lone;  lone.faction = 1;  lone.population = 8;  lone.assigned[Forage] = 1;
     GameState group; group.faction = 1; group.population = 8; group.assigned[Forage] = 4;
     QVERIFY(perWorker(group, Forage) > perWorker(lone, Forage));
+}
+
+void TstWarren::foldAntColony()
+{
+    // The ant swarm starts with a full queen and breeds far faster than a badger.
+    GameState s0 = fold(QVector<Event>() << arriveF(2), kSalt);
+    QCOMPARE(s0.faction, 2);
+    QCOMPARE(s0.res[Energy], kPheromoneCap);
+
+    GameState ant; ant.faction = 2; ant.arrived = true; ant.res[Food] = 50; ant.population = 4;
+    GameState bad; bad.arrived = true; bad.res[Food] = 50; bad.population = 4;
+    applyEvent(ant, tick(120000, 130000), kSalt);
+    applyEvent(bad, tick(120000, 130000), kSalt);
+    QVERIFY(ant.population > bad.population);
+
+    // Pheromone bends production: full keeps it at 1.0, empty sags it.
+    GameState fed; fed.faction = 2; fed.res[Energy] = kPheromoneCap;
+    GameState dry; dry.faction = 2; dry.res[Energy] = 0.0;
+    QCOMPARE(rechargeMult(fed), 1.0);
+    QVERIFY(rechargeMult(dry) < 1.0);
+
+    // Feeding the queen (a tap) restores pheromone after it has drained.
+    GameState s = fold(QVector<Event>() << arriveF(2) << tick(300000, 301000) << tap(1, 302000), kSalt);
+    QVERIFY(s.res[Energy] > 0.0);
 }
 
 QTEST_GUILESS_MAIN(TstWarren)

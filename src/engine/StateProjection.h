@@ -22,6 +22,7 @@ double territoryMult(const GameState& s);
 double watermillMult(const GameState& s);        // global yield bonus from watermills
 double garrisonDefense(const GameState& s);      // home defensive power (army + watchtowers)
 double energyMult(const GameState& s);           // production factor from energy infrastructure
+double rechargeMult(const GameState& s);         // production factor from the faction's recharge pool
 double perWorker(const GameState& s, int job);   // per-worker yield of a job, all bonuses applied
 double production(const GameState& s, int job);  // assigned workers * perWorker
 double foodConsumption(const GameState& s);

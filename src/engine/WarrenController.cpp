@@ -378,6 +378,7 @@ bool WarrenController::raidsUnlocked() const
     return warren::worksLand(m_state) ? m_state.stage >= 4 : m_state.stage >= 1;
 }
 bool WarrenController::canBuildQ() const { return warren::canBuild(m_state); }
+bool WarrenController::buysEnergy() const { return kFaction[m_state.faction].recharge == RMEnergy; }
 double WarrenController::armyPowerQ() const { return warren::armyPower(m_state); }
 int WarrenController::totalUnitsQ() const { return warren::totalUnits(m_state); }
 int WarrenController::raidForceQ() const { return warren::raidForce(m_state); }
@@ -479,11 +480,15 @@ void WarrenController::setAmbiance(int mode)
 
 QVariantList WarrenController::resources() const
 {
-    // The set is faction-specific: the magpie has no materials, hoards shinies, and spends stamina.
-    const bool magpie = !warren::worksLand(m_state);
+    // The set is faction-specific: the magpie hoards shinies and spends stamina; the ant hauls
+    // biomass and keeps the queen's pheromone up; the badger runs the four classic resources.
+    const int mech = kFaction[m_state.faction].recharge;
+    const bool magpie = mech == RMStamina;
+    const bool ant = mech == RMPheromone;
     static const char* const badgerKeys[ResCount] = { "food", "materials", "gold", "energy" };
     static const char* const magpieKeys[ResCount] = { "food", "materials", "shinies", "stamina" };
-    const char* const* keys = magpie ? magpieKeys : badgerKeys;
+    static const char* const antKeys[ResCount]    = { "food", "biomass", "gold", "pheromone" };
+    const char* const* keys = magpie ? magpieKeys : ant ? antKeys : badgerKeys;
     QVariantList out;
     for (int r = 0; r < ResCount; ++r) {
         bool visible;
@@ -493,6 +498,11 @@ QVariantList WarrenController::resources() const
             else if (r == Gold) visible = m_state.stage >= 1;     // shinies, from pilfering and raids
             else visible = true;                                  // food, stamina
             if (r == Energy) low = liveRes(Energy) < kStaminaRaidCost;
+        } else if (ant) {
+            if (r == Gold) visible = false;                       // ants have no use for gold
+            else if (r == Materials) visible = m_state.stage >= 1; // biomass
+            else visible = true;                                  // food, pheromone
+            if (r == Energy) low = liveRes(Energy) <= 0.0;        // the queen has gone quiet
         } else {
             if (r == Materials) visible = m_state.stage >= 1;
             else if (r == Gold || r == Energy) visible = m_state.stage >= 2;

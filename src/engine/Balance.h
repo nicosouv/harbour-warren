@@ -16,7 +16,9 @@ enum Res { Food = 0, Materials, Gold, Energy, ResCount };
 // When a faction becomes selectable (hybrid onboarding, option C in FACTIONS.md).
 enum FactionUnlock { FUStart = 0, FUCoreLoop };   // from the start / after the core loop is learnt
 // The energy-equivalent each faction must top up. Stored in the res[Energy] slot, read per faction.
-enum RechargeMechanic { RMEnergy = 0, RMStamina };
+// Energy: bought with gold, drains, boosts production. Stamina: rests back, spent on raids.
+// Pheromone: the queen's scent, fed by hand, drains, and production sags when it runs out.
+enum RechargeMechanic { RMEnergy = 0, RMStamina, RMPheromone };
 struct FactionDef {
     const char* id;
     bool  canBuild;    // false: no construction — goods come from raiding
@@ -25,11 +27,19 @@ struct FactionDef {
     int   unlockAfter; // FactionUnlock: gates the faction picker in the slot-select screen
     int   recharge;    // RechargeMechanic: what the res[Energy] slot means for this faction
 };
-static const int kFactionCount = 2;
+static const int kFactionCount = 3;
 static const FactionDef kFaction[kFactionCount] = {
-    { "badger", true,  true,  true,  FUStart,    RMEnergy  },
-    { "magpie", false, false, false, FUCoreLoop, RMStamina },   // can't build; recruits by raiding
+    { "badger", true,  true,  true,  FUStart,    RMEnergy    },
+    { "magpie", false, false, false, FUCoreLoop, RMStamina   },  // can't build; recruits by raiding
+    { "ant",    true,  true,  true,  FUCoreLoop, RMPheromone },  // a swarm; feed the queen or it sags
 };
+
+// --- Ant (faction 2): a fast-breeding swarm kept together by the queen's pheromone. -----------
+static const double kAntGrowthRate        = 0.012;  // explosive breeding (vs 0.0045 for badgers)
+static const double kPheromoneCap         = 100.0;
+static const double kPheromoneDrainPerSec = 0.05;   // the scent fades and must be renewed
+static const double kFeedQueen            = 8.0;    // pheromone restored per "feed the queen" tap
+static const double kPheromoneLowFactor   = 0.6;    // production sags when the queen goes quiet
 
 // --- Magpie (faction 1): raid-centric, no construction, stamina instead of energy. -------------
 static const int    kMagpieHousingBase    = 6;

@@ -11,7 +11,9 @@ Page {
         { idx: 0, key: "badger", name: qsTr("Badgers"),
           tag: qsTr("Build, mine, and raise an army. The baseline faction.") },
         { idx: 1, key: "magpie", name: qsTr("Magpies"),
-          tag: qsTr("Cannot build. A flock of thieves that lives by raiding.") }
+          tag: qsTr("Cannot build. A flock of thieves that lives by raiding.") },
+        { idx: 2, key: "ant", name: qsTr("Ants"),
+          tag: qsTr("A vast swarm. Breeds fast; feed the queen to hold it together.") }
     ]
 
     RemorsePopup { id: rem }
@@ -41,7 +43,8 @@ Page {
                         x: Theme.horizontalPageMargin
                         anchors.verticalCenter: parent.verticalCenter
                         width: Theme.iconSizeMedium; height: width
-                        sourceComponent: modelData.key === "magpie" ? magpieC : badgerC
+                        sourceComponent: modelData.key === "magpie" ? magpieC
+                                         : modelData.key === "ant" ? antC : badgerC
                     }
                     Column {
                         anchors { left: critter.right; leftMargin: Theme.paddingLarge
@@ -61,4 +64,5 @@ Page {
 
     Component { id: badgerC; PixelBadger {} }
     Component { id: magpieC; PixelMagpie {} }
+    Component { id: antC; PixelAnt {} }
 }
