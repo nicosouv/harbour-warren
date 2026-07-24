@@ -45,8 +45,17 @@ Page {
                                 text: modelData.exists ? qsTr("Start over") : qsTr("New game")
                                 onClicked: pickFaction(modelData.index)
                             }
+                            MenuItem {
+                                visible: modelData.exists
+                                text: qsTr("Delete")
+                                onClicked: delRemorse.execute(qsTr("Deleting"), function() {
+                                    Game.deleteSlot(modelData.index)
+                                    page.slotList = Game.saveSlots()
+                                })
+                            }
                         }
                     }
+                    RemorseItem { id: delRemorse }
                     Loader {
                         id: cr
                         x: Theme.horizontalPageMargin

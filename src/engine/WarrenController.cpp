@@ -5,6 +5,7 @@
 #include "StateProjection.h"
 
 #include <QDir>
+#include <QFile>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QLocale>
@@ -1164,16 +1165,34 @@ void WarrenController::newGame(int faction)
 
 void WarrenController::clearData()
 {
+    // A true wipe: every save slot's log file, every slot's metadata, records and globals — the
+    // lot. The active slot's log is emptied in place; the others are deleted outright.
+    const QString dir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
     m_store.clearAll();
-    m_state = GameState();
-    m_pendingTaps = 0;
-    m_welcomePending = false;
-    m_hist.clear();
-    m_firstTs = m_clock.nowMs();
+    for (int n = 0; n < kSlotCount; ++n)
+        if (n != m_slot) QFile::remove(dir + QLatin1String("/") + slotDbFile(n));
     m_settings.remove(QStringLiteral("narr"));
     m_settings.remove(QStringLiteral("rec"));
     m_settings.remove(QStringLiteral("glob"));
-    m_lastFlushMs = m_clock.nowMs();
+    m_settings.remove(QStringLiteral("slot"));           // every slot's exists/faction metadata
+    m_settings.setValue(QStringLiteral("activeSlot"), 0);
+    m_slot = 0;
+    loadActiveSlot();                                    // reopen a blank slot 0, transients reset
+    emit stateChanged();
+    emit liveChanged();
+}
+
+void WarrenController::deleteSlot(int slot)
+{
+    if (slot < 0 || slot >= kSlotCount) return;
+    const QString dir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    m_settings.remove(QStringLiteral("slot/") + QString::number(slot));   // exists/faction
+    if (slot == m_slot) {
+        m_store.clearAll();     // empty the live log in place
+        loadActiveSlot();       // reset to a blank game in this slot
+    } else {
+        QFile::remove(dir + QLatin1String("/") + slotDbFile(slot));
+    }
     emit stateChanged();
     emit liveChanged();
 }

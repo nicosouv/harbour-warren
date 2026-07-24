@@ -185,6 +185,7 @@ public:
     Q_INVOKABLE QVariantList factionDefs() const;                     // [{ index, id, unlocked }]
     Q_INVOKABLE void switchSlot(int slot);                        // resume another save slot
     Q_INVOKABLE void createSlot(int slot, int faction);           // start a fresh game in a slot
+    Q_INVOKABLE void deleteSlot(int slot);                        // erase one slot back to empty
     Q_INVOKABLE double playtimeMs() const;
     Q_INVOKABLE int eventCount() const;
 
