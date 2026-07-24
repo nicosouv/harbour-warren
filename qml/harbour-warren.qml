@@ -25,7 +25,7 @@ ApplicationWindow {
         return "#999999"
     }
     function jobName(key) {
-        if (key === "forage") return qsTr("Forage")
+        if (key === "forage") return Game.faction === 1 ? qsTr("Scavenge") : qsTr("Forage")
         if (key === "gather") return Game.faction === 2 ? qsTr("Harvest biomass")
                                    : Game.faction === 3 ? qsTr("Gather greens")
                                    : qsTr("Gather")

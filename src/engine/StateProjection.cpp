@@ -550,7 +550,7 @@ bool eventEligible(const GameState& s, int ev, qint64 nowMs)
     case EvMerchant:    return s.buildings[TradingPost] >= 1 && s.res[Food] > 15.0;
     case EvTransformer: return s.buildings[TradingPost] >= 1;
     case EvCollapse:    return s.buildings[MineShaft] >= 1;
-    case EvTax:         return s.goldEarned > 500.0;
+    case EvTax:         return usesGold(s) && s.goldEarned > 500.0;   // only factions that keep gold get taxed
     case EvScouts:      return s.raidsWon >= 1;
     case EvCounterRaid: return s.territory >= 1;   // provoked by taking their ground
     case EvExodus:      return s.population < housingCap(s);   // needs room to welcome them
@@ -558,7 +558,7 @@ bool eventEligible(const GameState& s, int ev, qint64 nowMs)
     case EvCult:        return s.population >= 15;
     case EvWolves:      return true;
     case EvMinerStrike: return s.buildings[MineShaft] >= 1;
-    case EvCaveIn:      return totalBuildings(s) >= 2;
+    case EvCaveIn:      return s.buildings[MineShaft] >= 1;   // a mine event: only for actual miners
     case EvVein:        return s.buildings[MineShaft] >= 1;
     case EvDeserter:    return s.raidsWon >= 1;
     case EvPrisoners:   return s.raidsWon >= 1;

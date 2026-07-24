@@ -8,6 +8,7 @@
     <message><source>Gold</source><translation>Gold</translation></message>
     <message><source>Energy</source><translation>Energy</translation></message>
     <message><source>Forage</source><translation>Forage</translation></message>
+    <message><source>Scavenge</source><translation>Scavenge</translation></message>
     <message><source>Gather</source><translation>Gather</translation></message>
     <message><source>Harvest biomass</source><translation>Harvest biomass</translation></message>
     <message><source>Gather greens</source><translation>Gather greens</translation></message>
@@ -297,6 +298,7 @@
     <message><source>train soldiers</source><translation>train soldiers</translation></message>
     <message><source>Scavenge</source><translation>Scavenge</translation></message>
     <message><source>Pilfer</source><translation>Pilfer</translation></message>
+    <message><source>Steal</source><translation>Steal</translation></message>
     <message><source>Feed the queen</source><translation>Feed the queen</translation></message>
     <message><source>Post a lookout</source><translation>Post a lookout</translation></message>
     <message><source>The burrow</source><translation>The burrow</translation></message>

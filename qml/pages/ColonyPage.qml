@@ -430,7 +430,7 @@ Page {
                     }
                     Label {
                         anchors.verticalCenter: parent.verticalCenter
-                        text: Game.faction === 1 ? qsTr("Pilfer")
+                        text: Game.faction === 1 ? qsTr("Steal")
                               : Game.faction === 2 ? qsTr("Feed the queen")
                               : Game.faction === 3 ? qsTr("Post a lookout") : qsTr("Scavenge")
                         font.pixelSize: Theme.fontSizeSmall

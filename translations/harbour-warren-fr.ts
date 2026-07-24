@@ -8,6 +8,7 @@
     <message><source>Gold</source><translation>Or</translation></message>
     <message><source>Energy</source><translation>Énergie</translation></message>
     <message><source>Forage</source><translation>Cueillir</translation></message>
+    <message><source>Scavenge</source><translation>Fouiller</translation></message>
     <message><source>Gather</source><translation>Récolter</translation></message>
     <message><source>Harvest biomass</source><translation>Récolter la biomasse</translation></message>
     <message><source>Gather greens</source><translation>Cueillir les verdures</translation></message>
@@ -297,6 +298,7 @@
     <message><source>train soldiers</source><translation>former des soldats</translation></message>
     <message><source>Scavenge</source><translation>Fouiller</translation></message>
     <message><source>Pilfer</source><translation>Chaparder</translation></message>
+    <message><source>Steal</source><translation>Voler</translation></message>
     <message><source>Feed the queen</source><translation>Nourrir la reine</translation></message>
     <message><source>Post a lookout</source><translation>Poster un guetteur</translation></message>
     <message><source>The burrow</source><translation>Le terrier</translation></message>
