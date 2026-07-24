@@ -486,19 +486,28 @@ Page {
                 sourceComponent: magpieBody
             }
 
+            // Ants and rabbits lead with their survival panel (queen / watch) and swarm dials,
+            // then fall through to the shared buildings / muster / raids sections below.
+            Loader {
+                active: Game.faction === 2 || Game.faction === 3
+                visible: active
+                width: col.width
+                sourceComponent: swarmTop
+            }
+
             Column {
                 id: classicSections
                 width: col.width
                 visible: Game.faction !== 1
 
-            // Workers ----------------------------------------------------------------
-            SectionHeader { text: qsTr("Badgers") + " · " + Game.idleWorkers + "/" + Game.population + " " + qsTr("idle") }
+            // Workers (badger only — ants and rabbits allocate with swarm dials up top) ----------
+            SectionHeader { visible: Game.faction === 0; text: qsTr("Badgers") + " · " + Game.idleWorkers + "/" + Game.population + " " + qsTr("idle") }
 
             Repeater {
                 model: Game.jobs
                 ListItem {
-                    visible: modelData.visible
-                    contentHeight: modelData.visible ? Theme.itemSizeSmall : 0
+                    visible: modelData.visible && Game.faction === 0
+                    contentHeight: visible ? Theme.itemSizeSmall : 0
 
                     Row {
                         x: Theme.horizontalPageMargin
@@ -540,7 +549,8 @@ Page {
             }
 
             // Buildings: sprite, cost with icon, and what it actually does. -----------
-            SectionHeader { visible: Game.canBuild && Game.stage >= 1; text: qsTr("Buildings") }
+            SectionHeader { visible: Game.canBuild && Game.stage >= 1
+                text: Game.faction === 2 ? qsTr("Chambers") : Game.faction === 3 ? qsTr("Burrows") : qsTr("Buildings") }
 
             // A site with no builders never finishes — say so, right under the header.
             Label {
@@ -654,7 +664,7 @@ Page {
             MechanicPanel {
                 app: app
                 width: parent.width
-                visible: Game.faction !== 0 || Game.energyActive
+                visible: Game.faction === 0 && Game.energyActive   // ant/rabbit show theirs up top
             }
 
             // Barracks ---------------------------------------------------------------
@@ -781,6 +791,37 @@ Page {
         }
 
         VerticalScrollDecorator { }
+    }
+
+    // ── Ant / rabbit lead-in ─────────────────────────────────────────────────────────────────
+    // The recharge panel (queen / watch) leads, then swarm dials replace the badger's ± job list.
+    Component {
+        id: swarmTop
+        Column {
+            width: col.width
+            spacing: Theme.paddingMedium
+
+            MechanicPanel { app: app; width: parent.width }
+
+            SectionHeader {
+                text: (Game.faction === 3 ? qsTr("The colony") : qsTr("The swarm"))
+                      + " · " + Game.idleWorkers + "/" + Game.population + " " + qsTr("idle")
+            }
+            Repeater {
+                model: Game.jobs
+                Slider {
+                    visible: modelData.visible
+                    width: col.width
+                    minimumValue: 0
+                    maximumValue: Math.max(1, Game.population)
+                    stepSize: 1
+                    value: modelData.assigned
+                    valueText: Math.round(value) + " / " + Game.population
+                    label: app.jobName(modelData.key)
+                    onReleased: Game.assign(modelData.index, Math.round(value) - modelData.assigned)
+                }
+            }
+        }
     }
 
     // ── The magpie's raid-board ──────────────────────────────────────────────────────────────

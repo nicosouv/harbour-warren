@@ -263,6 +263,10 @@
     <message><source>Birds scavenging for scraps</source><translation>Oiseaux qui fouillent des miettes</translation></message>
     <message><source>Prey</source><translation>Proies</translation></message>
     <message><source>Grow the flock, then hunt for caches to raid.</source><translation>Agrandis la volée, puis chasse des caches à piller.</translation></message>
+    <message><source>Chambers</source><translation>Chambres</translation></message>
+    <message><source>Burrows</source><translation>Terriers</translation></message>
+    <message><source>The swarm</source><translation>L'essaim</translation></message>
+    <message><source>The colony</source><translation>La colonie</translation></message>
     <message><source>Founding</source><translation>Fondation</translation></message>
     <message><source>Games</source><translation>Parties</translation></message>
     <message><source>The roost</source><translation>Le perchoir</translation></message>

@@ -263,6 +263,10 @@
     <message><source>Birds scavenging for scraps</source><translation>Birds scavenging for scraps</translation></message>
     <message><source>Prey</source><translation>Prey</translation></message>
     <message><source>Grow the flock, then hunt for caches to raid.</source><translation>Grow the flock, then hunt for caches to raid.</translation></message>
+    <message><source>Chambers</source><translation>Chambers</translation></message>
+    <message><source>Burrows</source><translation>Burrows</translation></message>
+    <message><source>The swarm</source><translation>The swarm</translation></message>
+    <message><source>The colony</source><translation>The colony</translation></message>
     <message><source>Founding</source><translation>Founding</translation></message>
     <message><source>Games</source><translation>Games</translation></message>
     <message><source>The roost</source><translation>The roost</translation></message>
