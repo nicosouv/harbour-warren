@@ -15,6 +15,7 @@ double foodCap(const GameState& s);
 double energyCap(const GameState& s);
 bool   canBuild(const GameState& s);             // faction capability: may it construct at all
 bool   worksLand(const GameState& s);            // faction capability: gather/mine produce goods
+bool   usesGold(const GameState& s);             // faction capability: gold is a real, spent resource
 int    totalBuildings(const GameState& s);
 int    totalUnits(const GameState& s);
 int    idleWorkers(const GameState& s);
@@ -31,6 +32,8 @@ double netFood(const GameState& s);
 double buildCost(const GameState& s, int bld, int n);
 double unitCostGold(const GameState& s, int u);
 double unitCostMaterials(const GameState& s, int u);
+double unitPaidGold(const GameState& s, int u);       // gold actually charged (0 for gold-free factions)
+double unitPaidMaterials(const GameState& s, int u);  // materials actually charged (absorbs gold if gold-free)
 double armyPower(const GameState& s);
 int    raidForce(const GameState& s);            // bodies a raid commits (units, or the whole flock)
 bool   targetUnlocked(const GameState& s, int t);

@@ -627,10 +627,8 @@ QVariantList WarrenController::jobs() const
         bool visible = true;
         // A faction that loots instead of working the land has no gatherers, miners, or builders.
         // Mining only pays in gold, so factions that have no use for gold (ant, rabbit) never mine.
-        const int mech = kFaction[m_state.faction].recharge;
-        const bool usesGold = mech != RMPheromone && mech != RMVigilance;
         if (j == Gather) visible = warren::worksLand(m_state) && m_state.stage >= 1;
-        else if (j == MineJob) visible = warren::worksLand(m_state) && usesGold && m_state.stage >= 2;
+        else if (j == MineJob) visible = warren::worksLand(m_state) && warren::usesGold(m_state) && m_state.stage >= 2;
         else if (j == Build) visible = warren::canBuild(m_state) && m_state.stage >= 1;
         QVariantMap m;
         m.insert(QStringLiteral("index"), j);
@@ -649,6 +647,9 @@ QVariantList WarrenController::buildings() const
     if (!warren::canBuild(m_state)) return out;   // factions that cannot build have no building list
     for (int b = 0; b < BldCount; ++b) {
         if (m_state.stage < kBld[b].unlockStage) continue;
+        // The mineshaft (mines gold) and trading post (buys energy with gold) are meaningless to a
+        // gold-free faction; leave them off its build list entirely.
+        if (!warren::usesGold(m_state) && (b == MineShaft || b == TradingPost)) continue;
         const double cost = buildCost(m_state, b, 1);
         QVariantMap m;
         m.insert(QStringLiteral("index"), b);
@@ -676,8 +677,8 @@ QVariantList WarrenController::unitsList() const
         QVariantMap m;
         m.insert(QStringLiteral("index"), u);
         m.insert(QStringLiteral("key"), QLatin1String(d.id));
-        const double cg = warren::unitCostGold(m_state, u);
-        const double cm = warren::unitCostMaterials(m_state, u);
+        const double cg = warren::unitPaidGold(m_state, u);
+        const double cm = warren::unitPaidMaterials(m_state, u);
         m.insert(QStringLiteral("count"), m_state.units[u]);
         m.insert(QStringLiteral("costGold"), cg);
         m.insert(QStringLiteral("costMaterials"), cm);

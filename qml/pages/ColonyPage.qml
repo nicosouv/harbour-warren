@@ -770,9 +770,10 @@ Page {
                         }
                         Row {
                             spacing: Theme.paddingSmall
-                            Image { anchors.verticalCenter: parent.verticalCenter; source: Qt.resolvedUrl("../images/res-gold.png"); smooth: false; width: Theme.iconSizeExtraSmall * 0.7; height: width; fillMode: Image.PreserveAspectFit }
-                            Label { anchors.verticalCenter: parent.verticalCenter; text: Game.fmt(modelData.costGold); font.pixelSize: Theme.fontSizeExtraSmall; color: Theme.secondaryColor }
-                            Image { anchors.verticalCenter: parent.verticalCenter; source: Qt.resolvedUrl("../images/res-materials.png"); smooth: false; width: Theme.iconSizeExtraSmall * 0.7; height: width; fillMode: Image.PreserveAspectFit }
+                            // Gold-free factions (ant, rabbit) pay entirely in their materials slot.
+                            Image { visible: modelData.costGold > 0; anchors.verticalCenter: parent.verticalCenter; source: Qt.resolvedUrl("../images/res-gold.png"); smooth: false; width: Theme.iconSizeExtraSmall * 0.7; height: width; fillMode: Image.PreserveAspectFit }
+                            Label { visible: modelData.costGold > 0; anchors.verticalCenter: parent.verticalCenter; text: Game.fmt(modelData.costGold); font.pixelSize: Theme.fontSizeExtraSmall; color: Theme.secondaryColor }
+                            Image { anchors.verticalCenter: parent.verticalCenter; source: Qt.resolvedUrl(page.jobIcon("gather")); smooth: false; width: Theme.iconSizeExtraSmall * 0.7; height: width; fillMode: Image.PreserveAspectFit }
                             Label { anchors.verticalCenter: parent.verticalCenter; text: Game.fmt(modelData.costMaterials); font.pixelSize: Theme.fontSizeExtraSmall; color: Theme.secondaryColor }
                             PixelBadger { anchors.verticalCenter: parent.verticalCenter; width: Theme.iconSizeExtraSmall * 0.7; height: width }
                             Label { anchors.verticalCenter: parent.verticalCenter; text: "" + modelData.costPop; font.pixelSize: Theme.fontSizeExtraSmall; color: Theme.secondaryColor }

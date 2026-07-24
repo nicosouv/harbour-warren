@@ -68,6 +68,8 @@ private slots:
     void foldMagpieHarvest();
     void foldAntColony();
     void foldRabbitWarren();
+    void foldGoldFreeEconomy();
+    void foldGoldFreeProgression();
 };
 
 void TstWarren::rngDeterminism()
@@ -499,6 +501,109 @@ void TstWarren::foldRabbitWarren()
     // A watch (tap) refills vigilance.
     GameState s = fold(QVector<Event>() << arriveF(3) << tick(300000, 301000) << tap(1, 302000), kSalt);
     QVERIFY(s.res[Energy] > 0.0);
+}
+
+// The gold-free factions (ant, rabbit) must carry a self-consistent economy: no gold anywhere, the
+// materials slot (biomass / greens) is their pivot, and every gold rule reroutes onto it.
+void TstWarren::foldGoldFreeEconomy()
+{
+    // Capability flag: badger and magpie keep gold; ant and rabbit do not.
+    GameState b; b.faction = 0; GameState m; m.faction = 1;
+    GameState a; a.faction = 2; GameState r; r.faction = 3;
+    QVERIFY(usesGold(b));
+    QVERIFY(usesGold(m));
+    QVERIFY(!usesGold(a));
+    QVERIFY(!usesGold(r));
+
+    // A gold-free faction is charged no gold for soldiers; the gold half folds into materials.
+    QCOMPARE(unitPaidGold(a, Militia), 0.0);
+    QVERIFY(qFuzzyCompare(unitPaidMaterials(a, Militia),
+                          unitCostMaterials(a, Militia) + unitCostGold(a, Militia)));
+    // Badger is unchanged: gold + materials, as before.
+    QCOMPARE(unitPaidGold(b, Militia), unitCostGold(b, Militia));
+    QCOMPARE(unitPaidMaterials(b, Militia), unitCostMaterials(b, Militia));
+
+    // Training actually goes through with materials only, no gold on hand.
+    GameState ant; ant.faction = 2; ant.arrived = true; ant.stage = 3;
+    ant.buildings[Barracks] = 1; ant.population = 12; ant.res[Gold] = 0.0;
+    ant.res[Materials] = unitPaidMaterials(ant, Militia) + 5.0;
+    applyEvent(ant, train(Militia, 1, 10000), kSalt);
+    QCOMPARE(ant.units[Militia], 1);
+    QCOMPARE(ant.res[Gold], 0.0);
+
+    // Stage 2 -> 3 clears on hauled materials, and gold does nothing for them.
+    GameState onMat; onMat.faction = 2; onMat.arrived = true; onMat.stage = 2;
+    onMat.population = 8; onMat.matEarned = kGateMatEarned;
+    applyEvent(onMat, tap(0, 11000), kSalt);
+    QVERIFY(onMat.stage >= 3);
+
+    GameState onGold; onGold.faction = 2; onGold.arrived = true; onGold.stage = 2;
+    onGold.population = 8; onGold.goldEarned = kGateGoldEarned * 100.0; onGold.matEarned = 0.0;
+    applyEvent(onGold, tap(0, 11000), kSalt);
+    QCOMPARE(onGold.stage, 2);   // a pile of (unusable) gold never advances them
+}
+
+// A headless ant colony must walk the whole staged reveal without ever touching gold: proof that
+// the gold-free path has no soft-lock now that mining and the gold gate are off the table.
+void TstWarren::foldGoldFreeProgression()
+{
+    GameState s;
+    QVector<Event> log;
+    qint64 t = 1000;
+    auto push = [&](const Event& e) { log.append(e); applyEvent(s, log.last(), kSalt); };
+    auto rebalance = [&](int f, int g, int b) {
+        int tgt[JobCount] = { f, g, 0, b };          // never any miners for a gold-free faction
+        for (int j = 0; j < JobCount; ++j)
+            if (tgt[j] < s.assigned[j]) push(assign(j, tgt[j] - s.assigned[j], t));
+        for (int j = 0; j < JobCount; ++j)
+            if (tgt[j] > s.assigned[j]) push(assign(j, tgt[j] - s.assigned[j], t));
+    };
+
+    push(arriveF(2, t));                             // ants
+    QVERIFY(!usesGold(s));
+
+    const qint64 step = Q_INT64_C(60000);
+    for (int i = 0; i < 8000 && s.stage < 5; ++i) {
+        t += step;
+        push(tick(step, t));
+        for (int k = 0; k < 8; ++k) push(tap(1, t));  // keep the queen's pheromone topped up
+
+        int p = s.population;
+        int foragers = (p + 1) / 2;
+        int rest = p - foragers;
+        int builders = 0, gatherers = 0;
+        if (s.stage >= 1 && rest > 0) { builders = rest >= 3 ? 2 : 1; rest -= builders; }
+        gatherers = rest;
+        rebalance(foragers, gatherers, s.stage >= 1 ? builders : 0);
+
+        if (s.siteBld < 0) {
+            int want = -1;
+            if (s.stage >= 3 && s.buildings[Barracks] == 0) want = Barracks;
+            if (want >= 0) {
+                if (s.res[Materials] >= buildCost(s, want, 1)) push(build(want, t));
+            } else {
+                for (int b = 0; b < BldCount; ++b) {
+                    if (s.stage < kBld[b].unlockStage) continue;
+                    if (b == MineShaft || b == TradingPost) continue;   // gold-free: never useful
+                    if (s.res[Materials] >= buildCost(s, b, 1) * 1.2) { push(build(b, t)); break; }
+                }
+            }
+        }
+        if (s.buildings[Barracks] >= 1 && s.res[Materials] > unitPaidMaterials(s, Militia) * 2.0
+            && s.population > 6)
+            push(train(Militia, 1, t));
+        if (s.stage >= 4 && totalUnits(s) >= 6 && raidReady(s, 0, t))
+            push(raidEv(0, t));
+    }
+
+    qInfo("gold-free sim: final stage %d, pop %d, units %d, matEarned %.0f, gold %.0f",
+          s.stage, s.population, totalUnits(s), s.matEarned, s.res[Gold]);
+    QVERIFY2(s.stage >= 5, "the gold-free faction must reach the endgame (stage 5) with no gold economy");
+    QVERIFY(s.unitsTrained >= kGateUnitsTrained);
+
+    GameState again = fold(log, kSalt);
+    QCOMPARE(again.stage, s.stage);
+    QCOMPARE(again.population, s.population);
 }
 
 QTEST_GUILESS_MAIN(TstWarren)

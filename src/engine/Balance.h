@@ -184,7 +184,8 @@ static const int kStageCount = 6;   // 0..5
 // thresholds indexed by the stage you are LEAVING (0->1 uses [0], etc.)
 static const int    kGatePopulation   = 6;      // 0 -> 1
 static const int    kGateBuildings    = 3;      // 1 -> 2 (buildings built)
-static const double kGateGoldEarned   = 400.0;  // 2 -> 3
+static const double kGateGoldEarned   = 400.0;  // 2 -> 3 (gold factions)
+static const double kGateMatEarned    = 900.0;  // 2 -> 3 (gold-free factions haul biomass/greens)
 static const int    kGateUnitsTrained = 3;      // 3 -> 4
 static const int    kGateRaidsWon     = 1;      // 4 -> 5
 

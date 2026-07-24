@@ -49,7 +49,8 @@ struct GameState {
     int    units[Balance::UnitCount] = { 0, 0 };
     int    unitsTrained = 0;        // lifetime (stage gate)
 
-    double goldEarned = 0.0;        // lifetime (stage gate)
+    double goldEarned = 0.0;        // lifetime (stage gate, gold factions)
+    double matEarned = 0.0;         // lifetime materials hauled (stage gate, gold-free factions)
 
     int    territory = 0;           // permanent yield bonus source
     int    raidsWon = 0;

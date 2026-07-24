@@ -57,10 +57,12 @@ void advanceStage(GameState& s)
             default: ok = false; break;
             }
         } else {
+            const bool gold = usesGold(s);
             switch (s.stage) {
             case 0: ok = s.population >= kGatePopulation; break;
             case 1: ok = s.buildingsBuilt >= kGateBuildings; break;
-            case 2: ok = s.goldEarned >= kGateGoldEarned; break;
+            // Gold factions prove themselves by earning gold; gold-free ones by hauling materials.
+            case 2: ok = gold ? s.goldEarned >= kGateGoldEarned : s.matEarned >= kGateMatEarned; break;
             case 3: ok = s.unitsTrained >= kGateUnitsTrained; break;
             case 4: ok = s.raidsWon >= kGateRaidsWon; break;
             default: ok = false; break;
@@ -347,6 +349,13 @@ double energyCap(const GameState& s)
 
 bool canBuild(const GameState& s) { return fac(s).canBuild; }
 bool worksLand(const GameState& s) { return fac(s).worksLand; }
+// Ants and rabbits keep no gold: their recharge comes from tapping, and their economy runs on
+// the materials slot (biomass / greens) instead. Every gold rule below routes through this.
+bool usesGold(const GameState& s)
+{
+    const int mech = fac(s).recharge;
+    return mech != RMPheromone && mech != RMVigilance;
+}
 
 int totalBuildings(const GameState& s)
 {
@@ -471,6 +480,17 @@ double unitCostMaterials(const GameState& s, int u)
 {
     if (u < 0 || u >= UnitCount) return 0.0;
     return kUnit[u].costMaterials * std::pow(kUnit[u].costGrowth, s.units[u]);
+}
+// What a faction is actually charged for a soldier. Gold-free factions pay no gold; the gold half
+// of the price is folded into their materials slot so the total effort stays comparable.
+double unitPaidGold(const GameState& s, int u)
+{
+    return usesGold(s) ? unitCostGold(s, u) : 0.0;
+}
+double unitPaidMaterials(const GameState& s, int u)
+{
+    return usesGold(s) ? unitCostMaterials(s, u)
+                       : unitCostMaterials(s, u) + unitCostGold(s, u);
 }
 
 double armyPower(const GameState& s)
@@ -677,7 +697,7 @@ void applyEvent(GameState& s, const Event& e, quint64 salt)
             // Buy them one at a time: each soldier costs more than the last (army-size scaling).
             int made = 0;
             for (int k = 0; k < n; ++k) {
-                const double cg = unitCostGold(s, u), cm = unitCostMaterials(s, u);
+                const double cg = unitPaidGold(s, u), cm = unitPaidMaterials(s, u);
                 if (s.population < d.costPop || s.res[Gold] < cg || s.res[Materials] < cm) break;
                 s.res[Gold] -= cg;
                 s.res[Materials] -= cm;
@@ -770,6 +790,7 @@ void applyEvent(GameState& s, const Event& e, quint64 salt)
 
         s.res[Food] = clampd(s.res[Food] + food, 0.0, foodCap(s));
         s.res[Materials] += mat;
+        if (mat > 0.0) s.matEarned += mat;
         s.res[Gold] += gold;
         if (gold > 0.0) s.goldEarned += gold;
 
