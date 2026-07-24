@@ -256,6 +256,7 @@
 </context>
 <context>
     <name>ColonyPage</name>
+    <message><source>About</source><translation>About</translation></message>
     <message><source>Founding</source><translation>Founding</translation></message>
     <message><source>Games</source><translation>Games</translation></message>
     <message><source>The roost</source><translation>The roost</translation></message>
@@ -423,6 +424,7 @@
 </context>
 <context>
     <name>SettingsPage</name>
+    <message><source>About Warren</source><translation>About Warren</translation></message>
     <message><source>Settings</source><translation>Settings</translation></message>
     <message><source>Display</source><translation>Display</translation></message>
     <message><source>Top margin (camera notch)</source><translation>Top margin (camera notch)</translation></message>
@@ -471,6 +473,8 @@
     <message><source>Empty. Tap to start.</source><translation>Empty. Tap to start.</translation></message>
     <message><source>Start over</source><translation>Start over</translation></message>
     <message><source>New game</source><translation>New game</translation></message>
+    <message><source>Delete</source><translation>Delete</translation></message>
+    <message><source>Deleting</source><translation>Deleting</translation></message>
     <message><source>Badgers</source><translation>Badgers</translation></message>
     <message><source>Magpies</source><translation>Magpies</translation></message>
     <message><source>Ants</source><translation>Ants</translation></message>
@@ -489,5 +493,16 @@
     <message><source>Breeds fastest of all, but fragile. Post lookouts or predators cull the warren.</source><translation>Breeds fastest of all, but fragile. Post lookouts or predators cull the warren.</translation></message>
     <message><source>Locked. Win a raid as the badgers to unlock.</source><translation>Locked. Win a raid as the badgers to unlock.</translation></message>
     <message><source>Starting a new game</source><translation>Starting a new game</translation></message>
+</context>
+<context>
+    <name>AboutPage</name>
+    <message><source>About</source><translation>About</translation></message>
+    <message><source>Version</source><translation>Version</translation></message>
+    <message><source>A colony idle game. Grow a warren, forage, build, keep the lights on, raise an army and raid your neighbours, while a narrator judges every move.</source><translation>A colony idle game. Grow a warren, forage, build, keep the lights on, raise an army and raid your neighbours, while a narrator judges every move.</translation></message>
+    <message><source>Fully offline: no ads, no account, no telemetry.</source><translation>Fully offline: no ads, no account, no telemetry.</translation></message>
+    <message><source>Author</source><translation>Author</translation></message>
+    <message><source>License</source><translation>License</translation></message>
+    <message><source>Source code</source><translation>Source code</translation></message>
+    <message><source>Made with %1 for Sailfish OS</source><translation>Made with %1 for Sailfish OS</translation></message>
 </context>
 </TS>

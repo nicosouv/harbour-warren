@@ -256,6 +256,7 @@
 </context>
 <context>
     <name>ColonyPage</name>
+    <message><source>About</source><translation>À propos</translation></message>
     <message><source>Founding</source><translation>Fondation</translation></message>
     <message><source>Games</source><translation>Parties</translation></message>
     <message><source>The roost</source><translation>Le perchoir</translation></message>
@@ -423,6 +424,7 @@
 </context>
 <context>
     <name>SettingsPage</name>
+    <message><source>About Warren</source><translation>À propos de Warren</translation></message>
     <message><source>Settings</source><translation>Réglages</translation></message>
     <message><source>Display</source><translation>Affichage</translation></message>
     <message><source>Top margin (camera notch)</source><translation>Marge haute (encoche caméra)</translation></message>
@@ -471,6 +473,8 @@
     <message><source>Empty. Tap to start.</source><translation>Vide. Touchez pour commencer.</translation></message>
     <message><source>Start over</source><translation>Recommencer</translation></message>
     <message><source>New game</source><translation>Nouvelle partie</translation></message>
+    <message><source>Delete</source><translation>Supprimer</translation></message>
+    <message><source>Deleting</source><translation>Suppression</translation></message>
     <message><source>Badgers</source><translation>Blaireaux</translation></message>
     <message><source>Magpies</source><translation>Pies</translation></message>
     <message><source>Ants</source><translation>Fourmis</translation></message>
@@ -489,5 +493,16 @@
     <message><source>Breeds fastest of all, but fragile. Post lookouts or predators cull the warren.</source><translation>La repro la plus rapide, mais fragile. Postez des guetteurs ou les prédateurs déciment la garenne.</translation></message>
     <message><source>Locked. Win a raid as the badgers to unlock.</source><translation>Verrouillé. Gagnez un raid avec les blaireaux pour débloquer.</translation></message>
     <message><source>Starting a new game</source><translation>Démarrage d'une nouvelle partie</translation></message>
+</context>
+<context>
+    <name>AboutPage</name>
+    <message><source>About</source><translation>À propos</translation></message>
+    <message><source>Version</source><translation>Version</translation></message>
+    <message><source>A colony idle game. Grow a warren, forage, build, keep the lights on, raise an army and raid your neighbours, while a narrator judges every move.</source><translation>Un jeu de colonie idle. Fais grandir ta garenne, cueille, construis, garde les lumières allumées, lève une armée et pille tes voisins, pendant qu'un narrateur juge chacun de tes gestes.</translation></message>
+    <message><source>Fully offline: no ads, no account, no telemetry.</source><translation>Entièrement hors ligne : pas de pub, pas de compte, pas de télémétrie.</translation></message>
+    <message><source>Author</source><translation>Auteur</translation></message>
+    <message><source>License</source><translation>Licence</translation></message>
+    <message><source>Source code</source><translation>Code source</translation></message>
+    <message><source>Made with %1 for Sailfish OS</source><translation>Fait avec %1 pour Sailfish OS</translation></message>
 </context>
 </TS>

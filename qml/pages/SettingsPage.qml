@@ -123,6 +123,16 @@ Page {
 
             SectionHeader { text: qsTr("About") }
             DetailItem { label: qsTr("Version"); value: Game.appVersion }
+            ListItem {
+                contentHeight: Theme.itemSizeSmall
+                Label {
+                    x: Theme.horizontalPageMargin
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: qsTr("About Warren")
+                    color: highlighted ? Theme.highlightColor : Theme.primaryColor
+                }
+                onClicked: pageStack.push(Qt.resolvedUrl("AboutPage.qml"))
+            }
         }
 
         VerticalScrollDecorator { }
