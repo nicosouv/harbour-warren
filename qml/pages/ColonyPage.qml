@@ -661,7 +661,8 @@ Page {
                 }
             }
             BackgroundItem {
-                visible: Game.tradingUnlocked
+                // Only gold-buying factions (the badger) fill up here; ants/rabbits recharge by tapping.
+                visible: Game.buysEnergy && Game.tradingUnlocked
                 width: parent.width
                 height: Theme.itemSizeMedium
                 onClicked: { Game.buyEnergy(); app.buzz(); app.quip("buyenergy") }
