@@ -112,7 +112,10 @@ Page {
     // What each job pays out, and what each building is for — no guessing.
     function jobIcon(key) {
         if (key === "forage") return "../images/res-food.png"
-        if (key === "gather") return "../images/res-materials.png"
+        if (key === "gather")                                 // the "materials" slot varies by faction
+            return Game.faction === 2 ? "../images/res-biomass.png"
+                 : Game.faction === 3 ? "../images/res-greens.png"
+                 : "../images/res-materials.png"
         if (key === "mine") return "../images/res-gold.png"
         return "../images/dig.png"   // builders carry the shovel
     }
@@ -310,6 +313,43 @@ Page {
                 ambiance: Game.ambiance
                 reduceFx: Game.reduceFx
                 faction: Game.faction
+            }
+
+            // Building tally: what actually stands in this colony, as compact count badges
+            // over the map (the pre-drawn scenery makes on-terrain sprites impossible to place).
+            Flow {
+                anchors { top: parent.top; left: parent.left; right: parent.right
+                          margins: Theme.paddingSmall }
+                spacing: Theme.paddingSmall
+                Repeater {
+                    model: Game.buildings
+                    Rectangle {
+                        visible: modelData.count > 0
+                        width: badgeRow.width + Theme.paddingSmall * 2
+                        height: badgeRow.height + 4
+                        radius: height / 4
+                        color: Theme.rgba("#12151c", 0.72)
+                        Row {
+                            id: badgeRow
+                            anchors.centerIn: parent
+                            spacing: 2
+                            Image {
+                                anchors.verticalCenter: parent.verticalCenter
+                                source: Qt.resolvedUrl(bldPath(modelData.key))
+                                smooth: false
+                                width: Theme.iconSizeExtraSmall * 0.9; height: width
+                                fillMode: Image.PreserveAspectFit
+                            }
+                            Label {
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: "×" + modelData.count
+                                font.pixelSize: Theme.fontSizeExtraSmall
+                                font.bold: true
+                                color: "white"
+                            }
+                        }
+                    }
+                }
             }
 
             // A birth is announced right on the village: a new badger, unmistakably.

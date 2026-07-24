@@ -477,18 +477,8 @@ Item {
     // Every faction shares the hand-drawn building sprites for now.
     function bldPath(key) { return "../images/bld-" + key + ".png" }
 
-    // Buildings, tidy rows.
-    Repeater {
-        model: view.buildingModel()
-        Image {
-            source: Qt.resolvedUrl(view.bldPath(modelData.key))
-            smooth: false
-            width: view.width * 0.082
-            height: width * (sourceSize.height / Math.max(1, sourceSize.width))
-            x: view.width * view.slotX(modelData.slot)
-            y: view.height * view.slotY(modelData.slot)
-        }
-    }
+    // Buildings are no longer scattered onto the painted map (they never lined up with the
+    // pre-drawn scenery). ColonyPage shows them as tidy count badges instead.
 
     // Magpie nests tucked onto the branches, and a hoard of shinies that grows with the flock.
     // Procedural decor only when there is no painted background (the image provides its own).
@@ -514,26 +504,6 @@ Item {
                 color: index % 2 === 0 ? "#e0c246" : "#8fd0e0"
                 x: (index % 3) * view.width * 0.03
                 y: -Math.floor(index / 3) * view.width * 0.022
-            }
-        }
-    }
-
-    // Construction site ghost with progress.
-    Item {
-        visible: view.siteBld >= 0
-        x: view.width * 0.44; y: view.height * 0.62
-        width: view.width * 0.082; height: width
-        Image {
-            anchors.fill: parent
-            source: view.siteBld >= 0 ? Qt.resolvedUrl(view.bldPath(view.siteKeys[view.siteBld])) : ""
-            smooth: false; fillMode: Image.PreserveAspectFit; opacity: 0.4
-        }
-        Rectangle {
-            anchors { left: parent.left; right: parent.right; top: parent.bottom; topMargin: 2 }
-            height: 3; color: Qt.rgba(1, 1, 1, 0.15)
-            Rectangle {
-                width: parent.width * view.siteProgress; height: parent.height; color: "#e0b23a"
-                Behavior on width { NumberAnimation { duration: 1000; easing.type: Easing.Linear } }
             }
         }
     }

@@ -9,6 +9,8 @@
     <message><source>Energy</source><translation>Énergie</translation></message>
     <message><source>Forage</source><translation>Cueillir</translation></message>
     <message><source>Gather</source><translation>Récolter</translation></message>
+    <message><source>Harvest biomass</source><translation>Récolter la biomasse</translation></message>
+    <message><source>Gather greens</source><translation>Cueillir les verdures</translation></message>
     <message><source>Mine</source><translation>Miner</translation></message>
     <message><source>Build</source><translation>Bâtir</translation></message>
     <message><source>The power is out</source><translation>Panne de courant</translation></message>

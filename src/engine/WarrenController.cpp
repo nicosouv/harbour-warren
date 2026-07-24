@@ -626,7 +626,11 @@ QVariantList WarrenController::jobs() const
     for (int j = 0; j < JobCount; ++j) {
         bool visible = true;
         // A faction that loots instead of working the land has no gatherers, miners, or builders.
-        if (j == Gather || j == MineJob) visible = warren::worksLand(m_state) && m_state.stage >= (j == MineJob ? 2 : 1);
+        // Mining only pays in gold, so factions that have no use for gold (ant, rabbit) never mine.
+        const int mech = kFaction[m_state.faction].recharge;
+        const bool usesGold = mech != RMPheromone && mech != RMVigilance;
+        if (j == Gather) visible = warren::worksLand(m_state) && m_state.stage >= 1;
+        else if (j == MineJob) visible = warren::worksLand(m_state) && usesGold && m_state.stage >= 2;
         else if (j == Build) visible = warren::canBuild(m_state) && m_state.stage >= 1;
         QVariantMap m;
         m.insert(QStringLiteral("index"), j);

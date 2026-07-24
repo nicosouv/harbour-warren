@@ -9,6 +9,8 @@
     <message><source>Energy</source><translation>Energy</translation></message>
     <message><source>Forage</source><translation>Forage</translation></message>
     <message><source>Gather</source><translation>Gather</translation></message>
+    <message><source>Harvest biomass</source><translation>Harvest biomass</translation></message>
+    <message><source>Gather greens</source><translation>Gather greens</translation></message>
     <message><source>Mine</source><translation>Mine</translation></message>
     <message><source>Build</source><translation>Build</translation></message>
     <message><source>The power is out</source><translation>The power is out</translation></message>
