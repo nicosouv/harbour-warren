@@ -257,6 +257,12 @@
 <context>
     <name>ColonyPage</name>
     <message><source>About</source><translation>About</translation></message>
+    <message><source>The hoard</source><translation>The hoard</translation></message>
+    <message><source>birds in the flock</source><translation>birds in the flock</translation></message>
+    <message><source>Prowl</source><translation>Prowl</translation></message>
+    <message><source>Birds scavenging for scraps</source><translation>Birds scavenging for scraps</translation></message>
+    <message><source>Prey</source><translation>Prey</translation></message>
+    <message><source>Grow the flock, then hunt for caches to raid.</source><translation>Grow the flock, then hunt for caches to raid.</translation></message>
     <message><source>Founding</source><translation>Founding</translation></message>
     <message><source>Games</source><translation>Games</translation></message>
     <message><source>The roost</source><translation>The roost</translation></message>

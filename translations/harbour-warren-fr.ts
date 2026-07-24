@@ -257,6 +257,12 @@
 <context>
     <name>ColonyPage</name>
     <message><source>About</source><translation>À propos</translation></message>
+    <message><source>The hoard</source><translation>Le magot</translation></message>
+    <message><source>birds in the flock</source><translation>oiseaux dans la volée</translation></message>
+    <message><source>Prowl</source><translation>Rôder</translation></message>
+    <message><source>Birds scavenging for scraps</source><translation>Oiseaux qui fouillent des miettes</translation></message>
+    <message><source>Prey</source><translation>Proies</translation></message>
+    <message><source>Grow the flock, then hunt for caches to raid.</source><translation>Agrandis la volée, puis chasse des caches à piller.</translation></message>
     <message><source>Founding</source><translation>Fondation</translation></message>
     <message><source>Games</source><translation>Parties</translation></message>
     <message><source>The roost</source><translation>Le perchoir</translation></message>

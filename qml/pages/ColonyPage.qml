@@ -477,6 +477,20 @@ Page {
             id: col
             width: listFlick.width
 
+            // The magpie flies a bespoke raid-board (no jobs, no buildings); every other faction
+            // keeps the classic management sections below.
+            Loader {
+                active: Game.faction === 1
+                visible: active
+                width: col.width
+                sourceComponent: magpieBody
+            }
+
+            Column {
+                id: classicSections
+                width: col.width
+                visible: Game.faction !== 1
+
             // Workers ----------------------------------------------------------------
             SectionHeader { text: qsTr("Badgers") + " · " + Game.idleWorkers + "/" + Game.population + " " + qsTr("idle") }
 
@@ -761,10 +775,137 @@ Page {
                     }
                 }
             }
+            }   // classicSections
 
             Item { width: 1; height: Theme.paddingLarge }
         }
 
         VerticalScrollDecorator { }
+    }
+
+    // ── The magpie's raid-board ──────────────────────────────────────────────────────────────
+    // No jobs list, no buildings: a hoard of shinies, the flock, a single foraging dial, and prey.
+    Component {
+        id: magpieBody
+        Column {
+            id: magpieRoot
+            width: col.width
+            spacing: Theme.paddingMedium
+
+            property real shinies: {
+                var rs = Game.resources
+                for (var i = 0; i < rs.length; i++) if (rs[i].key === "shinies") return rs[i].value
+                return 0
+            }
+            property int foragers: (Game.jobs.length > 0) ? Game.jobs[0].assigned : 0
+
+            // THE HOARD — the pilfered shinies, front and centre.
+            SectionHeader { text: qsTr("The hoard") }
+            Column {
+                width: parent.width
+                spacing: Theme.paddingSmall
+                Image {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    source: Qt.resolvedUrl("../images/res-shinies.png")
+                    smooth: false
+                    width: Theme.iconSizeExtraLarge; height: width
+                    fillMode: Image.PreserveAspectFit
+                }
+                Label {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: Game.fmt(magpieRoot.shinies)
+                    font.pixelSize: Theme.fontSizeHuge
+                    font.family: "Monospace"
+                    color: app.accent()
+                }
+                Label {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: Game.population + " " + qsTr("birds in the flock")
+                    font.pixelSize: Theme.fontSizeExtraSmall
+                    color: Theme.secondaryColor
+                }
+            }
+
+            // THE ROOST — stamina rests back for raids (shared recharge panel).
+            MechanicPanel { app: app; width: parent.width }
+
+            // PROWL — the flock's one honest job: a dial for how many birds scavenge food.
+            SectionHeader { text: qsTr("Prowl") }
+            Slider {
+                width: parent.width
+                minimumValue: 0
+                maximumValue: Math.max(1, Game.population)
+                stepSize: 1
+                value: magpieRoot.foragers
+                valueText: Math.round(value) + " / " + Game.population
+                label: qsTr("Birds scavenging for scraps")
+                onReleased: Game.assign(0, Math.round(value) - magpieRoot.foragers)
+            }
+
+            // PREY — the whole point: pick a target and send the flock.
+            SectionHeader { visible: Game.raidsUnlocked; text: qsTr("Prey") }
+            Label {
+                visible: !Game.raidsUnlocked
+                x: Theme.horizontalPageMargin
+                width: parent.width - 2 * Theme.horizontalPageMargin
+                wrapMode: Text.WordWrap
+                text: qsTr("Grow the flock, then hunt for caches to raid.")
+                font.pixelSize: Theme.fontSizeExtraSmall
+                color: Theme.secondaryColor
+            }
+            Repeater {
+                model: Game.targets
+                Item {
+                    visible: Game.raidsUnlocked
+                    width: magpieRoot.width
+                    height: Game.raidsUnlocked ? Theme.itemSizeMedium : 0
+                    Image {
+                        id: preyIcon
+                        x: Theme.horizontalPageMargin
+                        anchors.verticalCenter: parent.verticalCenter
+                        source: Qt.resolvedUrl("../images/fox-side.png")
+                        smooth: false
+                        width: Theme.iconSizeMedium; height: width * 0.6
+                        fillMode: Image.PreserveAspectFit
+                    }
+                    Column {
+                        anchors { left: preyIcon.right; leftMargin: Theme.paddingMedium
+                                  right: preyBtn.left; rightMargin: Theme.paddingMedium; verticalCenter: parent.verticalCenter }
+                        Label { text: app.targetName(modelData.key); truncationMode: TruncationMode.Fade; width: parent.width }
+                        Label {
+                            width: parent.width
+                            truncationMode: TruncationMode.Fade
+                            text: modelData.ready
+                                  ? qsTr("defence") + " " + Game.fmt(modelData.defense)
+                                  : qsTr("ready in") + " " + page.fmtCooldown(modelData.cooldownLeft)
+                            font.pixelSize: Theme.fontSizeExtraSmall
+                            color: modelData.ready ? Theme.secondaryColor : "#c0a24a"
+                        }
+                        Label {
+                            property real eff: Game.armyPower * (1 + modelData.intelPct / 100)
+                            visible: modelData.ready && Game.population > 0
+                            width: parent.width
+                            truncationMode: TruncationMode.Fade
+                            font.pixelSize: Theme.fontSizeExtraSmall
+                            text: qsTr("your power") + " " + Game.fmt(eff) + "  ·  "
+                                  + (eff >= modelData.defense * 1.5 ? qsTr("crushing")
+                                     : eff >= modelData.defense ? qsTr("favourable")
+                                     : eff >= modelData.defense * 0.66 ? qsTr("risky") : qsTr("suicidal"))
+                            color: eff >= modelData.defense ? "#7fae5a"
+                                   : eff >= modelData.defense * 0.66 ? "#c0a24a" : "#c0603a"
+                        }
+                    }
+                    IconButton {
+                        id: preyBtn
+                        anchors { right: parent.right; rightMargin: Theme.horizontalPageMargin; verticalCenter: parent.verticalCenter }
+                        icon.source: "image://theme/icon-m-right"
+                        enabled: modelData.ready && Game.raidForce > 0
+                        onClicked: { Game.raid(modelData.index); app.buzz() }
+                    }
+                }
+            }
+
+            Item { width: 1; height: Theme.paddingLarge }
+        }
     }
 }
