@@ -24,6 +24,13 @@ ApplicationWindow {
         if (key === "energy") return "#3ab5a6"
         return "#999999"
     }
+    // Each faction has its own accent, so the whole UI reads at a glance as badger / ant / rabbit / magpie.
+    function accent() {
+        return Game.faction === 1 ? "#3ab5c0"   // magpie: pilfered teal
+             : Game.faction === 2 ? "#d98a2b"   // ant: amber earth
+             : Game.faction === 3 ? "#6fae3f"   // rabbit: meadow green
+             : "#c9a24a"                          // badger: stone gold
+    }
     function jobName(key) {
         if (key === "forage") return Game.faction === 1 ? qsTr("Scavenge") : qsTr("Forage")
         if (key === "gather") return Game.faction === 2 ? qsTr("Harvest biomass")

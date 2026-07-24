@@ -494,7 +494,17 @@ double WarrenController::rateOf(int res) const
     if (res == Food) return netFood(m_state);
     if (res == Materials) return production(m_state, Gather);
     if (res == Gold) return production(m_state, MineJob);
-    if (res == Energy) return -energyDrain(m_state);
+    if (res == Energy) {
+        // The recharge slot moves differently per faction: the badger's energy drains, the flock
+        // rests stamina back, the queen's pheromone and the warren's vigilance fade over time.
+        const double e = m_state.res[Energy];
+        switch (kFaction[m_state.faction].recharge) {
+        case RMStamina:   return e >= kStaminaCap   ? 0.0 :  kStaminaRegenPerSec;
+        case RMPheromone: return e <= 0.0           ? 0.0 : -kPheromoneDrainPerSec;
+        case RMVigilance: return e <= 0.0           ? 0.0 : -kVigilanceDrainPerSec;
+        default:          return -energyDrain(m_state);
+        }
+    }
     return 0.0;
 }
 

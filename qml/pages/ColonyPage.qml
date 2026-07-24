@@ -634,110 +634,12 @@ Page {
                 }
             }
 
-            // Energy: the bar drains toward the dark. ---------------------------------
-            SectionHeader { visible: Game.energyActive && Game.buysEnergy; text: qsTr("Energy") }
-            // No trading post yet: energy matters now, but you can't buy any until you build one.
-            BackgroundItem {
-                visible: Game.energyActive && Game.buysEnergy && !Game.tradingUnlocked
+            // Faction recharge mechanic: energy (badger) / pheromone (ant) / vigilance (rabbit) /
+            // stamina (magpie), all through one shared panel.
+            MechanicPanel {
+                app: app
                 width: parent.width
-                height: Theme.itemSizeMedium
-                enabled: false
-                Image {
-                    id: enHintIcon
-                    x: Theme.horizontalPageMargin
-                    anchors.verticalCenter: parent.verticalCenter
-                    source: Qt.resolvedUrl("../images/res-energy.png")
-                    smooth: false
-                    width: Theme.iconSizeMedium; height: width
-                    fillMode: Image.PreserveAspectFit
-                    opacity: 0.5
-                }
-                Label {
-                    anchors { left: enHintIcon.right; leftMargin: Theme.paddingMedium; right: parent.right; rightMargin: Theme.horizontalPageMargin; verticalCenter: parent.verticalCenter }
-                    text: qsTr("Build a trading post to buy energy and power the colony.")
-                    wrapMode: Text.WordWrap
-                    font.pixelSize: Theme.fontSizeSmall
-                    color: Theme.secondaryColor
-                }
-            }
-            BackgroundItem {
-                // Only gold-buying factions (the badger) fill up here; ants/rabbits recharge by tapping.
-                visible: Game.buysEnergy && Game.tradingUnlocked
-                width: parent.width
-                height: Theme.itemSizeMedium
-                onClicked: { Game.buyEnergy(); app.buzz(); app.quip("buyenergy") }
-
-                Image {
-                    id: enIcon
-                    x: Theme.horizontalPageMargin
-                    anchors.verticalCenter: parent.verticalCenter
-                    source: Qt.resolvedUrl("../images/res-energy.png")
-                    smooth: false
-                    width: Theme.iconSizeMedium; height: width
-                    fillMode: Image.PreserveAspectFit
-                }
-                Column {
-                    anchors { left: enIcon.right; leftMargin: Theme.paddingMedium; right: fillLbl.left; rightMargin: Theme.paddingMedium; verticalCenter: parent.verticalCenter }
-                    spacing: Theme.paddingSmall
-                    Label {
-                        visible: text.length > 0
-                        text: Game.blackout ? qsTr("The lights are out.")
-                              : (Game.energyEtaSec > 0 ? page.fmtEta(Game.energyEtaSec) + " " + qsTr("left") : "")
-                        color: Game.blackout ? "#c0603a" : Theme.primaryColor
-                        font.pixelSize: Theme.fontSizeSmall
-                    }
-                    Label {
-                        text: Game.powered ? qsTr("Powered: +25% production and building")
-                              : Game.blackout ? qsTr("Blackout: −30% production and building")
-                              : qsTr("Keep it powered: +25% production and building")
-                        color: Game.powered ? "#3ab5a6" : Game.blackout ? "#c0603a" : Theme.secondaryColor
-                        font.pixelSize: Theme.fontSizeExtraSmall
-                        width: parent.width
-                        truncationMode: TruncationMode.Fade
-                    }
-                    Rectangle {
-                        width: parent.width; height: 6; radius: 2
-                        color: Theme.rgba(Theme.primaryColor, 0.15)
-                        Rectangle {
-                            property var er: {
-                                var rs = Game.resources
-                                for (var i = 0; i < rs.length; i++) if (rs[i].key === "energy") return rs[i]
-                                return { value: 0, cap: 1 }
-                            }
-                            width: parent.width * Math.max(0, Math.min(1, er.value / Math.max(1, er.cap)))
-                            height: parent.height; radius: 2
-                            color: Game.blackout ? "#c0603a" : "#3ab5a6"
-                            Behavior on width { NumberAnimation { duration: 400 } }
-                        }
-                    }
-                }
-                Column {
-                    id: fillLbl
-                    anchors { right: parent.right; rightMargin: Theme.horizontalPageMargin; verticalCenter: parent.verticalCenter }
-                    Label {
-                        anchors.right: parent.right
-                        text: qsTr("Fill up")
-                        color: Theme.highlightColor
-                    }
-                    Row {
-                        anchors.right: parent.right
-                        spacing: 3
-                        visible: Game.energyFillCost > 0
-                        Image {
-                            anchors.verticalCenter: parent.verticalCenter
-                            source: Qt.resolvedUrl("../images/res-gold.png")
-                            smooth: false; width: Theme.iconSizeExtraSmall * 0.7; height: width
-                            fillMode: Image.PreserveAspectFit
-                        }
-                        Label {
-                            anchors.verticalCenter: parent.verticalCenter
-                            text: Game.fmt(Game.energyFillCost)
-                            font.pixelSize: Theme.fontSizeExtraSmall
-                            font.family: "Monospace"
-                            color: Theme.secondaryColor
-                        }
-                    }
-                }
+                visible: Game.faction !== 0 || Game.energyActive
             }
 
             // Barracks ---------------------------------------------------------------
