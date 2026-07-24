@@ -610,7 +610,9 @@ void applyEvent(GameState& s, const Event& e, quint64 salt)
             s.damaged &= ~(1u << b);
         }
     } else if (e.kind == QLatin1String("tap")) {
-        const int n = p.value(QLatin1String("n")).toInt();
+        int n = p.value(QLatin1String("n")).toInt();
+        if (n < 0) n = 0;
+        if (n > 100000) n = 100000;                          // guard a corrupt log from a huge loop
         for (int i = 0; i < n; ++i) {
             if (!fac(s).worksLand) {                         // magpie pilfers something shiny
                 s.res[Gold] += kPilferShinies;
